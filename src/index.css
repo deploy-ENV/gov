@@ -16,7 +16,11 @@ body.dark {
   @apply bg-card backdrop-blur-md shadow-card rounded-xl border border-border;
 }
 
+<<<<<<< HEAD
 /* Remove neon glows, use subtle card shadow instead */
+=======
+/* Remove neon glows, use subtle card shadow instead just */
+>>>>>>> master
 .glow-blue, .glow-violet, .glow-cyan {
   box-shadow: 0 2px 12px 0 rgba(30,41,59,0.06);
 }

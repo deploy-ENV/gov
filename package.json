@@ -30,7 +30,10 @@
     "preview": "vite preview",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
+<<<<<<< HEAD
      "build": "react-scripts build"
+=======
+>>>>>>> master
   },
   "browserslist": {
     "production": [
