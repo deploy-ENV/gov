@@ -1,8 +1,0 @@
-{
-  "buildCommand": "vite build",
-  "outputDirectory": "dist",
-  "ignoreCommand": "echo 'No ignore'",
-  "rewrites": [
-    { "source": "/(.*)", "destination": "/index.html" }
-  ]
-}
