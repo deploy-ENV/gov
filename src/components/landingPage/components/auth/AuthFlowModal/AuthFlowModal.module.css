@@ -1,0 +1,223 @@
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+  backdrop-filter: blur(4px);
+  padding: 1rem;
+}
+
+.modalContainer {
+  background: rgba(24, 31, 42, 0.85);
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.18);
+  backdrop-filter: blur(16px);
+  border-radius: 1rem;
+  padding: 0.75rem;
+  max-width: 24rem;
+  width: 100%;
+  margin: 0 0.5rem;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  border: 2px solid rgba(29, 233, 182, 0.4);
+  position: relative;
+  animation: fadeInScale 0.3s ease-out;
+  max-height: 85vh;
+  overflow-y: auto;
+  padding-top: 1rem;
+}
+
+@media (min-width: 640px) {
+  .modalContainer {
+    padding: 1rem;
+    max-width: 28rem;
+    max-height: 90vh;
+  }
+}
+
+@media (min-width: 768px) {
+  .modalContainer {
+    padding: 1.5rem;
+    max-width: 32rem;
+  }
+}
+
+.closeButton {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  color: #9ca3af;
+  font-size: 1.25rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: color 0.2s;
+  z-index: 10;
+}
+
+@media (min-width: 640px) {
+  .closeButton {
+    top: 1rem;
+    right: 1rem;
+    font-size: 1.5rem;
+  }
+}
+
+.closeButton:hover {
+  color: #ffd580;
+}
+
+.modalTitle {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: #ffd580;
+  margin-bottom: 0.5rem;
+  text-align: center;
+  margin-top: 0.25rem;
+}
+
+@media (min-width: 640px) {
+  .modalTitle {
+    font-size: 1rem;
+    margin-bottom: 0.75rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .modalTitle {
+    font-size: 1.125rem;
+    margin-bottom: 1rem;
+  }
+}
+
+.modeToggle {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+@media (min-width: 640px) {
+  .modeToggle {
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+  }
+}
+
+.modeButton {
+  padding: 0.25rem 0.75rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  font-size: 0.75rem;
+  transition: all 0.2s;
+  border: 2px solid;
+  background: rgba(24, 31, 42, 0.8);
+  color: #ffd580;
+  border-color: #ffd580;
+  cursor: pointer;
+}
+
+@media (min-width: 640px) {
+  .modeButton {
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+  }
+}
+
+.modeButton:hover:not(:disabled) {
+  background: rgba(255, 213, 128, 0.8);
+  color: #181f2a;
+}
+
+.modeButtonActive {
+  background: linear-gradient(90deg, #1de9b6 0%, #ffd580 100%);
+  color: #181f2a;
+  border-color: #ffd580;
+  box-shadow: 0 0 8px 1px rgba(29, 233, 182, 0.4), 0 0 16px 2px rgba(255, 213, 128, 0.2);
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+@media (min-width: 640px) {
+  .form {
+    gap: 0.75rem;
+  }
+}
+
+.submitButton {
+  margin-top: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: linear-gradient(90deg, #1de9b6 0%, #ffd580 100%);
+  color: #181f2a;
+  font-weight: 700;
+  font-size: 0.875rem;
+  border-radius: 1rem;
+  box-shadow: 0 0 8px 1px rgba(29, 233, 182, 0.4), 0 0 16px 2px rgba(255, 213, 128, 0.2);
+  border: none;
+  transition: all 0.2s;
+  cursor: pointer;
+}
+
+@media (min-width: 640px) {
+  .submitButton {
+    margin-top: 0.75rem;
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+  }
+}
+
+.submitButton:hover {
+  box-shadow: 0 0 16px 2px #1de9b6, 0 0 32px 4px rgba(255, 213, 128, 0.4);
+  transform: translateY(-1px);
+}
+
+.uploadLabel {
+  display: block;
+  text-align: left;
+  font-size: 0.75rem;
+  color: #ffd580;
+  font-weight: 600;
+  margin-top: 0.25rem;
+  margin-bottom: 0.25rem;
+}
+
+/* Custom scrollbar for modal */
+.modalContainer {
+  scrollbar-width: thin;
+  scrollbar-color: #1de9b6 #232c3d;
+}
+
+.modalContainer::-webkit-scrollbar {
+  width: 6px;
+}
+
+.modalContainer::-webkit-scrollbar-track {
+  background: #232c3d;
+  border-radius: 6px;
+}
+
+.modalContainer::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #1de9b6 0%, #ffd580 100%);
+  border-radius: 6px;
+  box-shadow: 0 0 6px 2px #1de9b6, 0 0 12px 4px rgba(255, 213, 128, 0.4);
+}
+
+.modalContainer::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #ffd580 0%, #1de9b6 100%);
+}
+
+@keyframes fadeInScale {
+  0% {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+} 

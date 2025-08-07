@@ -1,0 +1,49 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  @apply bg-background font-sans text-text;
+  min-height: 100vh;
+}
+
+body.dark {
+  @apply bg-secure-navy text-gray-200;
+}
+
+.glass {
+  @apply bg-card backdrop-blur-md shadow-card rounded-xl border border-border;
+}
+
+/* Remove neon glows, use subtle card shadow instead */
+.glow-blue, .glow-violet, .glow-cyan {
+  box-shadow: 0 2px 12px 0 rgba(30,41,59,0.06);
+}
+
+/* Custom beautiful scrollbar for SecurePortal dark theme */
+::-webkit-scrollbar {
+  width: 10px;
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, #23395d 40%, #1a4d8c 100%);
+  border-radius: 8px;
+  box-shadow: 0 2px 8px 0 rgba(26,77,140,0.15);
+  border: 2px solid #20294a;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, #1a4d8c 60%, #63ace5 100%);
+}
+::-webkit-scrollbar-track {
+  background: #181e2a;
+  border-radius: 8px;
+}
+
+/* For Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #1a4d8c #181e2a;
+} 
+
+

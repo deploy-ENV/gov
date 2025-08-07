@@ -1,0 +1,42 @@
+.particleContainer {
+  position: absolute;
+  inset: 0;
+  z-index: -10;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.particle {
+  position: absolute;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(29, 233, 182, 0.6) 0%, rgba(255, 213, 128, 0.4) 100%);
+  filter: blur(8px);
+  opacity: 0.6;
+  animation: float 10s linear infinite;
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(0) translateX(0);
+  }
+  50% {
+    transform: translateY(-50px) translateX(10px);
+  }
+  100% {
+    transform: translateY(-100px) translateX(0);
+  }
+}
+
+/* Mobile-specific optimizations */
+@media (max-width: 640px) {
+  .particle {
+    animation-duration: 8s;
+  }
+}
+
+/* Reduce motion for users who prefer it */
+@media (prefers-reduced-motion: reduce) {
+  .particle {
+    animation: none;
+  }
+} 

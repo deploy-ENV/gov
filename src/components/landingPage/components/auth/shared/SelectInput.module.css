@@ -1,0 +1,76 @@
+.selectContainer {
+  position: relative;
+  margin-bottom: 1rem;
+}
+
+.select {
+  width: 100%;
+  appearance: none;
+  padding: 0.75rem 2rem 0.75rem 0.75rem;
+  background: rgba(35, 44, 61, 0.85);
+  border: 2px solid #1de9b6;
+  color: #f8fafc;
+  border-radius: 1rem;
+  box-shadow: 0 0 8px 1px rgba(29, 233, 182, 0.2);
+  font-size: 0.875rem;
+  font-weight: 600;
+  transition: all 0.2s;
+  outline: none;
+  backdrop-filter: blur(16px);
+}
+
+@media (min-width: 640px) {
+  .select {
+    padding: 1rem 2.5rem 1rem 1rem;
+    font-size: 1rem;
+  }
+}
+
+.select:focus {
+  border-color: #ffd580;
+  box-shadow: 0 0 0 3px #1de9b6, 0 0 16px 2px rgba(255, 213, 128, 0.6);
+}
+
+.label {
+  position: absolute;
+  left: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #94a3b8;
+  pointer-events: none;
+  transition: all 0.2s;
+  font-size: 0.875rem;
+}
+
+@media (min-width: 640px) {
+  .label {
+    left: 1rem;
+  }
+}
+
+.selectContainer:focus-within .label,
+.labelActive {
+  top: 0.5rem;
+  font-size: 0.75rem;
+  color: #ffd580;
+}
+
+.chevron {
+  position: absolute;
+  right: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #1de9b6;
+  pointer-events: none;
+  transition: all 0.2s;
+}
+
+@media (min-width: 640px) {
+  .chevron {
+    right: 1rem;
+  }
+}
+
+.selectContainer:focus-within .chevron {
+  color: #ffd580;
+} 

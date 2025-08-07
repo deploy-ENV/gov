@@ -1,0 +1,24 @@
+/* Custom styles for Footer */
+
+.footer {
+  box-shadow: 0 -4px 24px 0 rgba(16,22,36,0.12);
+  border-radius: 2rem 2rem 0 0;
+}
+
+.link {
+  transition: color 0.2s;
+}
+
+.link:hover {
+  color: #1de9b6;
+}
+
+.iconBtn {
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(246, 193, 119, 0.3);
+}
+
+.iconBtn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 8px 25px rgba(246, 193, 119, 0.5);
+}
