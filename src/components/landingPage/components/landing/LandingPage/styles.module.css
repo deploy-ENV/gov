@@ -1,0 +1,24 @@
+/* Marquee animation for the banner */
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+.marquee {
+  display: inline-block;
+  animation: marquee 15s linear infinite;
+}
+
+/* Utility helpers for spacing and layout */
+.section {
+  margin-bottom: 8rem;
+}
+.sectionTitle {
+  margin-bottom: 3.5rem;
+  font-size: 2.5rem;
+  font-weight: 700;
+}
+@media (min-width: 768px) {
+  .sectionTitle {
+    font-size: 3rem;
+  }
+} 
