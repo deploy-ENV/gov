@@ -19,13 +19,14 @@ export default function AuthFlowModal({ selectedType, onClose }) {
   const [signup, setSignup] = useState({
     fullName: '', age: '', mobile: '', username: '', password: '', email: '', gsti: '', address: '', companyName: '', companyAddress: '', businessAddress: '', empId: '', dept: '', idProof: null, role: '', authLetter: null, zone: '', phoneVerified: false
   });
-  const [login, setLogin] = useState({ username: '', password: '' });
+  const [login, setLogin] = useState({ username: '', password: '',role:'' });
   const [otpLoading, setOtpLoading] = useState(false);
 
   const handleSignupChange = e => {
     const { name, value, files } = e.target;
     setSignup({ ...signup, [name]: files ? files[0] : value });
   };
+  
   
   const handleLoginChange = e => setLogin({ ...login, [e.target.name]: e.target.value });
 
@@ -37,6 +38,7 @@ export default function AuthFlowModal({ selectedType, onClose }) {
       setOtpLoading(false);
     }, 1200);
   };
+  
 
   const { login: loginUser, signup: signupUser } = useAuth();
   const navigate = useNavigate();
@@ -49,8 +51,10 @@ export default function AuthFlowModal({ selectedType, onClose }) {
         username: login.username,
         password: login.password,
         userType: selectedType,
-        role: selectedType === 'govt-officer' ? signup.role : undefined,
+        role: selectedType === 'govt-officer' ? login.role : '',
       });
+      console.log(login.role,selectedType);
+      
       
       if (success) {
         onClose();
@@ -236,6 +240,18 @@ export default function AuthFlowModal({ selectedType, onClose }) {
           <form className={styles.form} onSubmit={handleLoginSubmit}>
             <FloatingInput icon={User} label="Username" name="username" value={login.username} onChange={handleLoginChange} required />
             <FloatingInput icon={Lock} label="Password" type="password" name="password" value={login.password} onChange={handleLoginChange} required />
+            {selectedType == 'govt-officer' && 
+            <SelectInput 
+              label="Officer Role" 
+              name="role" 
+              value={login.role} 
+              onChange={handleLoginChange} 
+              required 
+              options={[
+                <option key="" value="">Select Officer Role</option>, 
+                ...['Project Manager', 'Supervisor'].map(r => <option key={r} value={r}>{r}</option>)
+              ]} 
+            />}
             <button type="submit" className={styles.submitButton}>
               Login
             </button>
