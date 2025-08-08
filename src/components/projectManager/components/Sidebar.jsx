@@ -18,6 +18,7 @@ import {
   ChevronDown,
 } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
+import { logout } from "../../../services/authService";
 
 const menu = [
   { name: "Dashboard Home", icon: <Home size={20} />, id: "", color: "text-blue-600" },
@@ -125,8 +126,10 @@ export default function Sidebar() {
               <UserCircle className="w-4 h-4" />
               Profile
             </button>
-            <Link to={"/logout"}>
-            <button className="w-full flex items-center gap-2 px-3 py-2 text-sm bg-red-400/40 text-red-400/90 hover:bg-slate-500/50 rounded-md transition-colors">
+            <Link >
+            <button className="w-full flex items-center gap-2 px-3 py-2 text-sm bg-red-400/40 text-red-400/90 hover:bg-slate-500/50 rounded-md transition-colors"
+            onClick={logout}
+            >
               <LogOut className="w-4 h-4" />
               Logout
             </button>

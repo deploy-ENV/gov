@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from "react";
 import { Home, Box, ClipboardList, Truck, CreditCard, History, MessageCircle, Shield, User, UserCircle, LogOut, ChevronDown } from "lucide-react";
 import { useNavigate, useLocation, Link } from "react-router-dom";
+import { logout } from "../../../services/authService";
 
 const navItems = [
   { id: 'overview', label: "Overview", icon: Home, path: "" },
@@ -99,8 +100,10 @@ export default function Sidebar() {
               <UserCircle className="w-4 h-4" />
               Profile
             </button>
-             <Link to={"/logout"}>
-                        <button className="w-full flex items-center gap-2 px-3 py-2 text-sm bg-red-400/40 text-red-400/90 hover:bg-slate-500/50 rounded-md transition-colors">
+             <Link >
+                        <button className="w-full flex items-center gap-2 px-3 py-2 text-sm bg-red-400/40 text-red-400/90 hover:bg-slate-500/50 rounded-md transition-colors"
+                        onClick={logout}
+                        >
                           <LogOut className="w-4 h-4" />
                           Logout
                         </button>
