@@ -1,24 +1,57 @@
 import api from './api';
+import Cookies from 'js-cookie';
+
+
+const cookieOptions = {
+  expires: 7, 
+  secure: true,
+  sameSite: 'strict',
+};
+
+
+const setAuthCookies = (token, role) => {
+  Cookies.set('token', token, cookieOptions);
+  Cookies.set('userRole', role, cookieOptions);
+};
 
 // Register Government Admin
-export const registerGovtAdmin = async (userData) => {
+export const registerGovt = async (userData,role) => {
   try {
-    const response = await api.post('/auth/register/govt', userData);
+     if(role == 'Project Manager'){
+      const response = await api.post('/auth/register/projectmanager', userData);
+      return response.data;
+    }
+    else{
+      const response = await api.post('/auth/register/supervisor', userData);
     return response.data;
+    }
+    // const response = await api.post('/auth/register/govt', userData);
+    // return response.data;
   } catch (error) {
     throw error.response?.data || error.message;
   }
 };
 
 // Login Government Admin
-export const loginGovtAdmin = async (credentials) => {
+export const loginGovt = async (credentials,role) => {
   try {
-    const response = await api.post('/auth/login/govt', credentials);
-    if (response.data.token) {
-      localStorage.setItem('token', response.data.token);
-      localStorage.setItem('userRole', 'govt_admin');
+    if(role == 'Project Manager'){
+      
+      const response = await api.post('/auth/login/projectmanager', credentials);
+      if (response.data.token) {
+        setAuthCookies(response.data.token, 'govt_officer');
+      }
+      return response.data;
     }
-    return response.data;
+    else{
+      const response = await api.post('/auth/login/supervisor', credentials);
+      if (response.data.token) {
+        setAuthCookies(response.data.token, 'govt_officer');
+      }
+      return response.data;
+    }
+    
+    
   } catch (error) {
     throw error.response?.data || error.message;
   }
@@ -34,13 +67,33 @@ export const registerContractor = async (contractorData) => {
   }
 };
 
+export const registerSupplier = async (supplierData) => {
+  try {
+    const response = await api.post('/auth/register/supplier', supplierData);
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error.message;
+  }
+};
+
 // Login Contractor
 export const loginContractor = async (credentials) => {
   try {
     const response = await api.post('/auth/login/contractor', credentials);
     if (response.data.token) {
-      localStorage.setItem('token', response.data.token);
-      localStorage.setItem('userRole', 'contractor');
+      setAuthCookies(response.data.token, 'contractor');
+    }
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error.message;
+  }
+};
+
+export const loginSupplier = async (credentials) => {
+  try {
+    const response = await api.post('/auth/login/supplier', credentials);
+    if (response.data.token) {
+      setAuthCookies(response.data.token, 'supplier');
     }
     return response.data;
   } catch (error) {
@@ -50,16 +103,18 @@ export const loginContractor = async (credentials) => {
 
 // Logout
 export const logout = () => {
-  localStorage.removeItem('token');
-  localStorage.removeItem('userRole');
+  Cookies.remove('token');
+  Cookies.remove('userRole');
+  sessionStorage.clear();
+  // window.location.href = '/login'; 
 };
 
 // Get current user role
 export const getCurrentUserRole = () => {
-  return localStorage.getItem('userRole');
+  return Cookies.get('userRole');
 };
 
 // Check if user is authenticated
 export const isAuthenticated = () => {
-  return !!localStorage.getItem('token');
+  return !!Cookies.get('token');
 };
