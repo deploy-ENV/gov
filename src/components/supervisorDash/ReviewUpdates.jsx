@@ -27,6 +27,7 @@ import {
 import {
   setSubmittedUpdates,
 } from './supervisorDashboardSlice';
+import { logout } from '../../services/authService';
 
 const UpdatesReview = () => {
   const dispatch = useDispatch();
@@ -276,8 +277,10 @@ const UpdatesReview = () => {
                   Profile
                 </button>
               </Link>
-              <Link to="/logout">
-                <button className="w-full flex items-center gap-2 px-3 py-2 text-sm bg-red-400/40 text-red-400/90 hover:bg-slate-500/50 rounded-md transition-colors">
+              <Link >
+                <button className="w-full flex items-center gap-2 px-3 py-2 text-sm bg-red-400/40 text-red-400/90 hover:bg-slate-500/50 rounded-md transition-colors"
+                onClick={logout}
+                >
                   <LogOut className="w-4 h-4" />
                   Logout
                 </button>
