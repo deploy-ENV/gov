@@ -5,6 +5,7 @@ import Header from './common/Header';
 import Footer from './common/Footer';
 import LoadingScreen from './common/LoadingScreen';
 import LandingPage from './landing/LandingPage';
+import Cookies from 'js-cookie';
 import '../index.css';
 
 const MainApp = () => {
