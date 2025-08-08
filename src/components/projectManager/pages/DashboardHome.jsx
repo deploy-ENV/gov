@@ -10,22 +10,19 @@ const STATS = [
 ];
 
 const ALERTS = [
-  { id: 1, project: 'Bridge Construction', text: 'Fund request submitted', type: 'fund', time: '2 hours ago', icon: <Info className="text-emerald-400" size={18} /> },
-  { id: 2, project: 'School Renovation', text: 'Progress delayed', type: 'delay', time: '1 day ago', icon: <AlertTriangle className="text-red-400" size={18} /> },
-  { id: 3, project: 'Water Supply Upgrade', text: 'Bid submission deadline approaching', type: 'bid', time: '3 days ago', icon: <Clock className="text-yellow-400" size={18} /> },
+  
 ];
 
 const DEADLINES = [
-  { id: 1, project: 'Bridge Construction', type: 'Bid Submission', daysLeft: 3, status: 'Bidding', icon: <Calendar className="text-emerald-400" size={18} /> },
-  { id: 2, project: 'School Renovation', type: 'Project Start', daysLeft: 7, status: 'Launch', icon: <Clock className="text-emerald-400" size={18} /> },
+
 ];
 
 const PROGRESS = 65;
 
 const ACTIVITY = [
-  { id: 1, user: 'Project Manager', action: 'Uploaded report', time: 'Today at 9:32 AM', icon: <FileText className="text-emerald-400" size={16} /> },
-  { id: 2, user: 'Supervisor', action: 'Validated site', time: 'Yesterday at 4:10 PM', icon: <User className="text-cyan-400" size={16} /> },
-  { id: 3, user: 'Contractor', action: 'Submitted fund request', time: 'Yesterday at 2:45 PM', icon: <Info className="text-emerald-400" size={16} /> },
+  // { id: 1, user: 'Project Manager', action: 'Uploaded report', time: 'Today at 9:32 AM', icon: <FileText className="text-emerald-400" size={16} /> },
+  // { id: 2, user: 'Supervisor', action: 'Validated site', time: 'Yesterday at 4:10 PM', icon: <User className="text-cyan-400" size={16} /> },
+  // { id: 3, user: 'Contractor', action: 'Submitted fund request', time: 'Yesterday at 2:45 PM', icon: <Info className="text-emerald-400" size={16} /> },
 ];
 
 function StatsCard({ stat }) {

@@ -17,43 +17,43 @@ import { motion, AnimatePresence } from "framer-motion";
 import ViewDetailsModal from "../components/ViewDetailsModal";
 
 const deliveries = [
-  {
-    id: "DEL-0015",
-    project: "Smart Road Phase 1",
-    items: [
-      { name: "Bricks", icon: <Package className="w-4 h-4 text-slate-400" />, qty: "1200", unit: "pcs" },
-      { name: "Cement", icon: <Package className="w-4 h-4 text-slate-400" />, qty: "50", unit: "bags" },
-    ],
-    date: "2025-07-05",
-    status: "Delivered",
-    proof: "proof-del-0015.pdf",
-    supervisor: "Amit Sharma",
-    remarks: "Delivered on time. No issues reported."
-  },
-  {
-    id: "DEL-0016",
-    project: "Bridge Construction",
-    items: [
-      { name: "Steel Rods", icon: <Package className="w-4 h-4 text-slate-400" />, qty: "30", unit: "tons" }
-    ],
-    date: "2025-07-03",
-    status: "Partial",
-    proof: "proof-del-0016.pdf",
-    supervisor: "Priya Verma",
-    remarks: "Partial delivery due to supply chain delay."
-  },
-  {
-    id: "DEL-0017",
-    project: "School Renovation",
-    items: [
-      { name: "Bricks", icon: <Package className="w-4 h-4 text-slate-400" />, qty: "5000", unit: "pcs" }
-    ],
-    date: "2025-07-01",
-    status: "Failed",
-    proof: "proof-del-0017.pdf",
-    supervisor: "Rakesh Singh",
-    remarks: "Delivery failed due to vehicle breakdown."
-  },
+  // {
+  //   id: "DEL-0015",
+  //   project: "Smart Road Phase 1",
+  //   items: [
+  //     { name: "Bricks", icon: <Package className="w-4 h-4 text-slate-400" />, qty: "1200", unit: "pcs" },
+  //     { name: "Cement", icon: <Package className="w-4 h-4 text-slate-400" />, qty: "50", unit: "bags" },
+  //   ],
+  //   date: "2025-07-05",
+  //   status: "Delivered",
+  //   proof: "proof-del-0015.pdf",
+  //   supervisor: "Amit Sharma",
+  //   remarks: "Delivered on time. No issues reported."
+  // },
+  // {
+  //   id: "DEL-0016",
+  //   project: "Bridge Construction",
+  //   items: [
+  //     { name: "Steel Rods", icon: <Package className="w-4 h-4 text-slate-400" />, qty: "30", unit: "tons" }
+  //   ],
+  //   date: "2025-07-03",
+  //   status: "Partial",
+  //   proof: "proof-del-0016.pdf",
+  //   supervisor: "Priya Verma",
+  //   remarks: "Partial delivery due to supply chain delay."
+  // },
+  // {
+  //   id: "DEL-0017",
+  //   project: "School Renovation",
+  //   items: [
+  //     { name: "Bricks", icon: <Package className="w-4 h-4 text-slate-400" />, qty: "5000", unit: "pcs" }
+  //   ],
+  //   date: "2025-07-01",
+  //   status: "Failed",
+  //   proof: "proof-del-0017.pdf",
+  //   supervisor: "Rakesh Singh",
+  //   remarks: "Delivery failed due to vehicle breakdown."
+  // },
 ];
 
 const statusConfig = {

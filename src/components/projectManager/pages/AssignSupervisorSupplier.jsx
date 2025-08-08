@@ -3,62 +3,11 @@ import { Loader2, Truck, User, CheckCircle, XCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const DUMMY_SUPPLIERS = [
-  {
-    id: 1,
-    name: 'Sharma Cement Traders',
-    materials: ['Cement'],
-    distance: 12,
-    pricing: { Cement: 320 },
-    eta: '2 days',
-  },
-  {
-    id: 2,
-    name: 'SteelMart Pvt Ltd',
-    materials: ['Steel'],
-    distance: 8,
-    pricing: { Steel: 540 },
-    eta: '1 day',
-  },
-  {
-    id: 3,
-    name: 'Universal Bricks',
-    materials: ['Bricks'],
-    distance: 15,
-    pricing: { Bricks: 7 },
-    eta: '3 days',
-  },
-  {
-    id: 4,
-    name: 'Allied Construction',
-    materials: ['Cement', 'Steel'],
-    distance: 10,
-    pricing: { Cement: 315, Steel: 535 },
-    eta: '2 days',
-  },
+  
 ];
 
 const DUMMY_SUPERVISORS = [
-  {
-    id: 1,
-    name: 'Amit Kumar',
-    experience: 5,
-    status: 'Available',
-    zone: 'North',
-  },
-  {
-    id: 2,
-    name: 'Priya Singh',
-    experience: 8,
-    status: 'Busy',
-    zone: 'North',
-  },
-  {
-    id: 3,
-    name: 'Rakesh Verma',
-    experience: 3,
-    status: 'Available',
-    zone: 'North',
-  },
+ 
 ];
 
 const PROJECT_ZONE = 'North';

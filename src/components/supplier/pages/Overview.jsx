@@ -33,11 +33,11 @@ const stats = [
 ];
 
 const project = {
-  name: "Municipal Infrastructure Upgrade",
-  materials: ["Cement", "Steel", "Bricks"],
-  lastDelivery: "12 May 2025",
+  name: "",
+  materials: [],
+  lastDelivery: "",
   progress: 60,
-  status: "On Track",
+  status: "",
   statusColor: "bg-emerald-400",
 };
 

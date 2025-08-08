@@ -75,20 +75,15 @@ function OnBiddingModal({ project, onClose, onAssign }) {
   const [confirming, setConfirming] = useState(false);
 
   const DUMMY_BIDS = [
-    { id: 1, name: 'BuildTech India Pvt. Ltd.', amount: 4500000, duration: 120, proposal: 'proposal-buildtech.pdf' },
-    { id: 2, name: 'CementPro Infra', amount: 4700000, duration: 110, proposal: 'proposal-cementpro.pdf' },
+
   ];
 
   const DUMMY_SUPPLIERS = [
-    { id: 1, name: 'ShreeBuild Co.', zone: 'East' },
-    { id: 2, name: 'CementPro Ltd.', zone: 'West' },
-    { id: 3, name: 'SteelMart', zone: 'North' },
+    
   ];
 
   const DUMMY_SUPERVISORS = [
-    { id: 1, name: 'Amit Kumar', region: 'East', experience: 8 },
-    { id: 2, name: 'Priya Singh', region: 'West', experience: 5 },
-    { id: 3, name: 'Rakesh Verma', region: 'East', experience: 3 },
+    
   ];
 
   const getNearestSupplier = (zone) => DUMMY_SUPPLIERS.find(s => s.zone === zone) || DUMMY_SUPPLIERS[0];

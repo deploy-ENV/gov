@@ -3,9 +3,9 @@ import { User, Send, Paperclip, Circle, Camera, FileText, MapPin, Mic, X, FileIm
 import { motion, AnimatePresence } from 'framer-motion';
 
 const DUMMY_PROJECTS = [
-  { id: 1, name: 'Bridge Construction', unread: 2 },
-  { id: 2, name: 'School Renovation', unread: 0 },
-  { id: 3, name: 'Water Supply Upgrade', unread: 1 },
+  // { id: 1, name: 'Bridge Construction', unread: 2 },
+  // { id: 2, name: 'School Renovation', unread: 0 },
+  // { id: 3, name: 'Water Supply Upgrade', unread: 1 },
 ];
 
 const DUMMY_USERS = {
@@ -15,30 +15,30 @@ const DUMMY_USERS = {
 };
 
 const DUMMY_MESSAGES = [
-  {
-    id: 1,
-    sender: 'pm',
-    content: "Hello team, please share today's progress update.",
-    timestamp: '10:00 AM',
-  },
-  {
-    id: 2,
-    sender: 'supervisor',
-    content: 'Site inspection completed. All safety protocols followed.',
-    timestamp: '10:05 AM',
-  },
-  {
-    id: 3,
-    sender: 'contractor',
-    content: 'Materials delivered and work started on foundation.',
-    timestamp: '10:10 AM',
-  },
-  {
-    id: 4,
-    sender: 'pm',
-    content: 'Great! Please upload photos in the Documents section.',
-    timestamp: '10:12 AM',
-  },
+  // {
+  //   id: 1,
+  //   sender: 'pm',
+  //   content: "Hello team, please share today's progress update.",
+  //   timestamp: '10:00 AM',
+  // },
+  // {
+  //   id: 2,
+  //   sender: 'supervisor',
+  //   content: 'Site inspection completed. All safety protocols followed.',
+  //   timestamp: '10:05 AM',
+  // },
+  // {
+  //   id: 3,
+  //   sender: 'contractor',
+  //   content: 'Materials delivered and work started on foundation.',
+  //   timestamp: '10:10 AM',
+  // },
+  // {
+  //   id: 4,
+  //   sender: 'pm',
+  //   content: 'Great! Please upload photos in the Documents section.',
+  //   timestamp: '10:12 AM',
+  // },
 ];
 
 function ChatHeader({ project, partner }) {

@@ -4,46 +4,46 @@ import { motion } from 'framer-motion';
 
 // Dummy Data
 const PROGRESS_UPDATES = [
-  {
-    contractor: 'AlphaBuild Co.',
-    timestamp: '2024-07-19 14:30',
-    description: 'Foundation work is complete. Starting on structural columns.',
-    status: 'In Progress',
-    validated: true,
-    media: [
-      { type: 'image', url: '/images/foundation1.jpg' },
-      { type: 'video', url: '/videos/foundation-progress.mp4' },
-    ],
-  },
+  // {
+  //   contractor: 'AlphaBuild Co.',
+  //   timestamp: '2024-07-19 14:30',
+  //   description: 'Foundation work is complete. Starting on structural columns.',
+  //   status: 'In Progress',
+  //   validated: true,
+  //   media: [
+  //     { type: 'image', url: '/images/foundation1.jpg' },
+  //     { type: 'video', url: '/videos/foundation-progress.mp4' },
+  //   ],
+  // },
 ];
 
 const SUPERVISOR_VALIDATIONS = [
-  {
-    name: 'Engr. Josephine Cruz',
-    date: '2024-07-18',
-    status: 'Approved',
-    note: 'Progress matches submitted reports. Continue as scheduled.',
-  },
+  // {
+  //   name: 'Engr. Josephine Cruz',
+  //   date: '2024-07-18',
+  //   status: 'Approved',
+  //   note: 'Progress matches submitted reports. Continue as scheduled.',
+  // },
 ];
 
 const MATERIALS = [
-  { name: 'Cement', delivered: 100, used: 80 },
-  { name: 'Steel Bars', delivered: 200, used: 150 },
+  // { name: 'Cement', delivered: 100, used: 80 },
+  // { name: 'Steel Bars', delivered: 200, used: 150 },
 ];
 
 const FUND_DATA = {
-  allocated: 1000000,
-  used: 650000,
+  allocated: 0,
+  used: 0,
 };
 
 const ISSUE_ALERTS = [
-  {
-    title: 'Delayed Material Delivery',
-    description: 'Steel beams scheduled for July 15 have not yet arrived.',
-    severity: 'High',
-    reportedBy: 'Project Manager',
-    date: '2024-07-17',
-  },
+  // {
+  //   title: 'Delayed Material Delivery',
+  //   description: 'Steel beams scheduled for July 15 have not yet arrived.',
+  //   severity: 'High',
+  //   reportedBy: 'Project Manager',
+  //   date: '2024-07-17',
+  // },
 ];
 
 const LAST_UPDATED = '2024-07-20 10:00';

@@ -9,27 +9,27 @@ const DUMMY_PROJECTS = [
 ];
 
 const REPORT_TYPES = [
-  {
-    key: 'progress',
-    title: 'Project Progress Report',
-    summary: 'Includes project title, zone, status, tasks completed, live updates, supervisor notes, and issues.',
-    options: ['pdf', 'csv'],
-    badge: 'Last exported',
-  },
-  {
-    key: 'fund',
-    title: 'Fund Usage Report',
-    summary: 'Shows total budget, requested vs released funds, fund requests, remaining balance, and a chart preview.',
-    options: ['pdf', 'xlsx'],
-    badge: 'Last exported',
-  },
-  {
-    key: 'docs',
-    title: 'Document Summary Report',
-    summary: 'Lists all uploaded documents, uploader, upload date, and type.',
-    options: ['pdf'],
-    badge: 'Last exported',
-  },
+  // {
+  //   key: 'progress',
+  //   title: 'Project Progress Report',
+  //   summary: 'Includes project title, zone, status, tasks completed, live updates, supervisor notes, and issues.',
+  //   options: ['pdf', 'csv'],
+  //   badge: 'Last exported',
+  // },
+  // {
+  //   key: 'fund',
+  //   title: 'Fund Usage Report',
+  //   summary: 'Shows total budget, requested vs released funds, fund requests, remaining balance, and a chart preview.',
+  //   options: ['pdf', 'xlsx'],
+  //   badge: 'Last exported',
+  // },
+  // {
+  //   key: 'docs',
+  //   title: 'Document Summary Report',
+  //   summary: 'Lists all uploaded documents, uploader, upload date, and type.',
+  //   options: ['pdf'],
+  //   badge: 'Last exported',
+  // },
 ];
 
 const DUMMY_EXPORTS = [

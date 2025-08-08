@@ -1,14 +1,14 @@
 import React, { useState } from "react";
 
 const initialProfile = {
-  name: "ABC Suppliers Pvt Ltd",
-  gstin: "22AAAAA0000A1Z5",
-  pan: "ABCDE1234F",
-  bank: "State Bank of India",
-  account: "1234567890",
-  ifsc: "SBIN0001234",
-  email: "supplier@secureportal.com",
-  phone: "+91 9876543210",
+  name: "",
+  gstin: "",
+  pan: "",
+  bank: "",
+  account: "",
+  ifsc: "",
+  email: "",
+  phone: "",
   proof: null,
 };
 

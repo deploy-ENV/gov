@@ -33,19 +33,19 @@ const stats = [
 ];
 
 const project = {
-  name: "Municipal Infrastructure Upgrade",
-  materials: ["Cement", "Steel", "Bricks"],
-  lastDelivery: "12 May 2025",
+  name: "",
+  materials: [],
+  lastDelivery: "",
   progress: 60,
-  status: "On Track",
-  statusColor: "bg-emerald-400",
+  status: "",
+  statusColor: "",
 };
 
 const upcomingDelivery = {
-  project: "Smart City Roadworks",
-  due: "18 May 2025",
-  items: ["Bitumen", "Concrete Pipes"],
-  countdown: "3 days left",
+  project: "",
+  due: "",
+  items: [],
+  countdown: "",
 };
 
 // Mock components since they're imported

@@ -5,15 +5,15 @@ import { motion } from "framer-motion";
 
 // Placeholder data for demonstration
 const projectData = {
-  "1": {
-    name: "Municipal Infrastructure Upgrade",
-    materials: ["Cement", "Steel", "Bricks"],
-    deliveries: [
-      { date: "12 May 2025", item: "Cement", qty: "200 bags", status: "Delivered" },
-      { date: "15 May 2025", item: "Steel", qty: "500 kg", status: "Pending" },
-    ],
-    progress: 60,
-  },
+  // "1": {
+  //   name: "Municipal Infrastructure Upgrade",
+  //   materials: ["Cement", "Steel", "Bricks"],
+  //   deliveries: [
+  //     { date: "12 May 2025", item: "Cement", qty: "200 bags", status: "Delivered" },
+  //     { date: "15 May 2025", item: "Steel", qty: "500 kg", status: "Pending" },
+  //   ],
+  //   progress: 60,
+  // },
 };
 
 export default function ProjectDetail() {
