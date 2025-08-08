@@ -106,7 +106,7 @@ export const logout = () => {
   Cookies.remove('token', { sameSite: 'strict', secure: true });
   Cookies.remove('userRole', { sameSite: 'strict', secure: true });
   sessionStorage.clear();
-  localStorage.clear(); // if used
+  
   window.location.href = '/'; // or '/login'
 };
 
