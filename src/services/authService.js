@@ -103,11 +103,13 @@ export const loginSupplier = async (credentials) => {
 
 // Logout
 export const logout = () => {
-  Cookies.remove('token');
-  Cookies.remove('userRole');
+  Cookies.remove('token', { sameSite: 'strict', secure: true });
+  Cookies.remove('userRole', { sameSite: 'strict', secure: true });
   sessionStorage.clear();
-  // window.location.href = '/login'; 
+  localStorage.clear(); // if used
+  window.location.href = '/'; // or '/login'
 };
+
 
 // Get current user role
 export const getCurrentUserRole = () => {
