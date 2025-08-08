@@ -11,6 +11,17 @@ const MainApp = () => {
   const { user, loading: authLoading } = useAuth();
   const navigate = useNavigate();
   
+    useEffect(() => {
+    const token = Cookies.get('token');
+    const role = Cookies.get('userRole')
+    if (token) {
+      if(role === 'contractor')
+      navigate('/dashboard/contractor');
+      if(role === 'supplier')
+      navigate('/dashboard/supplier');
+    }
+  }, [navigate]);
+
   const [currentSlide, setCurrentSlide] = useState(0);
   const [showGovtOptions, setShowGovtOptions] = useState(false);
   const [formData, setFormData] = useState({ email: '', phone: '', message: '' });
