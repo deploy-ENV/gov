@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { registerGovt, registerContractor, loginGovt, loginContractor,registerSupplier,loginSupplier } from '../services/authService'; // Adjust import path as needed
 
 // Define user roles for easier reference
 export const ROLES = {
@@ -77,68 +78,112 @@ export const AuthProvider = ({ children }) => {
     loadUser();
   }, []);
 
-  const login = useCallback((userData) => {
+const login = useCallback(
+  async ({ username, password, userType, role }) => {
     try {
-      console.log('AuthContext: Login called with userData:', userData);
-      const userWithTimestamp = {
-        ...userData,
-        authTime: new Date().toISOString()
+      console.log('AuthContext: Attempting login for', userType);
+
+      let response;
+
+      
+      if (userType === 'individual-contractor' || userType === 'corporate-contractor') {
+        response = await loginContractor({ username, password });
+      } else if (userType === 'supplier') {
+        response = await loginSupplier({ username, password });
+      } else if (userType === 'govt-officer') {
+        response = await loginGovt({ username, password },role);
+      } else {
+        throw new Error('Unsupported user type');
+      }
+
+      const token = response?.token;
+      if (!token) throw new Error('Login failed: No token returned');
+
+      const resolvedRole = determineUserRole(userType, role);
+
+      const userData = {
+        username,
+        userType,
+        role: resolvedRole,
+        token,
+        authTime: new Date().toISOString(),
       };
-      
-      console.log('AuthContext: Setting user in state and localStorage');
-      setUser(userWithTimestamp);
-      localStorage.setItem('user', JSON.stringify(userWithTimestamp));
-      
-      // Redirect to appropriate dashboard after login
-      const dashboardPath = getDashboardPath(userData.role);
-      console.log('AuthContext: Redirecting to dashboard:', dashboardPath);
+
+      setUser(userData);
+      localStorage.setItem('user', JSON.stringify(userData));
+      localStorage.setItem('token', token); // Optional fallback
+
+      const dashboardPath = getDashboardPath(resolvedRole);
       navigate(dashboardPath, { replace: true });
-      
-      return true;
+
+      return { success: true, data: userData };
     } catch (error) {
       console.error('AuthContext: Login failed', error);
-      return false;
+      return { success: false, error: error.message || 'Login failed' };
+    }
+  },
+  [navigate]
+);
+
+
+  const signup = useCallback(async (userData) => {
+    try {
+      console.log('AuthContext: Signup called with userData:', userData);
+
+      let response;
+      
+      if (userData.userType === 'govt-officer') {
+        response = await registerGovt(userData,userData.role);
+      } else if (userData.userType === 'supplier'){
+        response = await registerSupplier(userData);
+      }
+      else {
+        
+        response = await registerContractor(userData);
+      }
+
+      console.log('AuthContext: Registration API response:', response);
+
+      // Determine role for the user
+      const role = determineUserRole(userData.userType, userData.role);
+
+      const userWithTimestamp = {
+        ...response.user, 
+        ...userData, 
+        role,
+        token: response.token,
+        authTime: new Date().toISOString()
+      };
+
+      console.log('AuthContext: Setting user after signup:', userWithTimestamp);
+      setUser(userWithTimestamp);
+      localStorage.setItem('user', JSON.stringify(userWithTimestamp));
+
+      // Redirect after signup
+      const dashboardPath = getDashboardPath(role);
+      navigate(dashboardPath, { replace: true });
+
+      return { success: true, data: userWithTimestamp };
+    } catch (error) {
+      console.error('AuthContext: Signup failed', error);
+      return { success: false, error: error.message || 'Signup failed' };
     }
   }, [navigate]);
-
-  const signup = useCallback((userData) => {
-  try {
-    console.log('AuthContext: Signup called with userData:', userData);
-
-    // Correctly derive role for all users
-    const role = determineUserRole(userData.userType, userData.role);
-
-    const userWithTimestamp = {
-      ...userData,
-      role,
-      authTime: new Date().toISOString()
-    };
-
-    console.log('AuthContext: Setting user after signup:', userWithTimestamp);
-    setUser(userWithTimestamp);
-    localStorage.setItem('user', JSON.stringify(userWithTimestamp));
-
-    // Redirect after signup
-    const dashboardPath = getDashboardPath(role);
-    navigate(dashboardPath, { replace: true });
-
-    return true;
-  } catch (error) {
-    console.error('AuthContext: Signup failed', error);
-    return false;
-  }
-}, [navigate]);
-
 
   const logout = useCallback(() => {
     try {
       setUser(null);
       localStorage.removeItem('user');
+      
+      // Also clear cookies if they exist
+      // You might want to call your logout function from authService here
+      // logout(); // from authService
+      
       navigate('/', { replace: true });
-      return true;
+      return { success: true };
     } catch (error) {
       console.error('Logout failed', error);
-      return false;
+      return { success: false, error: error.message || 'Logout failed' };
     }
   }, [navigate]);
 
