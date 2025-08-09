@@ -113,7 +113,7 @@ export const logout = () => {
 
 // Get current user role
 export const getCurrentUserRole = () => {
-  return Cookies.get('userRole');
+  return Cookies.get('userRole');Q
 };
 
 // Check if user is authenticated
