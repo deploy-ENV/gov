@@ -76,7 +76,7 @@ const Dashboard = () => {
   const biddingStats = [
     { title: 'Active Bids', value: myBids.length, icon: FileText, color: 'from-emerald-400 to-cyan-400' },
     { title: 'Projects Available', value: availableProjects.length, icon: Eye, color: 'from-yellow-400 to-orange-400' },
-    { title: 'Bid Success Rate', value: '75%', icon: TrendingUp, color: 'from-green-400 to-emerald-400' },
+    { title: 'Bid Success Rate', value: '0%', icon: TrendingUp, color: 'from-green-400 to-emerald-400' },
   ];
 
   const sidebarItems = [
