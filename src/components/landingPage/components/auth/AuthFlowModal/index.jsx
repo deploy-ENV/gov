@@ -19,19 +19,90 @@ export default function AuthFlowModal({ selectedType, onClose }) {
   const [signup, setSignup] = useState({
     fullName: '', age: '', mobile: '', username: '', password: '', email: '', gsti: '', address: '', companyName: '', companyAddress: '', businessAddress: '', empId: '', dept: '', idProof: null, role: '', authLetter: null, zone: '', phoneVerified: false
   });
-  const [login, setLogin] = useState({ username: '', password: '',role:'' });
+  const [login, setLogin] = useState({ username: '', password: '', role: '' });
   const [otpLoading, setOtpLoading] = useState(false);
+  const [errors, setErrors] = useState({});
+
+ 
+  const validateAge = (age) => {
+    const numAge = parseInt(age);
+    if (isNaN(numAge) || numAge < 18 || numAge > 100) {
+      return 'Age must be between 18 and 100 years';
+    }
+    return '';
+  };
+
+  const validateMobile = (mobile) => {
+    const mobileRegex = /^[0-9]{10}$/;
+    if (!mobileRegex.test(mobile)) {
+      return 'Mobile number must be exactly 10 digits';
+    }
+    return '';
+  };
+
+  const validatePassword = (password) => {
+    if (password.length < 6) {
+      return 'Password must be at least 6 characters long';
+    }
+    const specialCharRegex = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/;
+    if (!specialCharRegex.test(password)) {
+      return 'Password must contain at least one special character';
+    }
+    return '';
+  };
+
+  const validateEmail = (email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return 'Please enter a valid email address';
+    }
+    return '';
+  };
+
+  const validateField = (name, value) => {
+    let error = '';
+    switch (name) {
+      case 'age':
+        error = validateAge(value);
+        break;
+      case 'mobile':
+        error = validateMobile(value);
+        break;
+      case 'password':
+        error = validatePassword(value);
+        break;
+      case 'email':
+        error = validateEmail(value);
+        break;
+      default:
+        break;
+    }
+    
+    setErrors(prev => ({ ...prev, [name]: error }));
+    return error === '';
+  };
 
   const handleSignupChange = e => {
     const { name, value, files } = e.target;
-    setSignup({ ...signup, [name]: files ? files[0] : value });
+    const newValue = files ? files[0] : value;
+    
+    setSignup({ ...signup, [name]: newValue });
+    
+    // Validate on change for specific fields
+    if (['age', 'mobile', 'password', 'email'].includes(name)) {
+      validateField(name, newValue);
+    }
   };
-  
   
   const handleLoginChange = e => setLogin({ ...login, [e.target.name]: e.target.value });
 
   // OTP simulation handler
   const handleOtpVerify = () => {
+    // First validate mobile number
+    if (!validateField('mobile', signup.mobile)) {
+      return;
+    }
+    
     setOtpLoading(true);
     setTimeout(() => {
       setSignup(s => ({ ...s, phoneVerified: true }));
@@ -43,7 +114,7 @@ export default function AuthFlowModal({ selectedType, onClose }) {
   const { login: loginUser, signup: signupUser } = useAuth();
   const navigate = useNavigate();
 
-  // Form submit handlers
+  // Form submit handlers with validation
   const handleLoginSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -53,13 +124,10 @@ export default function AuthFlowModal({ selectedType, onClose }) {
         userType: selectedType,
         role: selectedType === 'govt-officer' ? login.role : '',
       });
-      console.log(login.role,selectedType);
-      
       
       if (success) {
         onClose();
       } else {
-        // Handle login error (you might want to show an error message to the user)
         console.error('Login failed');
       }
     } catch (error) {
@@ -69,6 +137,28 @@ export default function AuthFlowModal({ selectedType, onClose }) {
   
   const handleSignupSubmit = async (e) => {
     e.preventDefault();
+    
+    // Validate all required fields before submission
+    const fieldsToValidate = ['age', 'mobile', 'password', 'email'];
+    let hasErrors = false;
+    
+    fieldsToValidate.forEach(field => {
+      if (signup[field] && !validateField(field, signup[field])) {
+        hasErrors = true;
+      }
+    });
+
+    // Check if phone is verified
+    if (!signup.phoneVerified) {
+      setErrors(prev => ({ ...prev, mobile: 'Please verify your phone number' }));
+      hasErrors = true;
+    }
+    
+    if (hasErrors) {
+      console.error('Form has validation errors');
+      return;
+    }
+    
     try {
       const userData = {
         ...signup,
@@ -81,7 +171,6 @@ export default function AuthFlowModal({ selectedType, onClose }) {
       if (success) {
         onClose();
       } else {
-        // Handle signup error (you might want to show an error message to the user)
         console.error('Signup failed');
       }
     } catch (error) {
@@ -95,60 +184,80 @@ export default function AuthFlowModal({ selectedType, onClose }) {
   if (selectedType === 'individual-contractor') {
     title = 'Individual Contractor';
     signupFields = (
-      <>
+      <div className='grid grid-cols-2 gap-2 '>
         <FloatingInput icon={User} label="Full Name" name="fullName" value={signup.fullName} onChange={handleSignupChange} required />
-        <FloatingInput icon={Lock} label="Age" type="number" name="age" value={signup.age} onChange={handleSignupChange} required />
-        <FloatingInput icon={Phone} label="Mobile Number" name="mobile" value={signup.mobile} onChange={handleSignupChange} required />
-        <AnimatedVerifyButton onClick={handleOtpVerify} loading={otpLoading} verified={signup.phoneVerified} disabled={!signup.mobile} />
+        <FloatingInput icon={Lock} label="Age" type="number" name="age" value={signup.age} onChange={handleSignupChange} required error={errors.age} />
+        
+        <div className='flex flex-col col-span-2 w-full'>
+          
+            <FloatingInput icon={Phone} label="Mobile Number" name="mobile" value={signup.mobile} onChange={handleSignupChange} required error={errors.mobile} />
+         
+
+         
+            <AnimatedVerifyButton onClick={handleOtpVerify} loading={otpLoading} verified={signup.phoneVerified} disabled={!signup.mobile || !!errors.mobile} />
+        
+        </div>
         <FloatingInput icon={User} label="Username" name="username" value={signup.username} onChange={handleSignupChange} required />
-        <FloatingInput icon={Lock} label="Password" type="password" name="password" value={signup.password} onChange={handleSignupChange} required />
-        <FloatingInput icon={Mail} label="Email" type="email" name="email" value={signup.email} onChange={handleSignupChange} required />
+        <FloatingInput icon={Lock} label="Password" type="password" name="password" value={signup.password} onChange={handleSignupChange} required error={errors.password} />
+        <FloatingInput icon={Mail} label="Email" type="email" name="email" value={signup.email} onChange={handleSignupChange} required error={errors.email} />
         <FloatingInput icon={KeyRound} label="GSTI Number" name="gsti" value={signup.gsti} onChange={handleSignupChange} required />
-        <FloatingInput icon={Building2} label="Personal Address" name="address" value={signup.address} onChange={handleSignupChange} required type="textarea" />
-      </>
+        <div className='col-span-2'>
+          <FloatingInput icon={Building2} label="Personal Address" name="address" value={signup.address} onChange={handleSignupChange} required type="textarea" />
+        </div>
+      </div>
     );
   } else if (selectedType === 'corporate-contractor') {
     title = 'Corporate Contractor';
     signupFields = (
-      <>
+      <div className='grid grid-cols-2 gap-2'>
         <FloatingInput icon={User} label="Full Name" name="fullName" value={signup.fullName} onChange={handleSignupChange} required />
-        <FloatingInput icon={Lock} label="Age" type="number" name="age" value={signup.age} onChange={handleSignupChange} required />
-        <FloatingInput icon={Phone} label="Mobile Number" name="mobile" value={signup.mobile} onChange={handleSignupChange} required />
-        <AnimatedVerifyButton onClick={handleOtpVerify} loading={otpLoading} verified={signup.phoneVerified} disabled={!signup.mobile} />
+        <FloatingInput icon={Lock} label="Age" type="number" name="age" value={signup.age} onChange={handleSignupChange} required error={errors.age} />
+        <div className='flex flex-col col-span-2'>
+          <FloatingInput icon={Phone} label="Mobile Number" name="mobile" value={signup.mobile} onChange={handleSignupChange} required error={errors.mobile} />
+          <AnimatedVerifyButton onClick={handleOtpVerify} loading={otpLoading} verified={signup.phoneVerified} disabled={!signup.mobile || !!errors.mobile} />
+        </div>
         <FloatingInput icon={User} label="Username" name="username" value={signup.username} onChange={handleSignupChange} required />
-        <FloatingInput icon={Lock} label="Password" type="password" name="password" value={signup.password} onChange={handleSignupChange} required />
-        <FloatingInput icon={Mail} label="Email" type="email" name="email" value={signup.email} onChange={handleSignupChange} required />
+        <FloatingInput icon={Lock} label="Password" type="password" name="password" value={signup.password} onChange={handleSignupChange} required error={errors.password} />
+        <FloatingInput icon={Mail} label="Email" type="email" name="email" value={signup.email} onChange={handleSignupChange} required error={errors.email} />
         <FloatingInput icon={KeyRound} label="GSTI Number" name="gsti" value={signup.gsti} onChange={handleSignupChange} required />
-        <FloatingInput icon={Building2} label="Company Name" name="companyName" value={signup.companyName} onChange={handleSignupChange} required />
-        <FloatingInput icon={Building2} label="Company Address" name="companyAddress" value={signup.companyAddress} onChange={handleSignupChange} required type="textarea" />
-      </>
+        <div className='col-span-2'>
+          <FloatingInput icon={Building2} label="Company Name" name="companyName" value={signup.companyName} onChange={handleSignupChange} required />
+          <FloatingInput icon={Building2} label="Company Address" name="companyAddress" value={signup.companyAddress} onChange={handleSignupChange} required type="textarea" />
+        </div>
+      </div>
     );
   } else if (selectedType === 'supplier') {
     title = 'Supplier';
     signupFields = (
-      <>
+      <div className='grid grid-cols-2 gap-2'>
         <FloatingInput icon={User} label="Full Name" name="fullName" value={signup.fullName} onChange={handleSignupChange} required />
-        <FloatingInput icon={Lock} label="Age" type="number" name="age" value={signup.age} onChange={handleSignupChange} required />
-        <FloatingInput icon={Phone} label="Mobile Number" name="mobile" value={signup.mobile} onChange={handleSignupChange} required />
-        <AnimatedVerifyButton onClick={handleOtpVerify} loading={otpLoading} verified={signup.phoneVerified} disabled={!signup.mobile} />
+        <FloatingInput icon={Lock} label="Age" type="number" name="age" value={signup.age} onChange={handleSignupChange} required error={errors.age} />
+        <div className='flex flex-col col-span-2'>
+          <FloatingInput icon={Phone} label="Mobile Number" name="mobile" value={signup.mobile} onChange={handleSignupChange} required error={errors.mobile} />
+        <AnimatedVerifyButton onClick={handleOtpVerify} loading={otpLoading} verified={signup.phoneVerified} disabled={!signup.mobile || !!errors.mobile} />
+        </div>
         <FloatingInput icon={User} label="Username" name="username" value={signup.username} onChange={handleSignupChange} required />
-        <FloatingInput icon={Lock} label="Password" type="password" name="password" value={signup.password} onChange={handleSignupChange} required />
-        <FloatingInput icon={Mail} label="Email" type="email" name="email" value={signup.email} onChange={handleSignupChange} required />
+        <FloatingInput icon={Lock} label="Password" type="password" name="password" value={signup.password} onChange={handleSignupChange} required error={errors.password} />
+        <FloatingInput icon={Mail} label="Email" type="email" name="email" value={signup.email} onChange={handleSignupChange} required error={errors.email} />
         <FloatingInput icon={KeyRound} label="GSTI Number" name="gsti" value={signup.gsti} onChange={handleSignupChange} required />
-        <FloatingInput icon={Building2} label="Business Address" name="businessAddress" value={signup.businessAddress} onChange={handleSignupChange} required type="textarea" />
-      </>
+        <div className='col-span-2'>
+          <FloatingInput icon={Building2} label="Business Address" name="businessAddress" value={signup.businessAddress} onChange={handleSignupChange} required type="textarea" />
+        </div>
+      </div>
     );
   } else if (selectedType === 'govt-officer') {
     title = 'Government Officer';
     signupFields = (
-      <>
+      <div className='grid grid-cols-2 gap-2'>
         <FloatingInput icon={User} label="Full Name" name="fullName" value={signup.fullName} onChange={handleSignupChange} required />
-        <FloatingInput icon={Lock} label="Age" type="number" name="age" value={signup.age} onChange={handleSignupChange} required />
-        <FloatingInput icon={Phone} label="Mobile Number" name="mobile" value={signup.mobile} onChange={handleSignupChange} required />
-        <AnimatedVerifyButton onClick={handleOtpVerify} loading={otpLoading} verified={signup.phoneVerified} disabled={!signup.mobile} />
+        <FloatingInput icon={Lock} label="Age" type="number" name="age" value={signup.age} onChange={handleSignupChange} required error={errors.age} />
+        <div className='flex flex-col col-span-2'>
+          <FloatingInput icon={Phone} label="Mobile Number" name="mobile" value={signup.mobile} onChange={handleSignupChange} required error={errors.mobile} />
+          <AnimatedVerifyButton onClick={handleOtpVerify} loading={otpLoading} verified={signup.phoneVerified} disabled={!signup.mobile || !!errors.mobile} />
+        </div>
         <FloatingInput icon={User} label="Username" name="username" value={signup.username} onChange={handleSignupChange} required />
-        <FloatingInput icon={Lock} label="Password" type="password" name="password" value={signup.password} onChange={handleSignupChange} required />
-        <FloatingInput icon={Mail} label="Email" type="email" name="email" value={signup.email} onChange={handleSignupChange} required />
+        <FloatingInput icon={Lock} label="Password" type="password" name="password" value={signup.password} onChange={handleSignupChange} required error={errors.password} />
+        <FloatingInput icon={Mail} label="Email" type="email" name="email" value={signup.email} onChange={handleSignupChange} required error={errors.email} />
         <FloatingInput icon={KeyRound} label="Govt Employee ID" name="empId" value={signup.empId} onChange={handleSignupChange} required />
         <SelectInput 
           label="Department" 
@@ -161,10 +270,7 @@ export default function AuthFlowModal({ selectedType, onClose }) {
             ...DEPARTMENTS.map(d => <option key={d} value={d}>{d}</option>)
           ]} 
         />
-        <label className={styles.uploadLabel}>
-          Upload Govt ID Proof 
-          <DragDropUpload label="Govt ID Proof" name="idProof" onChange={handleSignupChange} file={signup.idProof} />
-        </label>
+       
         <SelectInput 
           label="Officer Role" 
           name="role" 
@@ -176,14 +282,22 @@ export default function AuthFlowModal({ selectedType, onClose }) {
             ...['Project Manager', 'Supervisor'].map(r => <option key={r} value={r}>{r}</option>)
           ]} 
         />
+        <div className='col-span-2'>
+           <label className={styles.uploadLabel}>
+          Upload Govt ID Proof 
+          <DragDropUpload label="Govt ID Proof" name="idProof" onChange={handleSignupChange} file={signup.idProof} />
+        </label>
+        </div>
         {signup.role === 'Project Manager' && (
-          <label className={styles.uploadLabel}>
+          <div className='col-span-2'>
+            <label className={styles.uploadLabel}>
             Upload Authorization Letter 
             <DragDropUpload label="Authorization Letter" name="authLetter" onChange={handleSignupChange} file={signup.authLetter} />
           </label>
+          </div>
         )}
         {signup.role === 'Supervisor' && (
-          <>
+          <div className='flex flex-col col-span-2'>
             <SelectInput 
               label="Zone/Region" 
               name="zone" 
@@ -199,9 +313,9 @@ export default function AuthFlowModal({ selectedType, onClose }) {
               Upload Authorization Letter 
               <DragDropUpload label="Authorization Letter" name="authLetter" onChange={handleSignupChange} file={signup.authLetter} />
             </label>
-          </>
+          </div>
         )}
-      </>
+      </div>
     );
   }
 
@@ -240,7 +354,7 @@ export default function AuthFlowModal({ selectedType, onClose }) {
           <form className={styles.form} onSubmit={handleLoginSubmit}>
             <FloatingInput icon={User} label="Username" name="username" value={login.username} onChange={handleLoginChange} required />
             <FloatingInput icon={Lock} label="Password" type="password" name="password" value={login.password} onChange={handleLoginChange} required />
-            {selectedType == 'govt-officer' && 
+            {selectedType === 'govt-officer' && 
             <SelectInput 
               label="Officer Role" 
               name="role" 
@@ -268,4 +382,4 @@ export default function AuthFlowModal({ selectedType, onClose }) {
       </div>
     </div>
   );
-} 
+}
