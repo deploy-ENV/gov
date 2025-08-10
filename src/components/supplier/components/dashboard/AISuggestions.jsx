@@ -13,38 +13,38 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 
 const suggestions = [
-  {
-    id: 1,
-    type: "urgent",
-    icon: Clock,
-    message: "2 deliveries are due in 2 days",
-    action: "View Deliveries",
-    color: "from-amber-500 to-orange-500"
-  },
-  {
-    id: 2,
-    type: "reminder",
-    icon: FileText,
-    message: "1 invoice hasn't been uploaded",
-    action: "Upload Now",
-    color: "from-blue-500 to-indigo-500"
-  },
-  {
-    id: 3,
-    type: "success",
-    icon: CheckCircle,
-    message: "Payment of ₹25,000 received",
-    action: "View Details",
-    color: "from-emerald-500 to-green-500"
-  },
-  {
-    id: 4,
-    type: "info",
-    icon: MessageSquare,
-    message: "New message from Project Manager",
-    action: "Reply",
-    color: "from-purple-500 to-pink-500"
-  }
+  // {
+  //   id: 1,
+  //   type: "urgent",
+  //   icon: Clock,
+  //   message: "2 deliveries are due in 2 days",
+  //   action: "View Deliveries",
+  //   color: "from-amber-500 to-orange-500"
+  // },
+  // {
+  //   id: 2,
+  //   type: "reminder",
+  //   icon: FileText,
+  //   message: "1 invoice hasn't been uploaded",
+  //   action: "Upload Now",
+  //   color: "from-blue-500 to-indigo-500"
+  // },
+  // {
+  //   id: 3,
+  //   type: "success",
+  //   icon: CheckCircle,
+  //   message: "Payment of ₹25,000 received",
+  //   action: "View Details",
+  //   color: "from-emerald-500 to-green-500"
+  // },
+  // {
+  //   id: 4,
+  //   type: "info",
+  //   icon: MessageSquare,
+  //   message: "New message from Project Manager",
+  //   action: "Reply",
+  //   color: "from-purple-500 to-pink-500"
+  // }
 ];
 
 function SuggestionCard({ suggestion, onDismiss, onAction }) {

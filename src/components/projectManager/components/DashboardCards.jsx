@@ -4,25 +4,25 @@ import { Home, Box, Truck, CreditCard } from "lucide-react";
 const cards = [
   {
     label: "Projects Active",
-    value: 2,
+    value: 0,
     icon: Home,
     color: "from-blue-600 to-emerald-500",
   },
   {
     label: "Orders Received",
-    value: 8,
+    value: 0,
     icon: Box,
     color: "from-emerald-500 to-blue-600",
   },
   {
     label: "Deliveries Completed",
-    value: 5,
+    value: 0,
     icon: Truck,
     color: "from-blue-600 to-emerald-500",
   },
   {
     label: "Payments Received",
-    value: 3,
+    value: 0,
     icon: CreditCard,
     color: "from-emerald-500 to-blue-600",
   },

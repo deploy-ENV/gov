@@ -25,7 +25,7 @@ const MainApp = () => {
     <Router>
       <AuthProvider>
         <Routes>
-          {/* Main landing page route */}
+        
           <Route path="/" element={<App />} />
           
           {/* Auth callback route */}

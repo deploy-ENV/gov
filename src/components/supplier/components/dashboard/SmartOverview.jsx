@@ -11,7 +11,7 @@ import { motion } from "framer-motion";
 const stats = [
   {
     label: "Active Deliveries",
-    value: 5,
+    value: 0,
     icon: Truck,
     color: "from-blue-500 to-blue-600",
     badge: "+2 today",
@@ -19,7 +19,7 @@ const stats = [
   },
   {
     label: "Pending Invoices",
-    value: 3,
+    value: 0,
     icon: FileText,
     color: "from-amber-500 to-amber-600",
     badge: "Due soon",
@@ -27,7 +27,7 @@ const stats = [
   },
   {
     label: "Payments Received",
-    value: "₹1.2L",
+    value: 0+'',
     icon: CreditCard,
     color: "from-emerald-500 to-emerald-600",
     badge: "+₹25K",
@@ -35,7 +35,7 @@ const stats = [
   },
   {
     label: "Total Delivered",
-    value: 28,
+    value: 0,
     icon: Package,
     color: "from-purple-500 to-purple-600",
     badge: "This month",

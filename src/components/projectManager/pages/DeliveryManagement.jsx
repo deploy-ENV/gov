@@ -109,7 +109,7 @@ const sampleDeliveries = [
   // }
 ];
 
-const projects = ["All", "Municipal Infrastructure Upgrade", "Smart City Roadworks", "Residential Complex", "Water Supply Project", "Bridge Construction", "Highway Extension"];
+const projects = ["All"];
 const statuses = ["All", "Pending Dispatch", "In Transit", "Delivered"];
 
 

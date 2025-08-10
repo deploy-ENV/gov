@@ -14,66 +14,66 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 
 const notifications = [
-  {
-    id: 1,
-    type: "order",
-    icon: Package,
-    title: "New order assigned",
-    message: "You have a new delivery order for Municipal Project",
-    time: "2 minutes ago",
-    color: "from-blue-500 to-blue-600",
-    bgColor: "bg-blue-500/20",
-    textColor: "text-blue-400",
-    isRead: false
-  },
-  {
-    id: 2,
-    type: "payment",
-    icon: CreditCard,
-    title: "Payment cleared",
-    message: "Payment of ₹25,000 has been processed",
-    time: "1 hour ago",
-    color: "from-emerald-500 to-emerald-600",
-    bgColor: "bg-emerald-500/20",
-    textColor: "text-emerald-400",
-    isRead: false
-  },
-  {
-    id: 3,
-    type: "invoice",
-    icon: FileText,
-    title: "Invoice approved",
-    message: "Invoice #INV-2024-001 has been approved",
-    time: "3 hours ago",
-    color: "from-purple-500 to-purple-600",
-    bgColor: "bg-purple-500/20",
-    textColor: "text-purple-400",
-    isRead: true
-  },
-  {
-    id: 4,
-    type: "message",
-    icon: MessageSquare,
-    title: "New message",
-    message: "Project Manager sent you a message",
-    time: "5 hours ago",
-    color: "from-orange-500 to-orange-600",
-    bgColor: "bg-orange-500/20",
-    textColor: "text-orange-400",
-    isRead: true
-  },
-  {
-    id: 5,
-    type: "reminder",
-    icon: Clock,
-    title: "Delivery reminder",
-    message: "Steel beams delivery is due tomorrow",
-    time: "1 day ago",
-    color: "from-amber-500 to-amber-600",
-    bgColor: "bg-amber-500/20",
-    textColor: "text-amber-400",
-    isRead: true
-  }
+  // {
+  //   id: 1,
+  //   type: "order",
+  //   icon: Package,
+  //   title: "New order assigned",
+  //   message: "You have a new delivery order for Municipal Project",
+  //   time: "2 minutes ago",
+  //   color: "from-blue-500 to-blue-600",
+  //   bgColor: "bg-blue-500/20",
+  //   textColor: "text-blue-400",
+  //   isRead: false
+  // },
+  // {
+  //   id: 2,
+  //   type: "payment",
+  //   icon: CreditCard,
+  //   title: "Payment cleared",
+  //   message: "Payment of ₹25,000 has been processed",
+  //   time: "1 hour ago",
+  //   color: "from-emerald-500 to-emerald-600",
+  //   bgColor: "bg-emerald-500/20",
+  //   textColor: "text-emerald-400",
+  //   isRead: false
+  // },
+  // {
+  //   id: 3,
+  //   type: "invoice",
+  //   icon: FileText,
+  //   title: "Invoice approved",
+  //   message: "Invoice #INV-2024-001 has been approved",
+  //   time: "3 hours ago",
+  //   color: "from-purple-500 to-purple-600",
+  //   bgColor: "bg-purple-500/20",
+  //   textColor: "text-purple-400",
+  //   isRead: true
+  // },
+  // {
+  //   id: 4,
+  //   type: "message",
+  //   icon: MessageSquare,
+  //   title: "New message",
+  //   message: "Project Manager sent you a message",
+  //   time: "5 hours ago",
+  //   color: "from-orange-500 to-orange-600",
+  //   bgColor: "bg-orange-500/20",
+  //   textColor: "text-orange-400",
+  //   isRead: true
+  // },
+  // {
+  //   id: 5,
+  //   type: "reminder",
+  //   icon: Clock,
+  //   title: "Delivery reminder",
+  //   message: "Steel beams delivery is due tomorrow",
+  //   time: "1 day ago",
+  //   color: "from-amber-500 to-amber-600",
+  //   bgColor: "bg-amber-500/20",
+  //   textColor: "text-amber-400",
+  //   isRead: true
+  // }
 ];
 
 function NotificationItem({ notification, onMarkRead, onDelete }) {

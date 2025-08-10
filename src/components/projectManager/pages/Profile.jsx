@@ -6,7 +6,7 @@ const initialProfile = {
   pan: "",
   bank: "",
   account: "",
-  ifsc: "SBIN000234",
+  ifsc: "",
   email: "",
   phone: "",
   proof: null,

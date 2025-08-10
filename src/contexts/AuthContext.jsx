@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { registerGovt, registerContractor, loginGovt, loginContractor,registerSupplier,loginSupplier } from '../services/authService'; // Adjust import path as needed
-
+import LoadingScreen from '../components/landingPage/components/common/LoadingScreen';
 // Define user roles for easier reference
 export const ROLES = {
   INDIVIDUAL_CONTRACTOR: 'individual_contractor',
@@ -51,7 +51,8 @@ const AuthContext = createContext({
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
+  
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -63,6 +64,7 @@ export const AuthProvider = ({ children }) => {
         const storedUser = localStorage.getItem('user');
         if (storedUser) {
           console.log('AuthContext: Found user in localStorage:', JSON.parse(storedUser));
+          setLoading(true)
           setUser(JSON.parse(storedUser));
         } else {
           console.log('AuthContext: No user found in localStorage');
@@ -81,8 +83,8 @@ export const AuthProvider = ({ children }) => {
 const login = useCallback(
   async ({ username, password, userType, role }) => {
     try {
-      console.log('AuthContext: Attempting login for', userType);
-
+      // console.log('AuthContext: Attempting login for', userType);
+      setLoading(true)
       let response;
 
       
@@ -98,7 +100,7 @@ const login = useCallback(
 
       const token = response?.token;
       if (!token) throw new Error('Login failed: No token returned');
-
+      
       const resolvedRole = determineUserRole(userType, role);
 
       const userData = {
@@ -115,11 +117,15 @@ const login = useCallback(
 
       const dashboardPath = getDashboardPath(resolvedRole);
       navigate(dashboardPath, { replace: true });
+      
 
       return { success: true, data: userData };
     } catch (error) {
       console.error('AuthContext: Login failed', error);
       return { success: false, error: error.message || 'Login failed' };
+    }
+    finally{
+      setLoading(false)
     }
   },
   [navigate]
@@ -128,8 +134,8 @@ const login = useCallback(
 
   const signup = useCallback(async (userData) => {
     try {
-      console.log('AuthContext: Signup called with userData:', userData);
-
+      // console.log('AuthContext: Signup called with userData:', userData);
+      setLoading(true)
       let response;
       
       if (userData.userType === 'govt-officer') {
@@ -142,7 +148,7 @@ const login = useCallback(
         response = await registerContractor(userData);
       }
 
-      console.log('AuthContext: Registration API response:', response);
+      // console.log('AuthContext: Registration API response:', response);
 
       // Determine role for the user
       const role = determineUserRole(userData.userType, userData.role);
@@ -155,7 +161,7 @@ const login = useCallback(
         authTime: new Date().toISOString()
       };
 
-      console.log('AuthContext: Setting user after signup:', userWithTimestamp);
+      // console.log('AuthContext: Setting user after signup:', userWithTimestamp);
       setUser(userWithTimestamp);
       localStorage.setItem('user', JSON.stringify(userWithTimestamp));
 
@@ -168,10 +174,14 @@ const login = useCallback(
       console.error('AuthContext: Signup failed', error);
       return { success: false, error: error.message || 'Signup failed' };
     }
+    finally{
+      setLoading(false)
+    }
   }, [navigate]);
 
   const logout = useCallback(() => {
     try {
+      setLoading(true)
       setUser(null);
       localStorage.removeItem('user');
       
@@ -184,6 +194,8 @@ const login = useCallback(
     } catch (error) {
       console.error('Logout failed', error);
       return { success: false, error: error.message || 'Logout failed' };
+    }finally{
+      setLoading(false)
     }
   }, [navigate]);
 
@@ -198,7 +210,7 @@ const login = useCallback(
 
   return (
     <AuthContext.Provider value={value}>
-      {!loading && children}
+      {loading ? <LoadingScreen/>: children}
     </AuthContext.Provider>
   );
 };

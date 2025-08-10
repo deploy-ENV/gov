@@ -3,10 +3,10 @@ import { Folder, Clock, CheckCircle, AlertTriangle, Info, Calendar, FileText, Us
 import { motion } from 'framer-motion';
 
 const STATS = [
-  { label: 'Total Projects', value: 24, icon: <Folder size={28} />, color: 'bg-gradient-to-br from-emerald-400/20 to-cyan-400/20 text-emerald-400' },
-  { label: 'Ongoing Projects', value: 14, icon: <Clock size={28} />, color: 'bg-gradient-to-br from-yellow-400/20 to-amber-400/20 text-yellow-400' },
-  { label: 'Completed Projects', value: 7, icon: <CheckCircle size={28} />, color: 'bg-gradient-to-br from-emerald-400/20 to-green-400/20 text-emerald-400' },
-  { label: 'Delayed Projects', value: 3, icon: <AlertTriangle size={28} />, color: 'bg-gradient-to-br from-red-400/20 to-pink-400/20 text-red-400' },
+  { label: 'Total Projects', value: 0, icon: <Folder size={28} />, color: 'bg-gradient-to-br from-emerald-400/20 to-cyan-400/20 text-emerald-400' },
+  { label: 'Ongoing Projects', value: 0, icon: <Clock size={28} />, color: 'bg-gradient-to-br from-yellow-400/20 to-amber-400/20 text-yellow-400' },
+  { label: 'Completed Projects', value: 0, icon: <CheckCircle size={28} />, color: 'bg-gradient-to-br from-emerald-400/20 to-green-400/20 text-emerald-400' },
+  { label: 'Delayed Projects', value: 0, icon: <AlertTriangle size={28} />, color: 'bg-gradient-to-br from-red-400/20 to-pink-400/20 text-red-400' },
 ];
 
 const ALERTS = [

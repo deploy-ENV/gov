@@ -2,14 +2,14 @@ import React, { useState } from 'react';
 import { Eye, EyeOff, User, File, Edit2, Smartphone, Briefcase, MapPin, Mail } from 'lucide-react';
 
 const initialProfile = {
-  fullName: 'Amit Sharma',
-  email: 'amit.sharma@govt.com',
-  mobile: '9876543210',
-  department: 'Public Works',
-  designation: 'Project Manager',
-  region: 'North',
-  authority: 'S. Verma',
-  address: 'PWD Office, Sector 12, Delhi',
+  fullName: '',
+  email: '',
+  mobile: '',
+  department: '',
+  designation: '',
+  region: '',
+  authority: '',
+  address: '',
   profilePic: null,
   kyc: null,
   newPassword: '',

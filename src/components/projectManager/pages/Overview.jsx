@@ -4,28 +4,28 @@ import { ClipboardList, Truck, CreditCard, Home, Calendar, PackageCheck, ArrowRi
 const stats = [
   {
     label: "Projects Active",
-    value: 2,
+    value: 0,
     icon: Home,
     badge: "+1 today",
     color: "from-emerald-400 to-cyan-400",
   },
   {
     label: "Orders Received",
-    value: 8,
+    value: 0,
     icon: ClipboardList,
     badge: "+2 today",
     color: "from-green-400 to-emerald-400",
   },
   {
     label: "Deliveries Completed",
-    value: 5,
+    value: 0,
     icon: Truck,
     badge: "+1 today",
     color: "from-emerald-400 to-cyan-400",
   },
   {
     label: "Payments Received",
-    value: 3,
+    value: 0,
     icon: CreditCard,
     badge: "+0 today",
     color: "from-green-400 to-emerald-400",

@@ -50,7 +50,7 @@ const sampleOrders = [
   // },
 ];
 
-const projects = ["All", "Municipal Infrastructure Upgrade", "Smart City Roadworks", "Residential Complex", "Water Supply Project"];
+const projects = ["All"];
 const statuses = ["All", "Pending", "Accepted", "Rejected"];
 
 function ConfirmationModal({ isOpen, onClose, onConfirm, title, message, confirmText, confirmColor }) {

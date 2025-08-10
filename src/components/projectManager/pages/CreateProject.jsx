@@ -8,7 +8,7 @@ import DocumentUploadForm from '../components/createProject/DocumentUploadForm';
 import OtherSettingsForm from '../components/createProject/OtherSettingsForm';
 import validateProjectForm from '../components/createProject/validateProjectForm';
 import { ProjectContext } from '../projectContext';
-
+import { createProject } from '../../../services/projectService';
 export default function CreateProjectForm() {
   const [step, setStep] = useState(0);
   const [data, setData] = useState({
@@ -45,37 +45,40 @@ export default function CreateProjectForm() {
   };
   const prev = () => setStep(s => Math.max(s - 1, 0));
 
-  const handleSubmit = e => {
-    e.preventDefault();
-    const errs = validateProjectForm(step, data);
-    setErrors(errs);
-    if (Object.keys(errs).length > 0) return;
-    setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-      setSuccess(true);
-      // Send new project to context
-      addProject({
-        id: Date.now(),
-        title: data.title,
-        status: 'On Bidding',
-        createdAt: new Date().toISOString(),
-        zone: data.zone,
-        contractor: '',
-        supervisor: '',
-        supplier: '',
-        budgetUsed: 0,
-        budgetTotal: Number(data.budget) || 0,
-        startDate: data.startDate,
-        deadline: 'TBD',
-        thumbnail: '',
-      });
-      setStep(0);
-      setData({
-        title: '', description: '', zone: '', startDate: '', deadline: '', bidDeadline: '', budget: '', skills: [], licenses: [], materials: [], legal: null, blueprints: null, boq: null, safety: null, aiMatch: false, comments: '',
-      });
-    }, 1500);
-  };
+  const handleSubmit = async e => {
+  e.preventDefault();
+  const errs = validateProjectForm(step, data);
+  setErrors(errs);
+  if (Object.keys(errs).length > 0) return;
+
+  setLoading(true);
+  try {
+    
+    const pmId = "123";  
+    const departmentId = "dept001";
+    const pmName = "John Doe";
+
+    const newProject = await createProject(data, pmId, departmentId, pmName);
+
+    addProject(newProject);
+    setSuccess(true);
+
+    // Reset form after submission
+    setStep(0);
+    setData({
+      title: '', description: '', zone: '', startDate: '', deadline: '',
+      bidDeadline: '', budget: '', skills: [], licenses: [], materials: [],
+      legal: null, blueprints: null, boq: null, safety: null, aiMatch: false,
+      comments: '',
+    });
+  } catch (err) {
+    console.error("Error creating project:", err);
+    setErrors({ submit: err.message || "Failed to create project" });
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   return (
     <div className="h-full w-full flex flex-col items-center justify-center ">

@@ -12,72 +12,72 @@ import {
 import { motion } from "framer-motion";
 
 const activities = [
-  {
-    id: 1,
-    date: "July 14",
-    time: "10:30 AM",
-    title: "Invoice approved",
-    description: "Invoice #INV-2024-001 has been approved",
-    icon: CheckCircle,
-    type: "success",
-    color: "text-emerald-400",
-    bgColor: "bg-emerald-500/20"
-  },
-  {
-    id: 2,
-    date: "July 13",
-    time: "2:15 PM",
-    title: "Delivery due",
-    description: "Steel beams delivery for Bridge Construction",
-    icon: Clock,
-    type: "pending",
-    color: "text-amber-400",
-    bgColor: "bg-amber-500/20"
-  },
-  {
-    id: 3,
-    date: "July 11",
-    time: "11:45 AM",
-    title: "Payment received",
-    description: "₹25,000 payment received for Municipal Project",
-    icon: CreditCard,
-    type: "success",
-    color: "text-emerald-400",
-    bgColor: "bg-emerald-500/20"
-  },
-  {
-    id: 4,
-    date: "July 10",
-    time: "9:20 AM",
-    title: "Delivery completed",
-    description: "150 bricks delivered to Project X",
-    icon: Package,
-    type: "completed",
-    color: "text-blue-400",
-    bgColor: "bg-blue-500/20"
-  },
-  {
-    id: 5,
-    date: "July 9",
-    time: "3:30 PM",
-    title: "New message",
-    description: "Message from Project Manager about schedule",
-    icon: MessageSquare,
-    type: "info",
-    color: "text-purple-400",
-    bgColor: "bg-purple-500/20"
-  },
-  {
-    id: 6,
-    date: "July 8",
-    time: "1:15 PM",
-    title: "Invoice submitted",
-    description: "Invoice #INV-2024-002 submitted for review",
-    icon: FileText,
-    type: "pending",
-    color: "text-amber-400",
-    bgColor: "bg-amber-500/20"
-  }
+  // {
+  //   id: 1,
+  //   date: "July 14",
+  //   time: "10:30 AM",
+  //   title: "Invoice approved",
+  //   description: "Invoice #INV-2024-001 has been approved",
+  //   icon: CheckCircle,
+  //   type: "success",
+  //   color: "text-emerald-400",
+  //   bgColor: "bg-emerald-500/20"
+  // },
+  // {
+  //   id: 2,
+  //   date: "July 13",
+  //   time: "2:15 PM",
+  //   title: "Delivery due",
+  //   description: "Steel beams delivery for Bridge Construction",
+  //   icon: Clock,
+  //   type: "pending",
+  //   color: "text-amber-400",
+  //   bgColor: "bg-amber-500/20"
+  // },
+  // {
+  //   id: 3,
+  //   date: "July 11",
+  //   time: "11:45 AM",
+  //   title: "Payment received",
+  //   description: "₹25,000 payment received for Municipal Project",
+  //   icon: CreditCard,
+  //   type: "success",
+  //   color: "text-emerald-400",
+  //   bgColor: "bg-emerald-500/20"
+  // },
+  // {
+  //   id: 4,
+  //   date: "July 10",
+  //   time: "9:20 AM",
+  //   title: "Delivery completed",
+  //   description: "150 bricks delivered to Project X",
+  //   icon: Package,
+  //   type: "completed",
+  //   color: "text-blue-400",
+  //   bgColor: "bg-blue-500/20"
+  // },
+  // {
+  //   id: 5,
+  //   date: "July 9",
+  //   time: "3:30 PM",
+  //   title: "New message",
+  //   description: "Message from Project Manager about schedule",
+  //   icon: MessageSquare,
+  //   type: "info",
+  //   color: "text-purple-400",
+  //   bgColor: "bg-purple-500/20"
+  // },
+  // {
+  //   id: 6,
+  //   date: "July 8",
+  //   time: "1:15 PM",
+  //   title: "Invoice submitted",
+  //   description: "Invoice #INV-2024-002 submitted for review",
+  //   icon: FileText,
+  //   type: "pending",
+  //   color: "text-amber-400",
+  //   bgColor: "bg-amber-500/20"
+  // }
 ];
 
 function TimelineItem({ activity, index }) {

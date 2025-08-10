@@ -3,9 +3,7 @@ import { Download, FileText, FileSpreadsheet, Calendar, CheckCircle } from 'luci
 import { motion, AnimatePresence } from 'framer-motion';
 
 const DUMMY_PROJECTS = [
-  { id: 1, name: 'Bridge Construction', zone: 'North', status: 'Ongoing' },
-  { id: 2, name: 'School Renovation', zone: 'East', status: 'Completed' },
-  { id: 3, name: 'Water Supply Upgrade', zone: 'West', status: 'Delayed' },
+
 ];
 
 const REPORT_TYPES = [
@@ -33,9 +31,7 @@ const REPORT_TYPES = [
 ];
 
 const DUMMY_EXPORTS = [
-  { id: 1, type: 'Progress', date: '2024-06-10', format: 'PDF', project: 'Bridge Construction' },
-  { id: 2, type: 'Fund Usage', date: '2024-06-09', format: 'Excel', project: 'School Renovation' },
-  { id: 3, type: 'Document Summary', date: '2024-06-08', format: 'PDF', project: 'Bridge Construction' },
+  
 ];
 
 function ProjectSelector({ projects, value, onChange }) {
