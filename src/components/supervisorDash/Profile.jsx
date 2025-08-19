@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { updateProfile} from './supervisorDashboardSlice';
+import Cookies from "js-cookie";
 import {
   Shield,
   Home,
@@ -27,6 +28,11 @@ const ProfileSupervisor = () => {
   const dispatch = useDispatch();
   const profile = useSelector(state => state.supervisorDashboard.profile);
   const [activeTab, setActiveTab] = useState('');
+  const [data,setData] = useState(null) 
+    // console.log("data:",(data));
+    useEffect(() => {
+      setData(JSON.parse(Cookies.get("userData")))
+    }, []); 
   
   const [isEditing, setIsEditing] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);

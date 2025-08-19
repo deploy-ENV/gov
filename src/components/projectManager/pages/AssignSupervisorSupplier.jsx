@@ -11,7 +11,7 @@ const DUMMY_SUPERVISORS = [
 ];
 
 const PROJECT_ZONE = 'North';
-const MATERIALS = ['Cement', 'Steel', 'Bricks'];
+const MATERIALS = [];
 
 function SupplierCard({ supplier, selected, onSelect, disabled, material }) {
   return (
@@ -46,7 +46,7 @@ function SupplierCard({ supplier, selected, onSelect, disabled, material }) {
 function SupervisorCard({ supervisor, selected, onSelect, disabled }) {
   return (
     <div
-      className={`rounded-xl border-2 p-4 bg-white shadow-card flex flex-col gap-2 transition-all duration-200
+      className={`rounded-xl border-2 p-4 flex flex-col gap-2 transition-all duration-200
         ${selected ? 'border-primary ring-2 ring-primary/30' : 'border-border'}
         ${disabled ? 'opacity-60 pointer-events-none' : ''}`}
     >
@@ -54,8 +54,8 @@ function SupervisorCard({ supervisor, selected, onSelect, disabled }) {
         <User className="text-primary" size={20} />
         <span className="font-semibold text-primary text-base">{supervisor.name}</span>
       </div>
-      <div className="text-sm text-secondary">Experience: <span className="font-medium">{supervisor.experience} completed projects</span></div>
-      <div className="text-sm text-secondary">Status: <span className={`font-medium ${supervisor.status === 'Available' ? 'text-success' : 'text-warning'}`}>{supervisor.status}</span></div>
+      <div className="text-sm text-white">Experience: <span className="font-medium">{supervisor.experience} completed projects</span></div>
+      <div className="text-sm text-white">Status: <span className={`font-medium ${supervisor.status === 'Available' ? 'text-success' : 'text-warning'}`}>{supervisor.status}</span></div>
       <div className="mt-2 flex items-center gap-2">
         <input
           type="radio"
@@ -122,8 +122,8 @@ function AssignmentPanel() {
   return (
     <div className="flex flex-col md:flex-row gap-8 w-full">
       {/* Supplier Auto-Fetch Section */}
-      <div className="flex-1 bg-[#F7F9FC] rounded-xl p-6 shadow-card flex flex-col min-w-[320px]">
-        <div className="text-lg font-bold text-primary mb-4">Auto-Fetched Suppliers</div>
+      <div className="flex-1  rounded-xl p-6 bg-slate-700/60 flex flex-col min-w-[320px]">
+        <div className="text-lg font-bold text-emerald-500 mb-4">Auto-Fetched Suppliers</div>
         {supplierLoading ? (
           <div className="flex flex-col items-center justify-center flex-1 py-12">
             <Loader2 className="animate-spin text-accent mb-2" size={32} />
@@ -133,7 +133,7 @@ function AssignmentPanel() {
           <div className="space-y-6 flex-1">
             {MATERIALS.map(mat => (
               <div key={mat} className="mb-2">
-                <div className="font-semibold text-primary mb-2">{mat}</div>
+                <div className="font-semibold text-white mb-2">{mat}</div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {suppliersByMaterial[mat].map(supplier => (
                     <SupplierCard
@@ -150,9 +150,9 @@ function AssignmentPanel() {
             ))}
           </div>
         )}
-        <div className="mt-6 text-xs text-secondary text-center">Supervisor must select one supplier per material</div>
+        <div className="mt-6 text-xs text-white text-center">Supervisor must select one supplier per material</div>
         <button
-          className="mt-6 px-6 py-2 rounded-lg bg-accent text-white font-semibold shadow-card hover:scale-105 transition disabled:opacity-50"
+          className="mt-6 px-6 py-2 bg-gradient-to-r from-yellow-300 via-emerald-400 to-cyan-400 hover:from-emerald-500 hover:to-cyan-500 text-slate-900 font-medium rounded-lg transition-all "
           disabled={supplierFinalized || MATERIALS.some(mat => !supplierSelection[mat])}
           onClick={finalizeSuppliers}
         >
@@ -160,9 +160,9 @@ function AssignmentPanel() {
         </button>
       </div>
       {/* Supervisor Assignment Section */}
-      <div className="flex-1 bg-[#F7F9FC] rounded-xl p-6 shadow-card flex flex-col min-w-[320px]">
-        <div className="text-lg font-bold text-primary mb-4">Assign Project Supervisor</div>
-        <div className="space-y-4 flex-1">
+      <div className="flex-1 bg-slate-700/40 rounded-xl p-6 flex flex-col min-w-[320px]">
+        <div className="text-lg font-bold text-emerald-500 mb-4">Assign Project Supervisor</div>
+        <div className="space-y-4 flex-1 text-white">
           {supervisors.map(sup => (
             <SupervisorCard
               key={sup.id}
@@ -174,7 +174,7 @@ function AssignmentPanel() {
           ))}
         </div>
         <button
-          className="mt-6 px-6 py-2 rounded-lg bg-primary text-white font-semibold shadow-card hover:scale-105 transition disabled:opacity-50"
+          className="mt-6 px-6 py-2 bg-gradient-to-r from-yellow-300 via-emerald-400 to-cyan-400 hover:from-emerald-500 hover:to-cyan-500 text-slate-900 font-medium rounded-lg transition-all"
           disabled={supervisorFinalized || !supervisorSelection}
           onClick={finalizeSupervisor}
         >
@@ -214,7 +214,7 @@ function AssignmentPanel() {
 
 export default function AssignSupervisorSupplier() {
   return (
-    <div className="h-full w-full bg-[#F7F9FC] p-0 m-0 flex items-center justify-center">
+    <div className="h-full w-full  p-0 m-0 flex items-center justify-center">
       <div className="w-full h-full">
         <AssignmentPanel />
       </div>

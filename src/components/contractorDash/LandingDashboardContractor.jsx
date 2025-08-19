@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, Outlet } from 'react-router-dom';
 import ProjectDetailsPopup from './BiddingDetailsCard';
 import { logout } from '../../services/authService';
+import Cookies from "js-cookie";
 import {
   Shield,
   Home,
@@ -49,13 +50,19 @@ const Dashboard = () => {
   const isBiddingFormVisible = useSelector(state => state.projectsDashboard.showBiddingForm);
   const viewProject = useSelector(state => state.projectsDashboard.viewProject);
   const myBids = useSelector(state => state.projectsDashboard.myBids);
-   
+  const [data,setData] = useState(null) 
+  // console.log("data:",(data));
+  useEffect(() => {
+    setData(JSON.parse(Cookies.get("userData")))
+  }, []);
+  
   const hasAcceptedBid = myBids.some(bid => bid.status === 'accepted');
   const dashboardMode = useSelector(state => state.projectsDashboard.dashMode);
 
   useEffect(() => {
     dispatch(recalculateDashMode());
   }, [dispatch]);
+  
 
   useEffect(() => {
     const currentPath = location.pathname.split('/').pop() || '';
@@ -259,8 +266,8 @@ const Dashboard = () => {
           <User className="w-5 h-5 text-slate-900" />
             </div>
             <div className="flex-1">
-              <p className="text-sm font-medium text-white">Contractor</p>
-              <p className="text-xs text-slate-400">contractor@secureportal.com</p>
+              <p className="text-sm font-medium text-white">{data?.username}</p>
+              <p className="text-xs text-slate-400">{data?.email}</p>
             </div>
             <ChevronDown className={`w-4 h-4 text-slate-400 transition-transform duration-300 ${isProfileOpen ? 'rotate-180' : ''}`} />
           </div>

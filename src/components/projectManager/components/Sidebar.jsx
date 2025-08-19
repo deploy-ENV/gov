@@ -19,7 +19,7 @@ import {
 } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { logout } from "../../../services/authService";
-
+import Cookies from "js-cookie";
 const menu = [
   { name: "Dashboard Home", icon: <Home size={20} />, id: "", color: "text-blue-600" },
   { name: "Create Project", icon: <PlusSquare size={20} />, id: "create-project", color: "text-green-600" },
@@ -37,9 +37,14 @@ export default function Sidebar() {
   const location = useLocation();
   const [activeTab, setActiveTab] = useState("");
   const [isProfileOpen, setIsProfileOpen] = useState(false);
-
+  const [data,setData] = useState(null) 
+    // console.log("data:",(data));
+    useEffect(() => {
+      setData(JSON.parse(Cookies.get("userData")))
+    }, []);
   // Update active tab based on URL
   useEffect(() => {
+     
     const currentPath = location.pathname.replace("/dashboard/pm/", "");
     const mainSegment = currentPath.split("/")[0]; // Get only the first segment after /dashboard/pm
     setActiveTab(mainSegment);
@@ -50,11 +55,11 @@ export default function Sidebar() {
   };
 
   return (
-    <aside className="left-0 top-0 min-h-full w-80 z-30 bg-slate-800/60 backdrop-blur-xl border-r border-slate-700/50 shadow-[0_4px_24px_rgba(0,0,0,0.3)] flex flex-col py-8 px-4 overflow-x-hidden relative">
+    <aside className="w-72 bg-slate-800/60 backdrop-blur-xl border-r border-slate-700/50 relative">
       <div className="absolute inset-0 bg-gradient-to-b from-emerald-500/5 to-yellow-500/5"></div>
 
       {/* Logo */}
-      <div className="mb-10 flex items-center justify-center gap-3 relative z-10">
+      <div className="flex items-center gap-3 p-6 relative z-10">
         <div className="w-10 h-10 bg-gradient-to-r from-amber-400 to-orange-300 rounded-xl flex items-center justify-center">
           <Shield className="w-6 h-6 text-slate-900" />
         </div>
@@ -65,7 +70,7 @@ export default function Sidebar() {
 
       {/* Navigation */}
       <nav
-        className="flex-1 flex flex-col gap-2 overflow-y-auto overflow-x-hidden max-h-[calc(100vh-200px)] min-h-0 scrollbar-thin scrollbar-thumb-slate-600 scrollbar-track-slate-800 scrollbar-thumb-rounded-full scrollbar-track-rounded-full pb-4 pr-4 -mr-4 relative z-10"
+        className="mt-4 px-4 relative z-10"
         style={{
           scrollbarColor: "#475569 #1e293b",
           scrollbarWidth: "thin",
@@ -77,12 +82,11 @@ export default function Sidebar() {
             <Link
               key={item.id || "dashboard"}
               to={item.id ? `/dashboard/pm/${item.id}` : "/dashboard/pm"}
-              className={`group flex items-center gap-3 w-full pl-4 pr-2 py-2.5 rounded-lg transition-all duration-200 font-medium text-sm text-left
-                hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl mb-2 transition-all duration-300
                 ${
                   isActive
-                    ? `bg-blue-50 text-blue-700 font-semibold border-l-4 ${item.color} border-current`
-                    : "text-gray-600 hover:border-l-4 hover:border-gray-200"
+                    ? 'bg-gradient-to-r from-yellow-300 via-emerald-400 to-cyan-400 text-slate-900 font-medium hover:brightness-110 transition-all shadow-lg shadow-emerald-500/20'
+                    : 'text-slate-300 hover:bg-slate-700/50 hover:text-white'
                 }`}
             >
               <span
@@ -102,14 +106,14 @@ export default function Sidebar() {
       </nav>
 
       {/* User Profile */}
-      <div className="mt-auto bg-slate-700/50 rounded-xl p-4 backdrop-blur-sm relative z-10 mb-4">
+      <div className="absolute bottom-6 left-4 right-4 bg-slate-700/50 rounded-xl p-4 backdrop-blur-sm">
         <div className="flex items-center gap-3 cursor-pointer" onClick={toggleProfileDropdown}>
           <div className="w-10 h-10 bg-gradient-to-br from-yellow-400 to-orange-400 rounded-full flex items-center justify-center">
             <User className="w-5 h-5 text-slate-900" />
           </div>
           <div className="flex-1">
-            <p className="text-sm font-medium text-white">Project Manager</p>
-            <p className="text-xs text-slate-400">manager@secureportal.com</p>
+            <p className="text-sm font-medium text-white">{data?.username}</p>
+            <p className="text-xs text-slate-400">{data?.email}</p>
           </div>
           <ChevronDown
             className={`w-4 h-4 text-slate-400 transition-transform duration-300 ${
@@ -138,10 +142,7 @@ export default function Sidebar() {
         )}
       </div>
 
-      {/* Footer */}
-      <div className="text-xs text-center text-slate-400 relative z-10">
-        <span>© 2025 Project Manager</span>
-      </div>
+      
     </aside>
   );
 }

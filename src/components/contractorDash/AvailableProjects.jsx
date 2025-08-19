@@ -2,7 +2,7 @@ import React, { useState,useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import ProjectDetailsPopup from './BiddingDetailsCard';
 import BiddingFormCard from './BiddingForm';
-
+import Cookies from "js-cookie";
 import {
   Search,
   Filter,
@@ -52,6 +52,7 @@ import { useNavigate } from 'react-router-dom';
 const AvailableProjects = () => {
   const [activeTab, setActiveTab] = useState('projects');
   const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const data = Cookies.get("userData"); 
   
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');

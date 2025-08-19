@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import Cookies from "js-cookie";
 import {
   Shield,
   Home,
@@ -28,6 +29,11 @@ const SettingsTabSupervisor = () => {
   const dispatch = useDispatch();
   // const navigate = useNavigate();
   const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const [data,setData] = useState(null) 
+    // console.log("data:",(data));
+    useEffect(() => {
+      setData(JSON.parse(Cookies.get("userData")))
+    }, []); 
 
   const { notificationPrefs, theme, language } = useSelector(state => state.supervisorDashboard.settings);
   const [localSettings, setLocalSettings] = useState({
@@ -126,8 +132,8 @@ const sidebarItems = [
               <User className="w-5 h-5 text-slate-900" />
             </div>
             <div className="flex-1">
-              <p className="text-sm font-medium text-white">Contractor</p>
-              <p className="text-xs text-slate-400">contractor@secureportal.com</p>
+              <p className="text-sm font-medium text-white">{data?.username}</p>
+              <p className="text-xs text-slate-400">{data?.email}</p>
             </div>
             <ChevronDown className="w-4 h-4 text-slate-400" />
           </div>

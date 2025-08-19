@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
+import Cookies from "js-cookie";
 import {
   Shield,
   Home,
@@ -35,6 +36,11 @@ const RequestHistory = () => {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [activeTab,setActiveTab] = useState('history');
   const fundReq = useSelector(state => state.supervisorDashboard.fundReq);
+  const [data,setData] = useState(null) 
+    // console.log("data:",(data));
+    useEffect(() => {
+      setData(JSON.parse(Cookies.get("userData")))
+    }, []);
   
   const [expandedReq, setExpandedReq] = useState(null);
 
@@ -128,8 +134,8 @@ const RequestHistory = () => {
               <User className="w-5 h-5 text-slate-900" />
             </div>
             <div className="flex-1">
-              <p className="text-sm font-medium text-white">Supervisor</p>
-              <p className="text-xs text-slate-400">supervisor@secureportal.com</p>
+              <p className="text-sm font-medium text-white">{data?.username}</p>
+              <p className="text-xs text-slate-400">{data?.email}</p>
             </div>
             <ChevronDownIcon className={`w-4 h-4 text-slate-400 transition-transform duration-300 ${isProfileOpen ? 'rotate-180' : ''}`} />
           </div>

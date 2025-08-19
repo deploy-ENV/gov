@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
+import Cookies from "js-cookie";
 import {
   Shield,
   Home,
@@ -78,6 +79,11 @@ const SupplierMaterialVerificationPanel = () => {
 
   const [alternateSuppliers, setAlternateSuppliers] = useState(['Supplier A', 'Supplier B', 'Supplier C']);
   const allotedProject = useSelector(state => state.supervisorDashboard?.allotedProject || { estimatedQuantities: [] });
+  const [data,setData] = useState(null) 
+    // console.log("data:",(data));
+    useEffect(() => {
+      setData(JSON.parse(Cookies.get("userData")))
+    }, []); 
 
   const handleAssignAlternate = (supplierId) => {
     console.log(`Assigning alternate supplier for ${supplierId}`);
@@ -179,8 +185,8 @@ const SupplierMaterialVerificationPanel = () => {
                       <User className="w-5 h-5 text-slate-900" />
                         </div>
                         <div className="flex-1">
-                          <p className="text-sm font-medium text-white">Contractor</p>
-                          <p className="text-xs text-slate-400">contractor@secureportal.com</p>
+                          <p className="text-sm font-medium text-white">{data?.username}</p>
+                          <p className="text-xs text-slate-400">{data?.email}</p>
                         </div>
                         <ChevronDown className={`w-4 h-4 text-slate-400 transition-transform duration-300 ${isProfileOpen ? 'rotate-180' : ''}`} />
                       </div>

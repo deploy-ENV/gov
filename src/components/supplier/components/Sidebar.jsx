@@ -1,8 +1,8 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { Home, Box, ClipboardList, Truck, CreditCard, History, MessageCircle, Shield, User, UserCircle, LogOut, ChevronDown } from "lucide-react";
 import { useNavigate, useLocation, Link } from "react-router-dom";
 import { logout } from "../../../services/authService";
-
+import Cookies from "js-cookie";
 const navItems = [
   { id: 'overview', label: "Overview", icon: Home, path: "" },
   { id: 'catalog', label: "Product Catalog", icon: Box, path: "product-catalog" },
@@ -17,6 +17,12 @@ export default function Sidebar() {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
+  const [data,setData] = useState(null) 
+    // console.log("data:",(data));
+    useEffect(() => {
+      setData(JSON.parse(Cookies.get("userData")))
+    }, []);
+  
 
   // Get the base path (e.g., /dashboard/supplier)
   const basePath = location.pathname.split('/').slice(0, 3).join('/');
@@ -26,7 +32,7 @@ export default function Sidebar() {
   const subPath = currentPath.split('/')[0] || '';
 
   return (
-    <div className="w-72 bg-slate-800/60 backdrop-blur-xl border-r border-slate-700/50 relative h-screen flex flex-col">
+    <div className="w-72 bg-slate-800/60 backdrop-blur-xl border-r border-slate-700/50 relative">
       <div className="absolute inset-0 bg-gradient-to-b from-emerald-500/5 to-yellow-500/5"></div>
 
       {/* Logo */}
@@ -53,8 +59,8 @@ export default function Sidebar() {
               to={`${basePath}/${item.path}`}
               className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg mb-2 transition-all duration-200 ${
                 isActive
-                  ? 'bg-blue-50 text-blue-600 font-semibold'
-                  : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+                  ? 'bg-gradient-to-r from-yellow-300 via-emerald-400 to-cyan-400 text-slate-900 font-medium hover:brightness-110 transition-all shadow-lg shadow-emerald-500/20'
+                  : 'text-slate-300 hover:bg-slate-700/50 hover:text-white'
               }`}
               onClick={(e) => {
                 // Only prevent default if we're already on the target path
@@ -83,8 +89,8 @@ export default function Sidebar() {
             <User className="w-5 h-5 text-slate-900" />
           </div>
           <div className="flex-1">
-            <p className="text-sm font-medium text-white">Supplier</p>
-            <p className="text-xs text-slate-400">supplier@secureportal.com</p>
+            <p className="text-sm font-medium text-white">{data?.username}</p>
+            <p className="text-xs text-slate-400">{data?.email}</p>
           </div>
           <ChevronDown className={`w-4 h-4 text-slate-400 transition-transform duration-300 ${isProfileOpen ? 'rotate-180' : ''}`} />
         </div>
