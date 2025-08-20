@@ -37,8 +37,8 @@ const ProfileSupervisor = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [formData, setFormData] = useState({
-    Name: profile.Name || '',
-    firmName: profile.firmName || '',
+    Name: data?.name || '',
+    age:data?.age || '',
     state: profile.state || '',
     region: profile.region || '',
     experience: profile.experience || ''

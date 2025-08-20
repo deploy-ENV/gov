@@ -51,10 +51,10 @@ const Dashboard = () => {
   const viewProject = useSelector(state => state.projectsDashboard.viewProject);
   const myBids = useSelector(state => state.projectsDashboard.myBids);
   const [data,setData] = useState(null) 
-  // console.log("data:",(data));
   useEffect(() => {
     setData(JSON.parse(Cookies.get("userData")))
   }, []);
+  console.log("data:",(data));
   
   const hasAcceptedBid = myBids.some(bid => bid.status === 'accepted');
   const dashboardMode = useSelector(state => state.projectsDashboard.dashMode);

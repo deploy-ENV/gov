@@ -29,21 +29,26 @@ import {
 const Profile = () => {
   const dispatch = useDispatch();
   const profile = useSelector(state => state.projectsDashboard.profile);
-
+  const [data,setData] = useState(null) 
+      // console.log("data:",(data));
+      useEffect(() => {
+        setData(JSON.parse(Cookies.get("userData")))
+      }, []); 
   const [isEditing, setIsEditing] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [formData, setFormData] = useState({
-    Name: profile.Name,
-    firmName: profile.firmName,
-    region:profile.region,
-    gst: profile.gst,
-    gstDocument: profile.gstDocument,
-    tradeLicense: profile.tradeLicense,
-    tradeLicenseDocument: profile.tradeLicenseDocument,
-    epfNo: profile.epfNo,
-    epfDocument: profile.epfDocument,
-    experience: profile.experience,
-    bankAccInfo: { ...profile.bankAccInfo }
+    Name: data?.name,
+    firmName: data?.firmName,
+    email:data?.email,
+    address:data?.address,
+    gst: data?.gst_number,
+    gstDocument: data?.gstDocument,
+    tradeLicense: data?.tradeLicense,
+    tradeLicenseDocument: data?.tradeLicenseDocument,
+    epfNo: data?.epfNo,
+    epfDocument: data?.epfDocument,
+    experience: data?.experience,
+    bankAccInfo: { ...data.bankAccInfo }
   });
 
 //   const hasAcceptedBid = myBids.some(bid => bid.status === 'accepted');

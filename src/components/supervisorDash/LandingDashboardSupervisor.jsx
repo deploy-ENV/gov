@@ -70,11 +70,12 @@ const SupervisorDashboard = () => {
     return new Date(`${year}-${month}-${day}`);
   };
 
+
   const executionStats = [
     { title: 'Allocated Project', value: currentProject.length, icon: CheckCircle, color: 'from-emerald-400 to-cyan-400' },
-    { title: 'Project Progress', value: useSelector(state => state.supervisorDashboard.allotedProject.progress) + "%", icon: TrendingUp, color: 'from-yellow-400 to-orange-400' },
-    { title: 'Updates Submitted', value: useSelector(state => state.supervisorDashboard.submittedUpdates).length, icon: FileText, color: 'from-green-400 to-emerald-400' },
-    { title: 'Days Remaining', value: (Math.ceil((parseDate(useSelector(state => state.supervisorDashboard.allotedProject.endDate)) - parseDate(useSelector(state => state.supervisorDashboard.allotedProject.startDate))) / (1000 * 60 * 60 * 24))), icon: Clock, color: 'from-purple-400 to-pink-400' },
+    { title: 'Project Progress', value: useSelector(state => state.supervisorDashboard.allotedProject?.progress || 0) + "%", icon: TrendingUp, color: 'from-yellow-400 to-orange-400' },
+    { title: 'Updates Submitted', value: useSelector(state => state.supervisorDashboard?.submittedUpdates || [])?.length || "0", icon: FileText, color: 'from-green-400 to-emerald-400' },
+    { title: 'Days Remaining', value: (Math.ceil((parseDate(useSelector(state => state.supervisorDashboard.allotedProject?.endDate || "0")) - parseDate(useSelector(state => state.supervisorDashboard.allotedProject?.startDate || "0"))) / (1000 * 60 * 60 * 24))), icon: Clock, color: 'from-purple-400 to-pink-400' },
   ];
 
   const sidebarItems = [
@@ -218,7 +219,7 @@ const SupervisorDashboard = () => {
                 <User className="w-5 h-5 text-slate-900" />
                   </div>
                   <div className="flex-1">
-                    <p className="text-sm font-medium text-white">{data?.username}</p>
+                    <p className="text-sm font-medium text-white">{data?.username }</p>
                     <p className="text-xs text-slate-400">{data?.email}</p>
                   </div>
                   <ChevronDown className={`w-4 h-4 text-slate-400 transition-transform duration-300 ${isProfileOpen ? 'rotate-180' : ''}`} />
@@ -394,7 +395,7 @@ const SupervisorDashboard = () => {
               {/* Recent Updates */}
               <div>
                 <h4 className="text-white font-semibold mb-2">Recent Updates</h4>
-                {submittedUpdates.length > 0 ? (
+                {submittedUpdates?.length > 0 ? (
                   submittedUpdates
                     .slice(-2) // Show only the last 2 updates
                     .map((update, index) => (

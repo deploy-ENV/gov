@@ -11,6 +11,13 @@ import { ProjectContext } from '../projectContext';
 import { createProject } from '../../../services/projectService';
 export default function CreateProjectForm() {
   const [step, setStep] = useState(0);
+   const [userData,setUserData] = useState(null) 
+        // console.log("data:",(data));
+        useEffect(() => {
+          setUserData(JSON.parse(Cookies.get("userData")))
+        }, []); 
+
+
   const [data, setData] = useState({
     title: '',
     description: '',
@@ -29,6 +36,8 @@ export default function CreateProjectForm() {
     aiMatch: false,
     comments: '',
   });
+
+
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -54,9 +63,9 @@ export default function CreateProjectForm() {
   setLoading(true);
   try {
     
-    const pmId = "123";  
+    const pmId = userData.id;  
     const departmentId = "dept001";
-    const pmName = "John Doe";
+    const pmName = userData.name;
 
     const newProject = await createProject(data, pmId, departmentId, pmName);
 

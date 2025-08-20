@@ -1,23 +1,23 @@
 import React, { useState } from "react";
 
-const initialProfile = {
-  name: "",
-  gstin: "",
-  pan: "",
-  bank: "",
-  account: "",
-  ifsc: "",
-  email: "",
-  phone: "",
-  proof: null,
-};
 
 export default function Profile() {
   const [profile, setProfile] = useState(initialProfile);
   const [edit, setEdit] = useState(false);
   const [form, setForm] = useState(initialProfile);
   const [file, setFile] = useState(null);
-
+  const initialProfile = {
+    name: "",
+    gstin: "",
+    pan: "",
+    bank: "",
+    account: "",
+    ifsc: "",
+    email: "",
+    phone: "",
+    proof: null,
+  };
+  
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };

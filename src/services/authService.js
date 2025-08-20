@@ -47,14 +47,14 @@ export const loginGovt = async (credentials,role) => {
       
       const response = await api.post('/auth/login/projectmanager', credentials);
       if (response.data.token) {
-        setAuthCookies(response.data.token, 'govt_officer',response,data.data);
+        setAuthCookies(response.data.token, 'govt_officer',response.data.data);
       }
       return response.data;
     }
     else{
       const response = await api.post('/auth/login/supervisor', credentials);
       if (response.data.token) {
-        setAuthCookies(response.data.token, 'govt_officer',response,data.data);
+        setAuthCookies(response.data.token, 'govt_officer',response.data.data);
       }
       return response.data;
     }

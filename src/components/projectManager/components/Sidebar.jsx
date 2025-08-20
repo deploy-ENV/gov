@@ -38,10 +38,10 @@ export default function Sidebar() {
   const [activeTab, setActiveTab] = useState("");
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [data,setData] = useState(null) 
-    // console.log("data:",(data));
-    useEffect(() => {
-      setData(JSON.parse(Cookies.get("userData")))
-    }, []);
+  useEffect(() => {
+    setData(JSON.parse(Cookies.get("userData")))
+  }, []);
+  console.log("data:",(data));
   // Update active tab based on URL
   useEffect(() => {
      
