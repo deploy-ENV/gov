@@ -6,6 +6,11 @@ export default function DocumentUploadForm({ data, onChange, errors }) {
     onChange(field, file);
   };
 
+  const handleMultipleFiles = (field, files) => {
+    const fileArray = Array.from(files);
+    onChange(field, [...(data[field] || []), ...fileArray]);
+  };
+
   const fileInputClass =
     'flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-emerald-400 to-cyan-400 text-slate-900 font-semibold cursor-pointer hover:from-emerald-500 hover:to-cyan-500 transition';
 
@@ -96,6 +101,36 @@ export default function DocumentUploadForm({ data, onChange, errors }) {
           {data.safety && <span className={fileNameClass}>{data.safety.name}</span>}
         </div>
         {errors.safety && <span className="text-red-400 text-xs">{errors.safety}</span>}
+      </div>
+
+      {/* Additional Documents (documentIds) */}
+      <div>
+        <label className={labelClass}>Additional Documents</label>
+        <div className="flex items-center gap-4">
+          <input
+            type="file"
+            multiple
+            className="hidden"
+            id="documents-upload"
+            onChange={(e) => handleMultipleFiles('documentIds', e.target.files)}
+            accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
+          />
+          <label htmlFor="documents-upload" className={fileInputClass}>
+            <UploadCloud size={18} /> Upload Documents
+          </label>
+        </div>
+        {data.documentIds && data.documentIds.length > 0 && (
+          <ul className="mt-2 space-y-1">
+            {data.documentIds.map((file, idx) => (
+              <li key={idx} className={fileNameClass}>
+                {file.name || file}
+              </li>
+            ))}
+          </ul>
+        )}
+        {errors.documentIds && (
+          <span className="text-red-400 text-xs">{errors.documentIds}</span>
+        )}
       </div>
     </div>
   );

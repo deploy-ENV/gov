@@ -3,7 +3,7 @@ import Cookies from 'js-cookie';
 // Create Project (PM)
 export const createProject = async (projectData, pmId, departmentId, pmName) => {
   try {
-    
+    console.log("prjct data",projectData);
     
     const response = await api.post(
       `/projects/pm/${pmId}/dept/${departmentId}/name/${pmName}`,
@@ -27,6 +27,7 @@ export const createProject = async (projectData, pmId, departmentId, pmName) => 
 
 export const getMyProjects = async (pmId) => {
   try {
+
     const response = await api.get(`/projects/pm/${ pmId }`, {
       
       headers: {
@@ -70,7 +71,6 @@ export const finalizeProjectTeam = async (projectId, contractorId, supervisorId)
 export const getAllProjects = async () => {
   try {
     
-    
     const response = await api.get("/projects/all",
       {
         headers: {
@@ -78,6 +78,7 @@ export const getAllProjects = async () => {
         }
       }
     );
+    console.log(`Bearer ${Cookies.get("token")}`);
     return response.data;
   } catch (error) {
     console.error("Error fetching projects:", error);

@@ -52,7 +52,7 @@ export default function RequirementsForm({ data, onChange, errors }) {
 
   return (
     <div className="space-y-6 text-white">
-      {/* Contractor Requirements (textarea instead of skills) */}
+      {/* Contractor Requirements */}
       <div>
         <label className="block font-semibold text-slate-300 mb-1">
           Contractor Requirements <span className="text-red-400">*</span>
@@ -105,9 +105,9 @@ export default function RequirementsForm({ data, onChange, errors }) {
                 required
               />
               <input
-                type="number"
-                className={`${inputBase} w-24`}
-                placeholder="Qty"
+                type="text" // ✅ text instead of number to allow "5000 tons"
+                className={`${inputBase} w-32`}
+                placeholder="Qty (e.g. 5000 tons)"
                 value={data.estimatedQuantities?.[i] || ''}
                 onChange={e => updateMaterial(i, 'qty', e.target.value)}
                 required
@@ -129,7 +129,11 @@ export default function RequirementsForm({ data, onChange, errors }) {
             <Plus size={16} /> Add Material
           </button>
         </div>
-        {errors.requiredMaterials && <span className="text-red-400 text-xs">{errors.requiredMaterials}</span>}
+        {(errors.requiredMaterials || errors.estimatedQuantities) && (
+          <span className="text-red-400 text-xs">
+            {errors.requiredMaterials || errors.estimatedQuantities}
+          </span>
+        )}
       </div>
     </div>
   );

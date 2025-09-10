@@ -8,13 +8,16 @@ export default function TimelineBudgetForm({ data, onChange, errors }) {
 
   // Helper functions for phases management
   const addPhase = () => {
-    const newPhases = [...(data.progressSteps || []), { name: "", description: "", deadline: "" }];
+    const newPhases = [
+      ...(data.progressSteps || []),
+      { title: "", description: "", dueDate: "", supervisorId: "", order: (data.progressSteps?.length || 0) + 1 }
+    ];
     onChange("progressSteps", newPhases);
   };
 
   const updatePhase = (index, field, value) => {
     const newPhases = [...(data.progressSteps || [])];
-    newPhases[index] = { ...newPhases[index], [field]: value };
+    newPhases[index] = { ...newPhases[index], [field]: String(value) };
     onChange("progressSteps", newPhases);
   };
 
@@ -32,13 +35,13 @@ export default function TimelineBudgetForm({ data, onChange, errors }) {
           </label>
           <input
             type="date"
-            className={`${inputBase} ${errors.startDate ? "border-red-400" : ""}`}
-            value={data.startDate}
-            onChange={(e) => onChange("startDate", e.target.value)}
+            className={`${inputBase} ${errors.expectedStartDate ? "border-red-400" : ""}`}
+            value={data.expectedStartDate || ""}
+            onChange={(e) => onChange("expectedStartDate", String(e.target.value))}
             required
           />
-          {errors.startDate && (
-            <span className="text-red-400 text-xs">{errors.startDate}</span>
+          {errors.expectedStartDate && (
+            <span className="text-red-400 text-xs">{errors.expectedStartDate}</span>
           )}
         </div>
 
@@ -49,8 +52,8 @@ export default function TimelineBudgetForm({ data, onChange, errors }) {
           <input
             type="date"
             className={`${inputBase} ${errors.deadline ? "border-red-400" : ""}`}
-            value={data.deadline}
-            onChange={(e) => onChange("deadline", e.target.value)}
+            value={data.deadline || ""}
+            onChange={(e) => onChange("deadline", String(e.target.value))}
             required
           />
           {errors.deadline && (
@@ -64,13 +67,13 @@ export default function TimelineBudgetForm({ data, onChange, errors }) {
           </label>
           <input
             type="date"
-            className={`${inputBase} ${errors.bidDeadline ? "border-red-400" : ""}`}
-            value={data.bidDeadline}
-            onChange={(e) => onChange("bidDeadline", e.target.value)}
+            className={`${inputBase} ${errors.bidSubmissionDeadline ? "border-red-400" : ""}`}
+            value={data.bidSubmissionDeadline || ""}
+            onChange={(e) => onChange("bidSubmissionDeadline", String(e.target.value))}
             required
           />
-          {errors.bidDeadline && (
-            <span className="text-red-400 text-xs">{errors.bidDeadline}</span>
+          {errors.bidSubmissionDeadline && (
+            <span className="text-red-400 text-xs">{errors.bidSubmissionDeadline}</span>
           )}
         </div>
 
@@ -82,8 +85,8 @@ export default function TimelineBudgetForm({ data, onChange, errors }) {
             type="number"
             className={`${inputBase} ${errors.totalBudget ? "border-red-400" : ""}`}
             placeholder="Enter total budget"
-            value={data.totalBudget}
-            onChange={(e) => onChange("totalBudget", e.target.value)}
+            value={data.totalBudget || ""}
+            onChange={(e) => onChange("totalBudget", String(e.target.value))}
             required
           />
           {errors.totalBudget && (
@@ -95,17 +98,17 @@ export default function TimelineBudgetForm({ data, onChange, errors }) {
       {/* Phases Section */}
       <div>
         <label className="block font-semibold text-slate-300 mb-1">
-          Phases <span className="text-red-400">*</span>
+          Project Phases <span className="text-red-400">*</span>
         </label>
         <div className="space-y-2">
           {(data.progressSteps || []).map((phase, i) => (
             <div key={i} className="flex gap-2 items-center">
-              <div className="grid grid-cols-3 gap-2 items-center w-full">
+              <div className="grid grid-cols-4 gap-2 items-center w-full">
                 <input
                   className={`${inputBase} flex-1 ${errors.phases ? "border-red-400" : ""}`}
-                  placeholder="Phase Name"
-                  value={phase.name}
-                  onChange={(e) => updatePhase(i, "name", e.target.value)}
+                  placeholder="Phase Title"
+                  value={phase.title}
+                  onChange={(e) => updatePhase(i, "title", e.target.value)}
                   required
                 />
                 <input
@@ -118,9 +121,15 @@ export default function TimelineBudgetForm({ data, onChange, errors }) {
                 <input
                   type="date"
                   className={`${inputBase} ${errors.phases ? "border-red-400" : ""}`}
-                  value={phase.deadline}
-                  onChange={(e) => updatePhase(i, "deadline", e.target.value)}
+                  value={phase.dueDate || ""}
+                  onChange={(e) => updatePhase(i, "dueDate", e.target.value)}
                   required
+                />
+                <input
+                  className={inputBase}
+                  placeholder="Supervisor ID"
+                  value={phase.supervisorId}
+                  onChange={(e) => updatePhase(i, "supervisorId", e.target.value)}
                 />
               </div>
 

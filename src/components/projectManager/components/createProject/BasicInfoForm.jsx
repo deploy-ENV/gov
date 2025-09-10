@@ -1,10 +1,17 @@
 import React from 'react';
-const DEPARTMENTS = ['Public Works', 'Education', 'Health', 'Transport'];
-const ZONES = ['North', 'South', 'East', 'West', 'Central'];
+
+const DEPARTMENTS = [
+  { id: "15131664", name: "Public Works" },
+  { id: "15131665", name: "Education" },
+  { id: "15131666", name: "Health" },
+  { id: "15131667", name: "Transport" },
+];
+
+const ZONES = ["North Zone", "South Zone", "East Zone", "West Zone", "Central Zone"];
 
 export default function BasicInfoForm({ data, onChange, errors }) {
   const handleAddressChange = (field, value) => {
-    onChange('address', { ...data.address, [field]: value });
+    onChange("location", { ...data.location, [field]: value });
   };
 
   return (
@@ -16,23 +23,96 @@ export default function BasicInfoForm({ data, onChange, errors }) {
         </label>
         <input
           className={`w-full p-3 rounded-lg bg-slate-700/50 border border-slate-600 text-white placeholder-slate-400 focus:ring-2 focus:ring-emerald-400/50 ${
-            errors.title ? 'border-red-500' : ''
+            errors.title ? "border-red-500" : ""
           }`}
           placeholder="Enter project title"
           value={data.title}
-          onChange={(e) => onChange('title', e.target.value)}
+          onChange={(e) => onChange("title", e.target.value)}
           required
         />
         {errors.title && <span className="text-red-400 text-xs">{errors.title}</span>}
       </div>
-      
-      {/* Department (disabled) */}
+
+      {/* Department */}
       <div>
-        <label className="block font-semibold text-slate-300 mb-1">Department</label>
+        <label className="block font-semibold text-slate-300 mb-1">
+          Department <span className="text-red-400">*</span>
+        </label>
+        <select
+          className={`w-full p-3 rounded-lg bg-slate-700/50 border border-slate-600 text-white ${
+            errors.departmentId ? "border-red-500" : ""
+          }`}
+          value={data.departmentId}
+          onChange={(e) => onChange("departmentId", e.target.value)}
+          required
+        >
+          <option value="">Select Department</option>
+          {DEPARTMENTS.map((dept) => (
+            <option key={dept.id} value={dept.id}>
+              {dept.name}
+            </option>
+          ))}
+        </select>
+        {errors.departmentId && (
+          <span className="text-red-400 text-xs">{errors.departmentId}</span>
+        )}
+      </div>
+
+      {/* Zone */}
+      <div>
+        <label className="block font-semibold text-slate-300 mb-1">
+          Zone <span className="text-red-400">*</span>
+        </label>
+        <select
+          className={`w-full p-3 rounded-lg bg-slate-700/50 border border-slate-600 text-white ${
+            errors.zone ? "border-red-500" : ""
+          }`}
+          value={data.zone}
+          onChange={(e) => onChange("zone", e.target.value)}
+          required
+        >
+          <option value="">Select Zone</option>
+          {ZONES.map((z) => (
+            <option key={z} value={z}>
+              {z}
+            </option>
+          ))}
+        </select>
+        {errors.zone && <span className="text-red-400 text-xs">{errors.zone}</span>}
+      </div>
+
+      {/* Created By */}
+      <div>
+        <label className="block font-semibold text-slate-300 mb-1">Created By</label>
         <input
           className="w-full p-3 rounded-lg bg-slate-700/30 border border-slate-600 text-slate-400 cursor-not-allowed"
-          value={DEPARTMENTS[0]}
+          value={data.createdByName || ""}
           disabled
+        />
+      </div>
+
+      {/* Project Manager ID */}
+      <div>
+        <label className="block font-semibold text-slate-300 mb-1">
+          Project Manager ID
+        </label>
+        <input
+          className="w-full p-3 rounded-lg bg-slate-700/50 border border-slate-600 text-white placeholder-slate-400"
+          placeholder="Enter project manager ID"
+          value={data.projectManagerId || ""}
+          onChange={(e) => onChange("projectManagerId", e.target.value)}
+        />
+      </div>
+
+      {/* Thumbnail URL */}
+      <div>
+        <label className="block font-semibold text-slate-300 mb-1">Thumbnail URL</label>
+        <input
+          type="url"
+          className="w-full p-3 rounded-lg bg-slate-700/50 border border-slate-600 text-white placeholder-slate-400"
+          placeholder="https://example.com/project-thumbnail.png"
+          value={data.thumbnailUrl || ""}
+          onChange={(e) => onChange("thumbnailUrl", e.target.value)}
         />
       </div>
 
@@ -43,15 +123,17 @@ export default function BasicInfoForm({ data, onChange, errors }) {
         </label>
         <textarea
           className={`w-full p-3 rounded-lg bg-slate-700/50 border border-slate-600 text-white placeholder-slate-400 focus:ring-2 focus:ring-emerald-400/50 ${
-            errors.description ? 'border-red-500' : ''
+            errors.description ? "border-red-500" : ""
           }`}
           placeholder="Describe the project"
           value={data.description}
-          onChange={(e) => onChange('description', e.target.value)}
+          onChange={(e) => onChange("description", e.target.value)}
           rows={3}
           required
         />
-        {errors.description && <span className="text-red-400 text-xs">{errors.description}</span>}
+        {errors.description && (
+          <span className="text-red-400 text-xs">{errors.description}</span>
+        )}
       </div>
 
       {/* Address Section */}
@@ -68,13 +150,11 @@ export default function BasicInfoForm({ data, onChange, errors }) {
                 errors.street ? "border-red-500" : ""
               }`}
               placeholder="Enter street address"
-              value={data.address?.street || ''}
+              value={data.location?.street || ""}
               onChange={(e) => handleAddressChange("street", e.target.value)}
               required
             />
-            {errors.street && (
-              <span className="text-red-400 text-xs">{errors.street}</span>
-            )}
+            {errors.street && <span className="text-red-400 text-xs">{errors.street}</span>}
           </div>
 
           {/* City */}
@@ -87,13 +167,11 @@ export default function BasicInfoForm({ data, onChange, errors }) {
                 errors.city ? "border-red-500" : ""
               }`}
               placeholder="Enter city"
-              value={data.address?.city || ''}
+              value={data.location?.city || ""}
               onChange={(e) => handleAddressChange("city", e.target.value)}
               required
             />
-            {errors.city && (
-              <span className="text-red-400 text-xs">{errors.city}</span>
-            )}
+            {errors.city && <span className="text-red-400 text-xs">{errors.city}</span>}
           </div>
 
           {/* State */}
@@ -106,16 +184,14 @@ export default function BasicInfoForm({ data, onChange, errors }) {
                 errors.state ? "border-red-500" : ""
               }`}
               placeholder="Enter state"
-              value={data.address?.state || ''}
+              value={data.location?.state || ""}
               onChange={(e) => handleAddressChange("state", e.target.value)}
               required
             />
-            {errors.state && (
-              <span className="text-red-400 text-xs">{errors.state}</span>
-            )}
+            {errors.state && <span className="text-red-400 text-xs">{errors.state}</span>}
           </div>
 
-          {/* Zip Code */}
+          {/* Zip */}
           <div>
             <label className="block font-semibold text-slate-300 mb-1">
               Zip Code <span className="text-red-400">*</span>
@@ -126,13 +202,11 @@ export default function BasicInfoForm({ data, onChange, errors }) {
                 errors.zip ? "border-red-500" : ""
               }`}
               placeholder="Enter zip code"
-              value={data.address?.zip || ''}
+              value={data.location?.zip || ""}
               onChange={(e) => handleAddressChange("zip", e.target.value)}
               required
             />
-            {errors.zip && (
-              <span className="text-red-400 text-xs">{errors.zip}</span>
-            )}
+            {errors.zip && <span className="text-red-400 text-xs">{errors.zip}</span>}
           </div>
 
           {/* Country */}
@@ -145,13 +219,11 @@ export default function BasicInfoForm({ data, onChange, errors }) {
                 errors.country ? "border-red-500" : ""
               }`}
               placeholder="Enter country"
-              value={data.address?.country || ''}
+              value={data.location?.country || ""}
               onChange={(e) => handleAddressChange("country", e.target.value)}
               required
             />
-            {errors.country && (
-              <span className="text-red-400 text-xs">{errors.country}</span>
-            )}
+            {errors.country && <span className="text-red-400 text-xs">{errors.country}</span>}
           </div>
         </div>
       </div>
