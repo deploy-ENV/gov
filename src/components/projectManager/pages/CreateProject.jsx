@@ -19,55 +19,42 @@ export default function CreateProjectForm() {
         }, []); 
 
 
-const [data, setData] = useState({
-  
-  title: "",
-  description: "",
-  location: {
-    street: "",
-    city: "",
-    state: "",
-    zip: "",
-    country: "",
-  },
-  departmentId: "",
-  zone: "",
-  projectManagerId: "",
-  createdByName: "",
-  expectedStartDate: "",
-  deadline: "",
-  bidSubmissionDeadline: "",
-  createdAt: "",
-  totalBudget: "",
-  budgetApproved: "",
-  budgetUsed: "",
-  contractorRequirements: "",
-  licenses: [],
-  requiredMaterials: [],
-  estimatedQuantities: [],
-  documentIds: [],
-  assignedContractorId: "",
-  assignedSupervisorId: "",
-  assignedSupplierIds: [],
-  aiMatch: false,
-  status: "",
-  comments: "",
-  thumbnailUrl: "",
-  progressSteps: [],
-  // Optional docs
-  legal: null,
-  blueprints: null,
-  boq: null,
-  safety: null,
-});
-
+  const [data, setData] = useState({
+    title: '',
+    description: '',
+    address: {
+      street: '',
+      city: '',
+      state: '',
+      zip: '',
+      country: '',
+    },
+    expectedStartDate: '',
+    deadline: '',
+    bidSubmissionDeadline: '',
+    totalBudget: '',
+    progressSteps: [],
+    contractorRequirements: "",
+    licenses: [],
+    requiredMaterials: [],
+    legal: null,
+    blueprints: null,
+    boq: null,
+    safety: null,
+    aiMatch: false,
+    comments: '',
+    estimatedQuantities:[],
+    documentIds:[],
+    createdByName:"",
+    thumbnailUrl:"",
+  });
 
 
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const { addProject } = useContext(ProjectContext);
-  
+
   const handleChange = (field, value) => {
     setData(d => ({ ...d, [field]: value }));
   };
@@ -92,55 +79,20 @@ const [data, setData] = useState({
     const departmentId = "dept001";
     const pmName = userData.name;
 
-    
     const newProject = await createProject(data, pmId, departmentId, pmName);
+    // console.log(newProject);
     
     addProject(newProject);
     setSuccess(true);
 
     // Reset form after submission
     setStep(0);
-    ssetData({
-   title: "",
-  description: "",
-  location: {
-    street: "",
-    city: "",
-    state: "",
-    zip: "",
-    country: "",
-  },
-  departmentId: "",
-  zone: "",
-  projectManagerId: "",
-  createdByName: "",
-  expectedStartDate: "",
-  deadline: "",
-  bidSubmissionDeadline: "",
-  createdAt: "",
-  totalBudget: "",
-  budgetApproved: "",
-  budgetUsed: "",
-  contractorRequirements: "",
-  licenses: [],
-  requiredMaterials: [],
-  estimatedQuantities: [],
-  documentIds: [],
-  assignedContractorId: "",
-  assignedSupervisorId: "",
-  assignedSupplierIds: [],
-  aiMatch: false,
-  status: "",
-  comments: "",
-  thumbnailUrl: "",
-  progressSteps: [],
-  // Optional docs
-  legal: null,
-  blueprints: null,
-  boq: null,
-  safety: null,
-});
-
+    setData({
+      title: '', description: '', address: { street: '', city: '', state: '', zip: '', country: '' }, startDate: '', deadline: '',
+      bidDeadline: '', totalBudget: '',progressSteps: [], contractorRequirements:'', licenses: [], requiredMaterials: [],
+      legal: null, blueprints: null, boq: null, safety: null, aiMatch: false,
+      comments: '',estimatedQuantities:[],
+    });
   } catch (err) {
     console.error("Error creating project:", err);
     setErrors({ submit: err.message || "Failed to create project" });
