@@ -11,19 +11,19 @@ export default function validateProjectForm(step, data) {
     }
 
     // Address validation
-    if (!data.address?.street || data.address.street.trim().length === 0) {
+    if (!data.location?.street || data.location.street.trim().length === 0) {
       errors.street = "Street address is required";
     }
-    if (!data.address?.city || data.address.city.trim().length === 0) {
+    if (!data.location?.city || data.location.city.trim().length === 0) {
       errors.city = "City is required";
     }
-    if (!data.address?.state || data.address.state.trim().length === 0) {
-      errors.state = "State is required";
+    if (!data.location?.state || data.location.state.trim().length === 0) {
+      errors.state = "State is required";location
     }
-    if (!data.address?.zip || data.address.zip.trim().length === 0) {
+    if (!data.location?.zip || data.location.zip.trim().length === 0) {
       errors.zip = "Zip code is required";
     }
-    if (!data.address?.country || data.address.country.trim().length === 0) {
+    if (!data.location?.country || data.location.country.trim().length === 0) {
       errors.country = "Country is required";
     }
   }
