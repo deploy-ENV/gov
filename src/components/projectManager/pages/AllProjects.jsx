@@ -1,8 +1,10 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState,useEffect  } from 'react';
 import { Flag, XCircle, CheckCircle, User, Truck, FileText } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ProjectContext } from '../projectContext';
-
+import Cookies from "js-cookie";
+import { getMyProjects } from '../../../services/projectService';
+import axios from 'axios';
 const STATUS_STYLES = {
   'On Bidding': 'bg-yellow-400/20 text-yellow-300 text-xs font-semibold rounded-md px-2 py-1',
   'Ongoing': 'bg-cyan-400/20 text-cyan-300 rounded-md px-2 py-1 text-xs font-semibold',
@@ -181,39 +183,96 @@ function OnBiddingModal({ project, onClose, onAssign }) {
   );
 }
 
+
+
+
 export default function AllProjects() {
-  const { hardcodedProjects, dynamicProjects } = useContext(ProjectContext);
+  const { hardcodedProjects } = useContext(ProjectContext); // keep for now if needed
+  const [dynamicProjects, setDynamicProjects] = useState([]);
   const [modalProject, setModalProject] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   const handleAssign = ({ contractor, supplier, supervisor }) => {
     if (modalProject) {
-      modalProject.status = 'Ongoing';
-      modalProject.contractor = contractor;
-      modalProject.supplier = supplier;
-      modalProject.supervisor = supervisor;
+      // update project locally
+      setDynamicProjects(prev =>
+        prev.map(p =>
+          p.id === modalProject.id
+            ? { ...p, status: "Ongoing", contractor, supplier, supervisor }
+            : p
+        )
+      );
     }
     setModalProject(null);
   };
+
+  const userData = JSON.parse(Cookies.get("userData"));
+  console.log(userData.id);
+  useEffect(() => {
+    const fetchProjects = async () => {
+      try {
+        setLoading(true);
+        const projects = await getMyProjects(userData.id);
+        
+        console.log("projects",projects);
+         // pmId from user
+        setDynamicProjects(projects);
+      } catch (err) {
+        setError(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProjects();
+  }, []);
 
   return (
     <div className="h-full w-full bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-6 font-sans text-white">
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold text-cyan-400">All My Projects</h2>
       </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {hardcodedProjects.map(project => (
-          <ProjectCard key={project.id} project={project} onClick={() => {}} />
-        ))}
-        {dynamicProjects.map(project => (
-          <ProjectCard key={project.id} project={project} onClick={p => p.status === 'On Bidding' ? setModalProject(p) : null} />
-        ))}
-        {hardcodedProjects.length + dynamicProjects.length === 0 && (
-          <div className="col-span-full text-center text-slate-400 py-12">No projects found.</div>
-        )}
-      </div>
+
+      {loading && (
+        <div className="text-center text-slate-400 py-12">Loading projects...</div>
+      )}
+     {error && (
+        <div className="text-center text-red-400 py-12">
+          Failed to load projects: {error.message || String(error)}
+        </div>
+      )}
+
+
+      {!loading && !error && (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {/* {dynamicProjects.map(project => (
+            <ProjectCard key={project.id} project={project} onClick={() => {}} />
+          ))} */}
+          {dynamicProjects.map(project => (
+            <ProjectCard
+              key={project.id}
+              project={project}
+              onClick={p =>
+                p.status === "On Bidding" ? setModalProject(p) : null
+              }
+            />
+          ))}
+          {hardcodedProjects.length + dynamicProjects.length === 0 && (
+            <div className="col-span-full text-center text-slate-400 py-12">
+              No projects found.
+            </div>
+          )}
+        </div>
+      )}
+
       {modalProject && (
-        <OnBiddingModal project={modalProject} onClose={() => setModalProject(null)} onAssign={handleAssign} />
+        <OnBiddingModal
+          project={modalProject}
+          onClose={() => setModalProject(null)}
+          onAssign={handleAssign}
+        />
       )}
     </div>
   );
 }
+

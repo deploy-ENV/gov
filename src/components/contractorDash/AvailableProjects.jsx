@@ -48,6 +48,8 @@ import {
 
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { getAllProjects } from '../../services/projectService';
+
 
 const AvailableProjects = () => {
   const [activeTab, setActiveTab] = useState('projects');
@@ -76,10 +78,25 @@ const toggleProfileDropdown = () => {
     setIsProfileOpen(!isProfileOpen);
   };
   // Minimal mock data - only 2 projects
-  const projects = [
-    
-  ];
+  const [projects,setProjects] = useState([])
+  const [loading,setLoading] = useState(false)
+   useEffect(() => {
+    const loadProjects = async () => {
+      try {
+        const res = await getAllProjects();
+        setProjects(res);
+        console.log("✅ Projects:", res);
+      } catch (err) {
+        console.error("❌ Failed to fetch projects", err);
+        
+      } finally {
+        setLoading(false);
+      }
+    };
 
+    loadProjects();
+  }, []);
+console.log("projects",projects);
   const categories = ['all', 'Infrastructure', 'Renovation', 'Construction', 'Maintenance'];
   const budgetRanges = [
     { label: 'All Budgets', value: 'all' },
@@ -96,10 +113,12 @@ const toggleProfileDropdown = () => {
   .filter(project => {
    
 
+   
+
     const matchesSearch =
-      project.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      project.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      project.category.toLowerCase().includes(searchTerm.toLowerCase());
+      project?.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      project?.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      project?.category.toLowerCase().includes(searchTerm.toLowerCase());
 
     const matchesCategory =
       selectedCategory === 'all' || project.category === selectedCategory;
@@ -251,37 +270,37 @@ const toggleProfileDropdown = () => {
 
           {/* Projects Grid */}
           <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-            {filteredProjects.map((project) => (
-              <div key={project.id} className="bg-slate-800/40 backdrop-blur-sm rounded-2xl p-6 border border-slate-700/50 hover:border-slate-600/50 transition-all duration-300 hover:transform hover:scale-105">
+            {projects.map((project) => (
+              <div key={project?.id} className="bg-slate-800/40 backdrop-blur-sm rounded-2xl p-6 border border-slate-700/50 hover:border-slate-600/50 transition-all duration-300 hover:transform hover:scale-105">
                 {/* Project Header */}
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex items-center gap-3">
                     <div className="w-12 h-12 bg-gradient-to-br from-emerald-400/20 to-cyan-400/20 rounded-xl flex items-center justify-center">
                       <FileText className="w-6 h-6 text-emerald-400" />
                     </div>
-                    <div className={`px-2 py-1 rounded-lg text-xs font-medium ${getUrgencyColor(project.urgency)}`}>
-                      {project.urgency} priority
+                    <div className={`px-2 py-1 rounded-lg text-xs font-medium ${getUrgencyColor(project?.urgency)}`}>
+                      {project?.urgency} priority
                     </div>
                   </div>
                   <div className="flex items-center gap-1">
                     <Star className="w-4 h-4 text-yellow-400 fill-current" />
-                    <span className="text-sm text-slate-300">{project.rating}</span>
+                    <span className="text-sm text-slate-300">{project?.rating}</span>
                   </div>
                 </div>
 
                 {/* Project Title */}
-                <h3 className="text-xl font-bold text-white mb-2">{project.name}</h3>
+                <h3 className="text-xl font-bold text-white mb-2">{project?.title}</h3>
                 <p className="text-sm text-slate-400 mb-4 line-clamp-2">{project.description}</p>
 
                 {/* Project Details */}
                 <div className="space-y-3 mb-4">
                   <div className="flex items-center gap-2">
                     <MapPin className="w-4 h-4 text-slate-400" />
-                    <span className="text-sm text-slate-300">{project.region}, {project.zone}</span>
+                    <span className="text-sm text-slate-300">{project?.region}, {project?.zone}</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <Briefcase className="w-4 h-4 text-slate-400" />
-                    <span className="text-sm text-slate-300">{project.department}</span>
+                    <span className="text-sm text-slate-300">{project?.department}</span>
                   </div>
                 </div>
 
@@ -292,7 +311,7 @@ const toggleProfileDropdown = () => {
                       <IndianRupee className="w-4 h-4 text-emerald-400" />
                       <span className="text-xs text-slate-400">Budget</span>
                     </div>
-                    <p className="text-sm font-bold text-emerald-400">{project.budget}</p>
+                    <p className="text-sm font-bold text-emerald-400">{project?.totalBudget}</p>
                   </div>
                   
                   <div className="bg-slate-700/30 rounded-lg p-3">
@@ -300,14 +319,14 @@ const toggleProfileDropdown = () => {
                       <Clock className="w-4 h-4 text-yellow-400" />
                       <span className="text-xs text-slate-400">Time Left</span>
                     </div>
-                    <p className="text-sm font-bold text-yellow-400">{project.timeLeft}</p>
+                    <p className="text-sm font-bold text-yellow-400">{project?.timeLeft}</p>
                   </div>
                 </div>
 
                 {/* Bids Count */}
                 <div className="flex items-center gap-2 mb-4">
                   <Users className="w-4 h-4 text-slate-400" />
-                  <span className="text-sm text-slate-300">{project.bidsCount} bids submitted</span>
+                  <span className="text-sm text-slate-300">{project?.bidsCount} bids submitted</span>
                 </div>
 
                 {/* Action Buttons */}
@@ -344,7 +363,7 @@ const toggleProfileDropdown = () => {
         <ProjectDetailsPopup  
           isOpen={showViewDetails} 
           onClose={() => dispatch(closeViewDetails())} 
-          project={viewProject}
+          projectId={viewProject}
           onInterested={() => {
             dispatch(showBiddingForm());
             dispatch(closeViewDetails());

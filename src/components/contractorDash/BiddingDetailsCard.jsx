@@ -20,6 +20,7 @@ import {
   Upload
 } from 'lucide-react';
 import api from '../../services/api';
+import { div } from 'framer-motion/client';
 
 const ProjectDetailsPopup = ({ isOpen, onClose, projectId,onInterested }) => {
   const dispatch = useDispatch();
@@ -27,10 +28,11 @@ const ProjectDetailsPopup = ({ isOpen, onClose, projectId,onInterested }) => {
   const [loading, setLoading] = useState(true);
   const [activeDocumentTab, setActiveDocumentTab] = useState('legal');
     // const [showBiddingForm,setShowBiddingForm] = useState(false)
+    console.log(projectId);
     useEffect(() => {
     const fetchProject = async () => {
       if (!projectId) return;
-
+      
       setLoading(true);
       try {
         const response = await api.get(`/projects/${projectId}`);
@@ -154,7 +156,7 @@ const ProjectDetailsPopup = ({ isOpen, onClose, projectId,onInterested }) => {
                   </div>
                   <div className="bg-slate-600/30 rounded-lg p-4">
                     <p className="text-xs text-slate-400 mb-1">Total Budget</p>
-                    <p className="text-sm font-medium text-emerald-400">{projectData.budget}</p>
+                    <p className="text-sm font-medium text-emerald-400">{projectData.totalBudget}</p>
                   </div>
                 </div>
               </div>
@@ -172,36 +174,51 @@ const ProjectDetailsPopup = ({ isOpen, onClose, projectId,onInterested }) => {
                   <div>
                     <h4 className="text-sm font-medium text-slate-300 mb-3">Contractor Requirements</h4>
                     <div className="space-y-2">
-                      {projectData.contractorRequirements.map((req, index) => (
-                        <div key={index} className="flex items-start gap-2">
+                     
+                        <div  className="flex items-start gap-2">
                           <CheckCircle className="w-4 h-4 text-emerald-400 mt-0.5 flex-shrink-0" />
-                          <span className="text-sm text-slate-300">{req}</span>
-                        </div>
-                      ))}
+                          <span className="text-sm text-slate-300">{projectData?.contractorRequirements}</span>
+                        </div> 
                     </div>
                   </div>
                   
                   <div>
                     <h4 className="text-sm font-medium text-slate-300 mb-3">Required Materials</h4>
                     <div className="space-y-2">
-                      {projectData.requiredMaterials.map((material, index) => (
+                      {projectData?.requiredMaterials ?
+                      <div>
+                        {projectData?.requiredMaterials.map((material, index) => (
                         <div key={index} className="flex items-start gap-2">
                           <Settings className="w-4 h-4 text-cyan-400 mt-0.5 flex-shrink-0" />
                           <span className="text-sm text-slate-300">{material}</span>
                         </div>
                       ))}
+                      </div>
+                      :
+                      <div>
+                        <span className='text-rose-500'>No Dta</span>
+                      </div>
+                      }
                     </div>
                   </div>
                   
                   <div>
                     <h4 className="text-sm font-medium text-slate-300 mb-3">Estimated Quantities</h4>
                     <div className="space-y-2">
-                      {projectData.estimatedQuantities.map((quantity, index) => (
+                      {projectData?.requiredMaterials ?
+                      <div>
+                        {projectData?.requiredMaterials.map((material, index) => (
                         <div key={index} className="flex items-start gap-2">
-                          <DollarSign className="w-4 h-4 text-yellow-400 mt-0.5 flex-shrink-0" />
-                          <span className="text-sm text-slate-300">{quantity}</span>
+                          <Settings className="w-4 h-4 text-cyan-400 mt-0.5 flex-shrink-0" />
+                          <span className="text-sm text-slate-300">{material}</span>
                         </div>
                       ))}
+                      </div>
+                      :
+                      <div>
+                        <span className='text-rose-500'>No Dta</span>
+                      </div>
+                      }
                     </div>
                   </div>
                 </div>
@@ -248,7 +265,7 @@ const ProjectDetailsPopup = ({ isOpen, onClose, projectId,onInterested }) => {
             </div>
 
             {/* Document Tabs */}
-            <div className="space-y-1 mb-6">
+            {/* <div className="space-y-1 mb-6">
               {documentTabs.map((tab) => {
                 const Icon = tab.icon;
                 return (
@@ -266,10 +283,10 @@ const ProjectDetailsPopup = ({ isOpen, onClose, projectId,onInterested }) => {
                   </button>
                 );
               })}
-            </div>
+            </div> */}
 
             {/* Document List */}
-            <div className="space-y-2">
+            {/* <div className="space-y-2">
               {projectData.documents[activeDocumentTab]?.map((doc, index) => (
                 <div key={index} className="bg-slate-600/30 rounded-lg p-3 hover:bg-slate-600/50 transition-colors">
                   <div className="flex items-center justify-between mb-2">
@@ -289,7 +306,7 @@ const ProjectDetailsPopup = ({ isOpen, onClose, projectId,onInterested }) => {
                   </div>
                 </div>
               ))}
-            </div>
+            </div> */}
           </div>
         </div>
 
@@ -297,14 +314,14 @@ const ProjectDetailsPopup = ({ isOpen, onClose, projectId,onInterested }) => {
         <div className="border-t border-slate-700/50 p-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
-              <div className="flex items-center gap-2">
+              {/* <div className="flex items-center gap-2">
                 <Users className="w-4 h-4 text-slate-400" />
                 <span className="text-sm text-slate-300">{projectData.bidsCount} bids submitted</span>
               </div>
               <div className="flex items-center gap-2">
                 <Clock className="w-4 h-4 text-yellow-400" />
                 <span className="text-sm text-yellow-400">{projectData.timeLeft} remaining</span>
-              </div>
+              </div> */}
             </div>
             
             <div className="flex items-center gap-3">

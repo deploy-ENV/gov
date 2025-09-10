@@ -23,7 +23,7 @@ import Cookies from "js-cookie";
 const menu = [
   { name: "Dashboard Home", icon: <Home size={20} />, id: "", color: "text-blue-600" },
   { name: "Create Project", icon: <PlusSquare size={20} />, id: "create-project", color: "text-green-600" },
-  { name: "All My Projects", icon: <FolderOpen size={20} />, id: "monitor", color: "text-amber-600" },
+  { name: "All My Projects", icon: <FolderOpen size={20} />, id: "all-projects", color: "text-amber-600" },
   { name: "Fund Requests", icon: <IndianRupee size={20} />, id: "fund-requests", color: "text-cyan-600" },
   { name: "Documents & Blueprints", icon: <FileText size={20} />, id: "documents", color: "text-indigo-600" },
   { name: "Internal Chat", icon: <MessageCircle size={20} />, id: "chat", color: "text-pink-600" },

@@ -1,7 +1,6 @@
 import React from 'react';
 import { Plus } from 'lucide-react';
 
-const SKILLS = ['Civil Engineering', 'Electrical', 'Plumbing', 'Masonry', 'Surveying'];
 const LICENSES = ['Class A', 'Class B', 'Class C', 'ISO 9001', 'Safety'];
 
 export default function RequirementsForm({ data, onChange, errors }) {
@@ -14,19 +13,31 @@ export default function RequirementsForm({ data, onChange, errors }) {
     }
   };
 
-  const addMaterial = () =>
-    onChange('materials', [...(data.materials || []), { name: '', qty: '' }]);
+  // --- Materials ---
+  const addMaterial = () => {
+    onChange('requiredMaterials', [...(data.requiredMaterials || []), '']);
+    onChange('estimatedQuantities', [...(data.estimatedQuantities || []), '']);
+  };
 
   const updateMaterial = (i, field, value) => {
-    const arr = [...(data.materials || [])];
-    arr[i][field] = value;
-    onChange('materials', arr);
+    if (field === 'name') {
+      const arr = [...(data.requiredMaterials || [])];
+      arr[i] = value;
+      onChange('requiredMaterials', arr);
+    } else if (field === 'qty') {
+      const arr = [...(data.estimatedQuantities || [])];
+      arr[i] = value;
+      onChange('estimatedQuantities', arr);
+    }
   };
 
   const removeMaterial = (i) => {
-    const arr = [...(data.materials || [])];
-    arr.splice(i, 1);
-    onChange('materials', arr);
+    const names = [...(data.requiredMaterials || [])];
+    const qtys = [...(data.estimatedQuantities || [])];
+    names.splice(i, 1);
+    qtys.splice(i, 1);
+    onChange('requiredMaterials', names);
+    onChange('estimatedQuantities', qtys);
   };
 
   const tagBase =
@@ -41,24 +52,21 @@ export default function RequirementsForm({ data, onChange, errors }) {
 
   return (
     <div className="space-y-6 text-white">
-      {/* Skills */}
+      {/* Contractor Requirements (textarea instead of skills) */}
       <div>
         <label className="block font-semibold text-slate-300 mb-1">
-          Skills Required <span className="text-red-400">*</span>
+          Contractor Requirements <span className="text-red-400">*</span>
         </label>
-        <div className="flex flex-wrap gap-2">
-          {SKILLS.map(skill => (
-            <button
-              type="button"
-              key={skill}
-              className={`${tagBase} ${data.skills?.includes(skill) ? activeTag : inactiveTag}`}
-              onClick={() => toggleMulti('skills', skill)}
-            >
-              {skill}
-            </button>
-          ))}
-        </div>
-        {errors.skills && <span className="text-red-400 text-xs">{errors.skills}</span>}
+        <textarea
+          className={`${inputBase} w-full h-24 resize-y`}
+          placeholder="Describe the required skills or contractor requirements..."
+          value={data.contractorRequirements || ''}
+          onChange={e => onChange('contractorRequirements', e.target.value)}
+          required
+        />
+        {errors.contractorRequirements && (
+          <span className="text-red-400 text-xs">{errors.contractorRequirements}</span>
+        )}
       </div>
 
       {/* Licenses */}
@@ -87,12 +95,12 @@ export default function RequirementsForm({ data, onChange, errors }) {
           Materials Needed <span className="text-red-400">*</span>
         </label>
         <div className="space-y-2">
-          {(data.materials || []).map((mat, i) => (
+          {(data.requiredMaterials || []).map((mat, i) => (
             <div key={i} className="flex gap-2 items-center">
               <input
                 className={`${inputBase} flex-1`}
                 placeholder="Material Name"
-                value={mat.name}
+                value={mat}
                 onChange={e => updateMaterial(i, 'name', e.target.value)}
                 required
               />
@@ -100,7 +108,7 @@ export default function RequirementsForm({ data, onChange, errors }) {
                 type="number"
                 className={`${inputBase} w-24`}
                 placeholder="Qty"
-                value={mat.qty}
+                value={data.estimatedQuantities?.[i] || ''}
                 onChange={e => updateMaterial(i, 'qty', e.target.value)}
                 required
               />
@@ -121,7 +129,7 @@ export default function RequirementsForm({ data, onChange, errors }) {
             <Plus size={16} /> Add Material
           </button>
         </div>
-        {errors.materials && <span className="text-red-400 text-xs">{errors.materials}</span>}
+        {errors.requiredMaterials && <span className="text-red-400 text-xs">{errors.requiredMaterials}</span>}
       </div>
     </div>
   );

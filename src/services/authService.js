@@ -70,7 +70,7 @@ export const registerContractor = async (contractorData) => {
   try {
     const response = await api.post('/auth/register/contractor', contractorData);
      if (response.data.token) {
-      setAuthCookies(response.data.token, 'supplier',contractorData);
+      setAuthCookies(response.data.token, 'contractor',contractorData);
     }
     return response.data;
   } catch (error) {

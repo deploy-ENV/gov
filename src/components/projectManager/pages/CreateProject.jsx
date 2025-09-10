@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext,useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import StepIndicator from '../components/createProject/StepIndicator';
 import BasicInfoForm from '../components/createProject/BasicInfoForm';
@@ -9,6 +9,7 @@ import OtherSettingsForm from '../components/createProject/OtherSettingsForm';
 import validateProjectForm from '../components/createProject/validateProjectForm';
 import { ProjectContext } from '../projectContext';
 import { createProject } from '../../../services/projectService';
+import Cookies from 'js-cookie';
 export default function CreateProjectForm() {
   const [step, setStep] = useState(0);
    const [userData,setUserData] = useState(null) 
@@ -21,20 +22,28 @@ export default function CreateProjectForm() {
   const [data, setData] = useState({
     title: '',
     description: '',
-    zone: '',
+    address: {
+      street: '',
+      city: '',
+      state: '',
+      zip: '',
+      country: '',
+    },
     startDate: '',
     deadline: '',
     bidDeadline: '',
-    budget: '',
-    skills: [],
+    totalBudget: '',
+    progressSteps: [],
+    contractorRequirements: "",
     licenses: [],
-    materials: [],
+    requiredMaterials: [],
     legal: null,
     blueprints: null,
     boq: null,
     safety: null,
     aiMatch: false,
     comments: '',
+    estimatedQuantities:[],
   });
 
 
@@ -68,17 +77,18 @@ export default function CreateProjectForm() {
     const pmName = userData.name;
 
     const newProject = await createProject(data, pmId, departmentId, pmName);
-
+    // console.log(newProject);
+    
     addProject(newProject);
     setSuccess(true);
 
     // Reset form after submission
     setStep(0);
     setData({
-      title: '', description: '', zone: '', startDate: '', deadline: '',
-      bidDeadline: '', budget: '', skills: [], licenses: [], materials: [],
+      title: '', description: '', address: { street: '', city: '', state: '', zip: '', country: '' }, startDate: '', deadline: '',
+      bidDeadline: '', totalBudget: '',progressSteps: [], contractorRequirements:'', licenses: [], requiredMaterials: [],
       legal: null, blueprints: null, boq: null, safety: null, aiMatch: false,
-      comments: '',
+      comments: '',estimatedQuantities:[],
     });
   } catch (err) {
     console.error("Error creating project:", err);
