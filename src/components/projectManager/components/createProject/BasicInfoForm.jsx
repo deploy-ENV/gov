@@ -1,10 +1,11 @@
 import React from 'react';
+
 const DEPARTMENTS = ['Public Works', 'Education', 'Health', 'Transport'];
 const ZONES = ['North', 'South', 'East', 'West', 'Central'];
 
 export default function BasicInfoForm({ data, onChange, errors }) {
-  const handleAddressChange = (field, value) => {
-    onChange('address', { ...data.address, [field]: value });
+  const handleLocationChange = (field, value) => {
+    onChange('location', { ...data.location, [field]: value });
   };
 
   return (
@@ -25,7 +26,7 @@ export default function BasicInfoForm({ data, onChange, errors }) {
         />
         {errors.title && <span className="text-red-400 text-xs">{errors.title}</span>}
       </div>
-      
+
       {/* Department (disabled) */}
       <div>
         <label className="block font-semibold text-slate-300 mb-1">Department</label>
@@ -54,7 +55,7 @@ export default function BasicInfoForm({ data, onChange, errors }) {
         {errors.description && <span className="text-red-400 text-xs">{errors.description}</span>}
       </div>
 
-      {/* Address Section */}
+      {/* Location Section */}
       <div className="md:col-span-2">
         <h2 className="text-xl font-bold text-cyan-400 mb-4">Address</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -65,16 +66,14 @@ export default function BasicInfoForm({ data, onChange, errors }) {
             </label>
             <input
               className={`w-full p-3 rounded-lg bg-slate-700/50 border border-slate-600 text-white placeholder-slate-400 focus:ring-2 focus:ring-emerald-400/50 ${
-                errors.street ? "border-red-500" : ""
+                errors.street ? 'border-red-500' : ''
               }`}
               placeholder="Enter street address"
-              value={data.address?.street || ''}
-              onChange={(e) => handleAddressChange("street", e.target.value)}
+              value={data.location?.street || ''}
+              onChange={(e) => handleLocationChange('street', e.target.value)}
               required
             />
-            {errors.street && (
-              <span className="text-red-400 text-xs">{errors.street}</span>
-            )}
+            {errors.street && <span className="text-red-400 text-xs">{errors.street}</span>}
           </div>
 
           {/* City */}
@@ -84,16 +83,14 @@ export default function BasicInfoForm({ data, onChange, errors }) {
             </label>
             <input
               className={`w-full p-3 rounded-lg bg-slate-700/50 border border-slate-600 text-white placeholder-slate-400 focus:ring-2 focus:ring-emerald-400/50 ${
-                errors.city ? "border-red-500" : ""
+                errors.city ? 'border-red-500' : ''
               }`}
               placeholder="Enter city"
-              value={data.address?.city || ''}
-              onChange={(e) => handleAddressChange("city", e.target.value)}
+              value={data.location?.city || ''}
+              onChange={(e) => handleLocationChange('city', e.target.value)}
               required
             />
-            {errors.city && (
-              <span className="text-red-400 text-xs">{errors.city}</span>
-            )}
+            {errors.city && <span className="text-red-400 text-xs">{errors.city}</span>}
           </div>
 
           {/* State */}
@@ -103,16 +100,14 @@ export default function BasicInfoForm({ data, onChange, errors }) {
             </label>
             <input
               className={`w-full p-3 rounded-lg bg-slate-700/50 border border-slate-600 text-white placeholder-slate-400 focus:ring-2 focus:ring-emerald-400/50 ${
-                errors.state ? "border-red-500" : ""
+                errors.state ? 'border-red-500' : ''
               }`}
               placeholder="Enter state"
-              value={data.address?.state || ''}
-              onChange={(e) => handleAddressChange("state", e.target.value)}
+              value={data.location?.state || ''}
+              onChange={(e) => handleLocationChange('state', e.target.value)}
               required
             />
-            {errors.state && (
-              <span className="text-red-400 text-xs">{errors.state}</span>
-            )}
+            {errors.state && <span className="text-red-400 text-xs">{errors.state}</span>}
           </div>
 
           {/* Zip Code */}
@@ -123,16 +118,14 @@ export default function BasicInfoForm({ data, onChange, errors }) {
             <input
               type="text"
               className={`w-full p-3 rounded-lg bg-slate-700/50 border border-slate-600 text-white placeholder-slate-400 focus:ring-2 focus:ring-emerald-400/50 ${
-                errors.zip ? "border-red-500" : ""
+                errors.zip ? 'border-red-500' : ''
               }`}
               placeholder="Enter zip code"
-              value={data.address?.zip || ''}
-              onChange={(e) => handleAddressChange("zip", e.target.value)}
+              value={data.location?.zipCode || ''}
+              onChange={(e) => handleLocationChange('zipCode', e.target.value)}
               required
             />
-            {errors.zip && (
-              <span className="text-red-400 text-xs">{errors.zip}</span>
-            )}
+            {errors.zip && <span className="text-red-400 text-xs">{errors.zipCode}</span>}
           </div>
 
           {/* Country */}
@@ -142,16 +135,14 @@ export default function BasicInfoForm({ data, onChange, errors }) {
             </label>
             <input
               className={`w-full p-3 rounded-lg bg-slate-700/50 border border-slate-600 text-white placeholder-slate-400 focus:ring-2 focus:ring-emerald-400/50 ${
-                errors.country ? "border-red-500" : ""
+                errors.country ? 'border-red-500' : ''
               }`}
               placeholder="Enter country"
-              value={data.address?.country || ''}
-              onChange={(e) => handleAddressChange("country", e.target.value)}
+              value={data.location?.country || ''}
+              onChange={(e) => handleLocationChange('country', e.target.value)}
               required
             />
-            {errors.country && (
-              <span className="text-red-400 text-xs">{errors.country}</span>
-            )}
+            {errors.country && <span className="text-red-400 text-xs">{errors.country}</span>}
           </div>
         </div>
       </div>

@@ -117,12 +117,32 @@ const ProjectDetailsPopup = ({ isOpen, onClose, projectId,onInterested }) => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                   <div className="bg-slate-600/30 rounded-lg p-4">
                     <p className="text-xs text-slate-400 mb-1">Department</p>
-                    <p className="text-sm font-medium text-white">{projectData.department}</p>
+                    <p className="text-sm font-medium text-white">{projectData.departmentId}</p>
                   </div>
                   <div className="bg-slate-600/30 rounded-lg p-4">
-                    <p className="text-xs text-slate-400 mb-1">Zone / Region</p>
-                    <p className="text-sm font-medium text-white">{projectData.zone}</p>
-                    <p className="text-xs text-slate-400">{projectData.region}</p>
+                    <p className="text-xs text-slate-400 mb-1">Location</p>
+                    <div className='flex gap-2'>
+                      <p className="text-sm font-medium text-green-300">Street:</p>
+                      <p className="text-sm font-medium text-white">{projectData?.location?.street}</p>
+                    </div>
+                    <div className='flex gap-2'>
+                      <p className="text-sm font-medium text-green-300">City:</p>
+                      <p className="text-sm font-medium text-white">{projectData?.location?.city}</p>
+                    </div>
+                    <div className='flex gap-2'>
+                      <p className="text-sm font-medium text-green-300">State:</p>
+                      <p className="text-sm font-medium text-white">{projectData?.location?.state}</p>
+                    </div>
+                    <div className='flex gap-2'>
+                      <p className="text-sm font-medium text-green-300">Country:</p>
+                      <p className="text-sm font-medium text-white">{projectData?.location?.country}</p>
+                    </div>
+                    <div className='flex gap-2'>
+                      <p className="text-sm font-medium text-green-300">ZipCode:</p>
+                      <p className="text-sm font-medium text-white">{projectData?.location?.zipCode}</p>
+                    </div>
+                    
+                    
                   </div>
                 </div>
                 
@@ -140,7 +160,19 @@ const ProjectDetailsPopup = ({ isOpen, onClose, projectId,onInterested }) => {
                   </div>
                   <h3 className="text-lg font-semibold text-white">Timeline & Budget</h3>
                 </div>
-                
+                <div className='mb-3'>
+                  {projectData.progressSteps.map((phase, index) => (
+                    <div key={index} className="bg-slate-600/30 rounded-lg p-4">
+                      <p className="text-xs text-slate-400 mb-1">Phase {index + 1}</p>
+                      <p className="text-sm font-medium text-white">Title: {phase.title}</p>
+                      <p className="text-sm font-medium text-white">Description: {phase.description}</p>
+                      <p className="text-sm font-medium text-white">Due Date: {phase.dueDate}</p>
+                     
+                    </div>
+                  ))
+
+                  }
+                </div>                
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                   <div className="bg-slate-600/30 rounded-lg p-4">
                     <p className="text-xs text-slate-400 mb-1">Project Deadline</p>
@@ -205,9 +237,9 @@ const ProjectDetailsPopup = ({ isOpen, onClose, projectId,onInterested }) => {
                   <div>
                     <h4 className="text-sm font-medium text-slate-300 mb-3">Estimated Quantities</h4>
                     <div className="space-y-2">
-                      {projectData?.requiredMaterials ?
+                      {projectData?.estimatedQuantities ?
                       <div>
-                        {projectData?.requiredMaterials.map((material, index) => (
+                        {projectData?.estimatedQuantities.map((material, index) => (
                         <div key={index} className="flex items-start gap-2">
                           <Settings className="w-4 h-4 text-cyan-400 mt-0.5 flex-shrink-0" />
                           <span className="text-sm text-slate-300">{material}</span>

@@ -8,7 +8,7 @@ export default function TimelineBudgetForm({ data, onChange, errors }) {
 
   // Helper functions for phases management
   const addPhase = () => {
-    const newPhases = [...(data.progressSteps || []), { name: "", description: "", deadline: "" }];
+    const newPhases = [...(data.progressSteps || []), { title: "", description: "", dueDate: "" }];
     onChange("progressSteps", newPhases);
   };
 
@@ -32,13 +32,13 @@ export default function TimelineBudgetForm({ data, onChange, errors }) {
           </label>
           <input
             type="date"
-            className={`${inputBase} ${errors.startDate ? "border-red-400" : ""}`}
-            value={data.startDate}
-            onChange={(e) => onChange("startDate", e.target.value)}
+            className={`${inputBase} ${errors.expectedStartDate ? "border-red-400" : ""}`}
+            value={data.expectedStartDate}
+            onChange={(e) => onChange("expectedStartDate", e.target.value)}
             required
           />
-          {errors.startDate && (
-            <span className="text-red-400 text-xs">{errors.startDate}</span>
+          {errors.expectedStartDate && (
+            <span className="text-red-400 text-xs">{errors.expectedStartDate}</span>
           )}
         </div>
 
@@ -64,13 +64,13 @@ export default function TimelineBudgetForm({ data, onChange, errors }) {
           </label>
           <input
             type="date"
-            className={`${inputBase} ${errors.bidDeadline ? "border-red-400" : ""}`}
-            value={data.bidDeadline}
-            onChange={(e) => onChange("bidDeadline", e.target.value)}
+            className={`${inputBase} ${errors.bidSubmissionDeadline ? "border-red-400" : ""}`}
+            value={data.bidSubmissionDeadline}
+            onChange={(e) => onChange("bidSubmissionDeadline", e.target.value)}
             required
           />
-          {errors.bidDeadline && (
-            <span className="text-red-400 text-xs">{errors.bidDeadline}</span>
+          {errors.bidSubmissionDeadline && (
+            <span className="text-red-400 text-xs">{errors.bidSubmissionDeadline}</span>
           )}
         </div>
 
@@ -104,8 +104,8 @@ export default function TimelineBudgetForm({ data, onChange, errors }) {
                 <input
                   className={`${inputBase} flex-1 ${errors.phases ? "border-red-400" : ""}`}
                   placeholder="Phase Name"
-                  value={phase.name}
-                  onChange={(e) => updatePhase(i, "name", e.target.value)}
+                  value={phase.title}
+                  onChange={(e) => updatePhase(i, "title", e.target.value)}
                   required
                 />
                 <input
@@ -118,8 +118,8 @@ export default function TimelineBudgetForm({ data, onChange, errors }) {
                 <input
                   type="date"
                   className={`${inputBase} ${errors.phases ? "border-red-400" : ""}`}
-                  value={phase.deadline}
-                  onChange={(e) => updatePhase(i, "deadline", e.target.value)}
+                  value={phase.dueDate}
+                  onChange={(e) => updatePhase(i, "dueDate", e.target.value)}
                   required
                 />
               </div>

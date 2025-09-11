@@ -10,56 +10,56 @@ export default function validateProjectForm(step, data) {
       errors.description = "Project description is required";
     }
 
-    // Address validation
-    if (!data.address?.street || data.address.street.trim().length === 0) {
+    // Location validation
+    if (!data.location?.street || data.location.street.trim().length === 0) {
       errors.street = "Street address is required";
     }
-    if (!data.address?.city || data.address.city.trim().length === 0) {
+    if (!data.location?.city || data.location.city.trim().length === 0) {
       errors.city = "City is required";
     }
-    if (!data.address?.state || data.address.state.trim().length === 0) {
+    if (!data.location?.state || data.location.state.trim().length === 0) {
       errors.state = "State is required";
     }
-    if (!data.address?.zip || data.address.zip.trim().length === 0) {
+    if (!data.location?.zipCode || data.location.zipCode.trim().length === 0) {
       errors.zip = "Zip code is required";
     }
-    if (!data.address?.country || data.address.country.trim().length === 0) {
+    if (!data.location?.country || data.location.country.trim().length === 0) {
       errors.country = "Country is required";
     }
   }
 
   if (step === 1) {
     // Timeline and budget validation
-    if (!data.startDate) {
-      errors.startDate = "Start date is required";
+    if (!data.expectedStartDate) {
+      errors.expectedStartDate = "Expected start date is required";
     }
     if (!data.deadline) {
       errors.deadline = "Deadline is required";
     }
-    if (!data.bidDeadline) {
-      errors.bidDeadline = "Bid deadline is required";
+    if (!data.bidSubmissionDeadline) {
+      errors.bidSubmissionDeadline = "Bid submission deadline is required";
     }
     if (!data.totalBudget || data.totalBudget <= 0) {
       errors.totalBudget = "Total budget is required and must be greater than 0";
     }
 
-    // Phases validation (object array)
+    // Phases validation
     if (!data.progressSteps || data.progressSteps.length === 0) {
       errors.phases = "At least one phase is required";
     } else {
       const invalidPhases = [];
 
       data.progressSteps.forEach((phase, index) => {
-        if (!phase.name || phase.name.trim().length < 2) {
+        if (!phase.title || phase.title.trim().length < 2) {
           invalidPhases.push(`Phase ${index + 1} name is too short`);
         }
-        if (phase.name && phase.name.trim().length > 50) {
+        if (phase.title && phase.title.trim().length > 50) {
           invalidPhases.push(`Phase ${index + 1} name cannot exceed 50 characters`);
         }
         if (!phase.description || phase.description.trim().length < 5) {
           invalidPhases.push(`Phase ${index + 1} description is too short`);
         }
-        if (!phase.deadline) {
+        if (!phase.dueDate) {
           invalidPhases.push(`Phase ${index + 1} deadline is required`);
         }
       });
@@ -79,27 +79,27 @@ export default function validateProjectForm(step, data) {
     }
 
     // Date validation - ensure dates are logical
-    if (data.startDate && data.deadline) {
-      const start = new Date(data.startDate);
+    if (data.expectedStartDate && data.deadline) {
+      const start = new Date(data.expectedStartDate);
       const end = new Date(data.deadline);
       if (start >= end) {
         errors.deadline = "Deadline must be after start date";
       }
     }
 
-    if (data.bidDeadline && data.startDate) {
-      const bid = new Date(data.bidDeadline);
-      const start = new Date(data.startDate);
+    if (data.bidSubmissionDeadline && data.expectedStartDate) {
+      const bid = new Date(data.bidSubmissionDeadline);
+      const start = new Date(data.expectedStartDate);
       if (bid >= start) {
-        errors.bidDeadline = "Bid deadline must be before start date";
+        errors.bidSubmissionDeadline = "Bid deadline must be before start date";
       }
     }
 
-    if (data.bidDeadline && data.deadline) {
-      const bid = new Date(data.bidDeadline);
+    if (data.bidSubmissionDeadline && data.deadline) {
+      const bid = new Date(data.bidSubmissionDeadline);
       const deadline = new Date(data.deadline);
       if (bid >= deadline) {
-        errors.bidDeadline = "Bid deadline must be before project deadline";
+        errors.bidSubmissionDeadline = "Bid deadline must be before project deadline";
       }
     }
 
@@ -107,26 +107,23 @@ export default function validateProjectForm(step, data) {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
-    if (data.startDate) {
-      const start = new Date(data.startDate);
+    if (data.expectedStartDate) {
+      const start = new Date(data.expectedStartDate);
       if (start < today) {
-        errors.startDate = "Start date cannot be in the past";
+        errors.expectedStartDate = "Start date cannot be in the past";
       }
     }
 
-    if (data.bidDeadline) {
-      const bid = new Date(data.bidDeadline);
+    if (data.bidSubmissionDeadline) {
+      const bid = new Date(data.bidSubmissionDeadline);
       if (bid < today) {
-        errors.bidDeadline = "Bid deadline cannot be in the past";
+        errors.bidSubmissionDeadline = "Bid deadline cannot be in the past";
       }
     }
   }
 
   if (step === 2) {
-    if (
-      !data.contractorRequirements ||
-      data.contractorRequirements.trim().length === 0
-    ) {
+    if (!data.contractorRequirements || data.contractorRequirements.trim().length === 0) {
       errors.contractorRequirements = "Contractor requirements are required";
     }
 
@@ -143,19 +140,14 @@ export default function validateProjectForm(step, data) {
           errors.materials = "Material name cannot be empty";
           materialError = true;
         }
-        if (
-          !data.estimatedQuantities[index] ||
-          data.estimatedQuantities[index] <= 0
-        ) {
+        if (!data.estimatedQuantities[index] || data.estimatedQuantities[index] <= 0) {
           errors.materials = "All material quantities must be greater than 0";
           materialError = true;
         }
       });
 
       if (!materialError) {
-        const materialNames = data.requiredMaterials.map(m =>
-          m.trim().toLowerCase()
-        );
+        const materialNames = data.requiredMaterials.map(m => m.trim().toLowerCase());
         const uniqueMaterials = [...new Set(materialNames)];
         if (materialNames.length !== uniqueMaterials.length) {
           errors.materials = "Material names must be unique";

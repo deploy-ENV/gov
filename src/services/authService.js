@@ -36,8 +36,11 @@ export const registerGovt = async (userData,role) => {
     // const response = await api.post('/auth/register/govt', userData);
     // return response.data;
   } catch (error) {
-    throw error.response?.data || error.message;
-  }
+    console.log(userData,role,error)
+    
+  console.error('Signup API Error:', error.response?.data || error.message);
+  throw error.response?.data || error.message;
+}
 };
 
 // Login Government Admin
@@ -60,9 +63,12 @@ export const loginGovt = async (credentials,role) => {
     }
     
     
-  } catch (error) {
-    throw error.response?.data || error.message;
-  }
+  }catch (error) {
+    console.log(credentials,role,error)
+
+  console.error('Signup API Error:', error.response?.data || error.message);
+  throw error.response?.data || error.message;
+}
 };
 
 // Register Contractor
@@ -74,8 +80,10 @@ export const registerContractor = async (contractorData) => {
     }
     return response.data;
   } catch (error) {
-    throw error.response?.data || error.message;
-  }
+    console.log(contractorData,error)
+  console.error('Signup API Error:', error.response?.data || error.message);
+  throw error.response?.data || error.message;
+}
 };
 
 export const registerSupplier = async (supplierData) => {
@@ -86,8 +94,10 @@ export const registerSupplier = async (supplierData) => {
     }
     return response.data;
   } catch (error) {
-    throw error.response?.data || error.message;
-  }
+    console.log(supplierData,error)
+  console.error('Signup API Error:', error.response?.data || error.message);
+  throw error.response?.data || error.message;
+}
 };
 
 // Login Contractor
