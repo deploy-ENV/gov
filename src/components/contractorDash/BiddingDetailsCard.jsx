@@ -160,7 +160,7 @@ const ProjectDetailsPopup = ({ isOpen, onClose, projectId,onInterested }) => {
                   </div>
                   <h3 className="text-lg font-semibold text-white">Timeline & Budget</h3>
                 </div>
-                <div className='mb-3'>
+                <div className='mb-3 flex flex-col gap-4'>
                   {projectData.progressSteps.map((phase, index) => (
                     <div key={index} className="bg-slate-600/30 rounded-lg p-4">
                       <p className="text-xs text-slate-400 mb-1">Phase {index + 1}</p>
