@@ -70,6 +70,7 @@ const projectsDashboardSlice = createSlice({
     showBiddingForm: (state) => {
       state.showBiddingForm = true;
       state.showViewDetails = false;
+      
     },
     hideBiddingForm: (state) => {
       state.showBiddingForm = false;

@@ -104,7 +104,7 @@ console.log("projects",projects);
     { label: '₹1,00,000 - ₹2,00,000', value: '100000-200000' },
     { label: '₹2,00,000+', value: '200000+' }
   ];
-
+console.log('isBiddingFormVisible:', isBiddingFormVisible);
   const filteredProjects = projects
   .filter(project => {
     
@@ -374,7 +374,7 @@ console.log("projects",projects);
       {/* Bidding Form Modal */}
       {isBiddingFormVisible && (
         <BiddingFormCard
-          project={viewProject}
+          projectId={viewProject}
           show={true}
           onClose={() => dispatch(hideBiddingForm())}
         />

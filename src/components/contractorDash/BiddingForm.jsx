@@ -1,4 +1,4 @@
-import React, { useState,useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import api from '../../services/api';
 import {
   FileText,
@@ -24,11 +24,16 @@ const BiddingFormCard = ({ projectId, show, onClose }) => {
     projectTime: '',
     budget: '',
     workers: '',
-    workPlan: null,
+    workPlan: '',
     experience: '',
     supportingDocs: null
   });
   const [projectData, setProjectData] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  // All hooks must be called before any conditional returns
+  const contractorId = useSelector(state => state.projectsDashboard.profile.id);
+
   useEffect(() => {
     const fetchProject = async () => {
       if (!projectId) return;
@@ -48,13 +53,8 @@ const BiddingFormCard = ({ projectId, show, onClose }) => {
       fetchProject();
     }
   }, [projectId, show]);
-  if (!show) return null;
-  if(!projectData) return null;
-
+  console.log("projectData",projectData);
   
-  console.log(projectData);
-  
-
   const handleInputChange = (field, value) => {
     setFormData(prev => ({
       ...prev,
@@ -68,26 +68,44 @@ const BiddingFormCard = ({ projectId, show, onClose }) => {
       [field]: file
     }));
   };
-  const contractorId = useSelector(state => state.projectsDashboard.profile.id)
- const handleSubmit = async () => {
-  try {
-    const response = await api.post('/bids', {
-      projectId: projectData.id, 
-      contractorId: contractorId, 
-      bidAmount: Number(formData.budget),
-      timeline: formData.projectTime,
-      workers: Number(formData.workers),
-      workPlan: formData.workPlan,
-      experience: formData.experience
-    });
 
-    console.log('Bid submitted successfully:', response.data);
-    onClose();
-  } catch (error) {
-    console.error('Error submitting bid:', error);
-    alert('Bid submission failed. Please check your input.');
+  // Conditional returns after all hooks
+  if (!show) return null;
+  
+  // Show loading state while fetching project data
+  if (loading) {
+    return (
+      <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div className="bg-slate-800/95 backdrop-blur-xl rounded-2xl border border-slate-700/50 p-6">
+          <div className="text-white text-center">Loading project details...</div>
+        </div>
+      </div>
+    );
   }
-};
+  
+  if (!projectData) return null;
+
+  console.log(projectData);
+
+  const handleSubmit = async () => {
+    try {
+      const response = await api.post('/bids', {
+        projectId: projectData.id, 
+        contractorId: contractorId, 
+        bidAmount: Number(formData.budget),
+        timeline: formData.projectTime,
+        workers: Number(formData.workers),
+        workPlan: formData.workPlan,
+        experience: formData.experience
+      });
+
+      console.log('Bid submitted successfully:', response.data);
+      onClose();
+    } catch (error) {
+      console.error('Error submitting bid:', error);
+      alert('Bid submission failed. Please check your input.');
+    }
+  };
 
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
@@ -121,27 +139,52 @@ const BiddingFormCard = ({ projectId, show, onClose }) => {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="bg-slate-700/30 rounded-lg p-4">
               <div className="flex items-center gap-2 mb-2">
                 <FileText className="w-4 h-4 text-emerald-400" />
                 <span className="text-xs text-slate-400 uppercase">Title</span>
               </div>
-              <p className="text-sm font-medium text-white">{projectData.name}</p>
+              <p className="text-sm font-medium text-white">{projectData.title}</p>
             </div>
-            <div className="bg-slate-700/30 rounded-lg p-4">
-              <div className="flex items-center gap-2 mb-2">
-                <MapPin className="w-4 h-4 text-emerald-400" />
-                <span className="text-xs text-slate-400 uppercase">Region</span>
-              </div>
-              <p className="text-sm font-medium text-white">{projectData.region}</p>
-            </div>
+           
             <div className="bg-slate-700/30 rounded-lg p-4">
               <div className="flex items-center gap-2 mb-2">
                 <Building className="w-4 h-4 text-emerald-400" />
                 <span className="text-xs text-slate-400 uppercase">Department</span>
               </div>
-              <p className="text-sm font-medium text-white">{projectData.department}</p>
+              <p className="text-sm font-medium text-white">{projectData.departmentId}</p>
+            </div>
+             <div className="bg-slate-700/30 rounded-lg p-4 col-span-2">
+              <div className="flex items-center gap-2 mb-2">
+                <MapPin className="w-4 h-4 text-emerald-400" />
+                <span className="text-xs text-slate-400 uppercase">Location</span>
+              </div>
+              <div className="bg-slate-600/30 rounded-lg p-4">
+                                  
+                                  <div className='flex gap-2'>
+                                    <p className="text-sm font-medium text-green-300">Street:</p>
+                                    <p className="text-sm font-medium text-white">{projectData?.location?.street}</p>
+                                  </div>
+                                  <div className='flex gap-2'>
+                                    <p className="text-sm font-medium text-green-300">City:</p>
+                                    <p className="text-sm font-medium text-white">{projectData?.location?.city}</p>
+                                  </div>
+                                  <div className='flex gap-2'>
+                                    <p className="text-sm font-medium text-green-300">State:</p>
+                                    <p className="text-sm font-medium text-white">{projectData?.location?.state}</p>
+                                  </div>
+                                  <div className='flex gap-2'>
+                                    <p className="text-sm font-medium text-green-300">Country:</p>
+                                    <p className="text-sm font-medium text-white">{projectData?.location?.country}</p>
+                                  </div>
+                                  <div className='flex gap-2'>
+                                    <p className="text-sm font-medium text-green-300">ZipCode:</p>
+                                    <p className="text-sm font-medium text-white">{projectData?.location?.zipCode}</p>
+                                  </div>
+                                  
+                                  
+                                </div>
             </div>
           </div>
         </div>
@@ -203,6 +246,7 @@ const BiddingFormCard = ({ projectId, show, onClose }) => {
               rows={4}
               className="mt-2 w-full bg-slate-700/50 border border-slate-600 rounded-lg text-white px-4 py-3 placeholder-slate-400"
               placeholder="Describe your work plan..."
+              value={formData.workPlan}
               onChange={(e) => handleInputChange('workPlan', e.target.value)}
             />
           </div>
