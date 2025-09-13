@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import ProjectDetailsPopup from './BiddingDetailsCard';
 import BiddingFormCard from './BiddingForm';
 import Cookies from "js-cookie";
+import CountdownTimer from './CountdownTimer';
 import {
   Search,
   Filter,
@@ -73,7 +74,7 @@ const AvailableProjects = () => {
   //       navigate('/'); 
   //     }
   // }, [dashboardMode, navigate]);
-
+  
 const toggleProfileDropdown = () => {
     setIsProfileOpen(!isProfileOpen);
   };
@@ -91,6 +92,7 @@ const toggleProfileDropdown = () => {
         
       } finally {
         setLoading(false);
+       
       }
     };
 
@@ -319,7 +321,7 @@ console.log('isBiddingFormVisible:', isBiddingFormVisible);
                       <Clock className="w-4 h-4 text-yellow-400" />
                       <span className="text-xs text-slate-400">Time Left</span>
                     </div>
-                    <p className="text-sm font-bold text-yellow-400">{project?.timeLeft}</p>
+                    <CountdownTimer deadline={project?.bidSubmissionDeadline} />
                   </div>
                 </div>
 
