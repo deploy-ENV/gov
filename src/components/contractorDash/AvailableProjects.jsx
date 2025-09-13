@@ -296,11 +296,11 @@ console.log('isBiddingFormVisible:', isBiddingFormVisible);
                 <div className="space-y-3 mb-4">
                   <div className="flex items-center gap-2">
                     <MapPin className="w-4 h-4 text-slate-400" />
-                    <span className="text-sm text-slate-300">{project?.region}, {project?.zone}</span>
+                    <span className="text-sm text-slate-300">{project?.location?.street}, {project?.location?.city}, {project?.location?.state}, {project?.location?.country}, {project?.location?.zipCode}</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <Briefcase className="w-4 h-4 text-slate-400" />
-                    <span className="text-sm text-slate-300">{project?.department}</span>
+                    <span className="text-sm text-slate-300">{project?.departmentId}</span>
                   </div>
                 </div>
 
