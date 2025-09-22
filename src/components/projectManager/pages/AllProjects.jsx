@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ProjectContext } from '../projectContext';
 import Cookies from "js-cookie";
 
-import { getMyProjects ,deleteProjectById} from '../../../services/projectService';
+import { getMyProjects ,deleteProjectById,getNearestSupervisor } from '../../../services/projectService';
 import { getBidsByProject } from '../../../services/bidService';
 
 
@@ -78,6 +78,202 @@ function ProjectCard({ project, onClick,onDelete }) {
         </button>
       </div>
     </motion.div>
+  );
+}
+
+// Supervisor Selection Modal
+function SupervisorSelectionModal({ bid, project, onClose, onConfirm }) {
+  const [selectedSupervisor, setSelectedSupervisor] = useState('');
+  const [confirming, setConfirming] = useState(false);
+  const [supervisors, setSupervisors] = useState([]);
+
+  const handleFetch = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const data = await getNearestSupervisor(zone);
+      setSupervisors(data);
+    } catch (err) {
+      setError(err.message || "Failed to fetch supervisors");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    handleFetch();
+  }, []);
+
+  // Dummy supervisors data - replace with actual API call
+  const DUMMY_SUPERVISORS = [
+    { id: 1, name: 'Rajesh Kumar', experience: 8, region: 'North', rating: 4.7, phone: '+91-9876543210' },
+    { id: 2, name: 'Priya Sharma', experience: 6, region: 'South', rating: 4.5, phone: '+91-9876543211' },
+    { id: 3, name: 'Amit Singh', experience: 10, region: 'East', rating: 4.8, phone: '+91-9876543212' },
+    { id: 4, name: 'Sunita Patel', experience: 5, region: 'West', rating: 4.3, phone: '+91-9876543213' },
+    { id: 5, name: 'Vikram Gupta', experience: 7, region: 'Central', rating: 4.6, phone: '+91-9876543214' }
+  ];
+
+  const handleConfirmAssignment = async () => {
+    if (!selectedSupervisor) return;
+    
+    setConfirming(true);
+    
+    // Simulate API call delay
+    setTimeout(() => {
+      const supervisor = DUMMY_SUPERVISORS.find(s => s.id === Number(selectedSupervisor));
+      onConfirm({
+        bid,
+        supervisor,
+        project
+      });
+      setConfirming(false);
+    }, 1000);
+  };
+
+  const contractorName = bid.contractorName || bid.contractor_name || 'Unknown Contractor';
+  const bidAmount = bid.bidAmount || bid.bid_amount || bid.amount || 0;
+
+  return (
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+      <div className="w-full max-w-2xl bg-slate-800/95 backdrop-blur-xl rounded-2xl border border-slate-700/50 p-6 relative">
+        
+        {/* Close Button */}
+        <button
+          onClick={onClose}
+          className="absolute top-4 right-4 p-2 rounded hover:bg-slate-700/50"
+        >
+          <X className="w-6 h-6 text-slate-400" />
+        </button>
+
+        {/* Header */}
+        <div className="mb-6">
+          <h1 className="text-2xl font-bold bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-transparent mb-2">
+            Assign Supervisor
+          </h1>
+          <p className="text-slate-400">Complete the project assignment process</p>
+        </div>
+
+        {/* Assignment Summary */}
+        <div className="bg-slate-700/30 rounded-xl p-4 mb-6 border border-slate-600/30">
+          <h3 className="text-lg font-bold text-white mb-3">Assignment Summary</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+            <div>
+              <span className="text-slate-400">Project:</span>
+              <p className="text-white font-medium">{project.title}</p>
+            </div>
+            <div>
+              <span className="text-slate-400">Selected Contractor:</span>
+              <p className="text-emerald-400 font-medium">{contractorName}</p>
+            </div>
+            <div>
+              <span className="text-slate-400">Bid Amount:</span>
+              <p className="text-white font-medium">₹{bidAmount.toLocaleString()}</p>
+            </div>
+            <div>
+              <span className="text-slate-400">Timeline:</span>
+              <p className="text-white font-medium">{bid.timeline || bid.duration || 'TBD'} days</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Supervisor Selection */}
+        <div className="mb-6">
+          <label className="text-sm font-medium text-white flex items-center gap-2 mb-3">
+            <User className="w-4 h-4 text-emerald-400" />
+            Select Project Supervisor
+          </label>
+          <select
+            className="w-full bg-slate-700/50 border border-slate-600 rounded-lg text-white px-4 py-3 focus:outline-none focus:border-cyan-400 transition"
+            value={selectedSupervisor}
+            onChange={e => setSelectedSupervisor(e.target.value)}
+            disabled={supervisors.length === 0} // disable if no supervisors
+          >
+            {supervisors.length === 0 ? (
+              <option value="" disabled>
+                No supervisors available
+              </option>
+            ) : (
+              <>
+                <option value="" disabled>
+                  Choose a supervisor...
+                </option>
+                {supervisors.map(supervisor => (
+                  <option key={supervisor.id} value={supervisor.id}>
+                    {supervisor.name} - {supervisor.experience} yrs exp (★{supervisor.rating})
+                  </option>
+                ))}
+              </>
+            )}
+          </select>
+        </div>
+
+
+        {/* Selected Supervisor Details */}
+        {selectedSupervisor && (
+          <div className="bg-slate-700/30 rounded-xl p-4 mb-6 border border-slate-600/30">
+            {(() => {
+              const supervisor = DUMMY_SUPERVISORS.find(s => s.id === Number(selectedSupervisor));
+              return supervisor ? (
+                <div>
+                  <h4 className="text-lg font-bold text-white mb-2">Selected Supervisor Details</h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
+                    <div className="flex items-center gap-2">
+                      <User className="w-4 h-4 text-cyan-400" />
+                      <span className="text-slate-400">Name:</span>
+                      <span className="text-white font-medium">{supervisor.name}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Award className="w-4 h-4 text-purple-400" />
+                      <span className="text-slate-400">Experience:</span>
+                      <span className="text-white font-medium">{supervisor.experience} years</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Star className="w-4 h-4 text-yellow-400 fill-current" />
+                      <span className="text-slate-400">Rating:</span>
+                      <span className="text-white font-medium">{supervisor.rating}/5</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Phone className="w-4 h-4 text-emerald-400" />
+                      <span className="text-slate-400">Contact:</span>
+                      <span className="text-white font-medium">{supervisor.phone}</span>
+                    </div>
+                  </div>
+                </div>
+              ) : null;
+            })()}
+          </div>
+        )}
+
+        {/* Action Buttons */}
+        <div className="flex gap-4">
+          <button
+            onClick={onClose}
+            className="px-6 py-3 bg-slate-700/50 text-slate-300 rounded-lg hover:bg-slate-600/50 transition"
+            disabled={confirming}
+          >
+            Cancel
+          </button>
+          
+          <button 
+            onClick={handleConfirmAssignment}
+            disabled={!selectedSupervisor || confirming}
+            className="flex-1 bg-gradient-to-r from-emerald-400 to-cyan-400 text-slate-900 font-semibold py-3 px-6 rounded-lg hover:from-emerald-500 hover:to-cyan-500 transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+          >
+            {confirming ? (
+              <>
+                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-slate-900"></div>
+                Assigning...
+              </>
+            ) : (
+              <>
+                <CheckCircle className="w-5 h-5" />
+                Confirm Assignment
+              </>
+            )}
+          </button>
+        </div>
+      </div>
+    </div>
   );
 }
 
@@ -271,7 +467,7 @@ function BidDetailsModal({ bid, project, onClose, onAcceptBid }) {
                   <div className="mt-2 bg-slate-700/50 border border-slate-600 rounded-lg p-4">
                     {bid[field] ? (
                       <div className="flex items-center gap-3">
-                        <File className="w-5 h-5 text-emerald-400" />
+                        <FileText className="w-5 h-5 text-emerald-400" />
                         <div>
                           <p className="text-sm font-medium text-white">Document uploaded</p>
                           <p className="text-xs text-slate-400">Available for review</p>
@@ -310,7 +506,7 @@ function BidDetailsModal({ bid, project, onClose, onAcceptBid }) {
                 <div className="mt-2 bg-slate-700/50 border border-slate-600 rounded-lg p-4">
                   {bid.boq || bid.proposal ? (
                     <div className="flex items-center gap-3">
-                      <File className="w-5 h-5 text-emerald-400" />
+                      <FileText className="w-5 h-5 text-emerald-400" />
                       <div>
                         <p className="text-sm font-medium text-white">BOQ Document uploaded</p>
                         <p className="text-xs text-slate-400">Available for download</p>
@@ -484,14 +680,13 @@ function BidCard({ bid, index, project, onViewDetails, onAcceptBid }) {
 }
 
 // Full Page Project Bids View
-function ProjectBidsView({ project, onBack }) {
+function ProjectBidsView({ project, onBack, onProjectUpdate }) {
   const [bids, setBids] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedBid, setSelectedBid] = useState(null);
-  const [contractor, setContractor] = useState(null);
-  const [supplier, setSupplier] = useState(null);
-  const [supervisor, setSupervisor] = useState(null);
+  const [showSupervisorModal, setShowSupervisorModal] = useState(false);
+  const [acceptingBid, setAcceptingBid] = useState(null);
 
   const fetchProjectBids = async (projectId) => {
     try {
@@ -518,7 +713,7 @@ function ProjectBidsView({ project, onBack }) {
   };
 
   const getDummyBids = () => [
-    
+   
   ];
 
   useEffect(() => {
@@ -532,9 +727,32 @@ function ProjectBidsView({ project, onBack }) {
   };
 
   const handleAcceptBid = (bid) => {
-    setContractor(bid.contractorId);
-    
-    
+    setAcceptingBid(bid);
+    setSelectedBid(null); // Close bid details modal
+    setShowSupervisorModal(true); // Show supervisor selection modal
+  };
+
+  const handleSupervisorAssignment = (assignmentData) => {
+    // Update project with new assignment
+    const updatedProject = {
+      ...project,
+      status: 'Ongoing',
+      contractor: assignmentData.bid.contractorName,
+      supervisor: assignmentData.supervisor.name,
+      budgetUsed: assignmentData.bid.bidAmount
+    };
+
+    // Call parent update function if available
+    if (onProjectUpdate) {
+      onProjectUpdate(updatedProject);
+    }
+
+    // Close modals
+    setShowSupervisorModal(false);
+    setAcceptingBid(null);
+
+    // Show success message or redirect
+    console.log('Project assigned successfully:', assignmentData);
   };
 
   return (
@@ -625,6 +843,19 @@ function ProjectBidsView({ project, onBack }) {
           project={project}
           onClose={() => setSelectedBid(null)}
           onAcceptBid={handleAcceptBid}
+        />
+      )}
+
+      {/* Supervisor Selection Modal */}
+      {showSupervisorModal && acceptingBid && (
+        <SupervisorSelectionModal
+          bid={acceptingBid}
+          project={project}
+          onClose={() => {
+            setShowSupervisorModal(false);
+            setAcceptingBid(null);
+          }}
+          onConfirm={handleSupervisorAssignment}
         />
       )}
     </div>
@@ -766,6 +997,15 @@ export default function AllProjects() {
     setSelectedProject(null); // Return to projects list
   };
 
+  const handleProjectUpdate = (updatedProject) => {
+    setDynamicProjects(prev =>
+      prev.map(p =>
+        p.id === updatedProject.id ? updatedProject : p
+      )
+    );
+    setSelectedProject(updatedProject); // Update the selected project as well
+  };
+
   const handleDeleteProject = async (projectId) => {
       try {
       await deleteProjectById(projectId);
@@ -799,6 +1039,7 @@ export default function AllProjects() {
       <ProjectBidsView 
         project={selectedProject} 
         onBack={handleBackToProjects}
+        onProjectUpdate={handleProjectUpdate}
       />
     );
   }
@@ -851,3 +1092,4 @@ export default function AllProjects() {
     </div>
   );
 }
+

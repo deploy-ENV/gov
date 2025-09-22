@@ -30,7 +30,6 @@ export const getMyProjects = async (pmId) => {
         Authorization: `Bearer ${Cookies.get("token")}`
       }
     });
-
     return response.data;
   } catch (error) {
     console.error("Error fetching projects:", error);
@@ -41,22 +40,48 @@ export const getMyProjects = async (pmId) => {
 // Get Project by ID
 export const getProjectById = async (projectId) => {
   try {
-    const response = await api.get(`/projects/${projectId}`);
+    const response = await api.get(`/projects/${projectId}`, {
+      headers: {
+        Authorization: `Bearer ${Cookies.get("token")}`
+      }
+    });
     return response.data;
   } catch (error) {
     throw error.response?.data || error.message;
   }
 };
 
-// Finalize Contractor & Supervisor
-export const finalizeProjectTeam = async (projectId, contractorId, supervisorId) => {
+// Fetch Nearest Supervisor by Project Location
+export const getNearestSupervisor = async (zone) => {
   try {
-    const response = await api.post(`/projects/${projectId}/finalize`, {
-      contractorId,
-      supervisorId
+    const response = await api.get('/projects/supervisors/nearest', {
+      params: { zone },
+      headers: {
+        Authorization: `Bearer ${Cookies.get("token")}`
+      }
     });
     return response.data;
   } catch (error) {
+    console.error("Error fetching nearest supervisor:", error);
+    throw error.response?.data || error.message;
+  }
+};
+
+// Move Project to Execution / Finalize Contractor & Supervisor
+export const finalizeProjectTeam = async (projectId, contractorId, supervisorId) => {
+  try {
+    const response = await api.post(
+      `/projects/${projectId}/finalize/contractor/${contractorId}/supervisor/${supervisorId}`,
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${Cookies.get("token")}`
+        }
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error finalizing project team:", error);
     throw error.response?.data || error.message;
   }
 };
@@ -69,7 +94,6 @@ export const getAllProjects = async () => {
         Authorization: `Bearer ${Cookies.get("token")}`
       }
     });
-   
     return response.data;
   } catch (error) {
     console.error("Error fetching projects:", error);
@@ -80,7 +104,6 @@ export const getAllProjects = async () => {
 // Delete Project by ID (PM)
 export const deleteProjectById = async (projectId) => {
   try {
-    
     const response = await api.delete(`/projects/${projectId}`, {
       headers: {
         Authorization: `Bearer ${Cookies.get("token")}`
