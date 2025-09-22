@@ -20,7 +20,7 @@ import {
   Trash2
 } from 'lucide-react';
 import { useSelector } from 'react-redux';
-
+import Cookies from "js-cookie";
 const BiddingFormCard = ({ projectId, show, onClose }) => {
   const [formData, setFormData] = useState({
     projectTime: '',
@@ -41,8 +41,13 @@ const BiddingFormCard = ({ projectId, show, onClose }) => {
   const [projectData, setProjectData] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  // All hooks must be called before any conditional returns
-  const contractorId = useSelector(state => state.projectsDashboard.profile.id);
+  const [data,setData] = useState(null) 
+    useEffect(() => {
+      setData(JSON.parse(Cookies.get("userData")))
+    }, []);
+  const contractorId = data?.id;
+  const contractorName = data?.username;
+  console.log("contractorId",data);
 
   useEffect(() => {
     const fetchProject = async () => {
@@ -165,28 +170,40 @@ const BiddingFormCard = ({ projectId, show, onClose }) => {
   const handleSubmit = async () => {
     try {
       // Create FormData for file uploads
-      const submitData = new FormData();
+      const submitData = {
+        projectId: projectData.id,
+        contractorId: contractorId,
+        contractorName: contractorName,
+        bidAmount: formData.budget,
+        timelineEstimate: formData.projectTime,
+        // workers: formData.workers,
+        materialsPlan: formData.workPlan,
+        proposalText: formData.experience
+      };
       
       // Add basic form data
-      submitData.append('projectId', projectData.id);
-      submitData.append('contractorId', contractorId);
-      submitData.append('bidAmount', Number(formData.budget));
-      submitData.append('timeline', formData.projectTime);
-      submitData.append('workers', Number(formData.workers));
-      submitData.append('workPlan', formData.workPlan);
-      submitData.append('experience', formData.experience);
+      // submitData.append('projectId', projectData.id);
+      // submitData.append('contractorId', contractorId);
+      // submitData.append('contractorName', contractorName);
+      // submitData.append('bidAmount', Number(formData.budget));
+      // submitData.append('timelineEstimate', formData.projectTime);
+      // // submitData.append('workers', Number(formData.workers));
+      // submitData.append('materialsPlan', formData.workPlan);
+      // submitData.append('proposalText', formData.experience);
+      console.log(submitData);
+      
       
       // Add file uploads
-      const fileFields = ['enlistment', 'epf', 'gst', 'companyDocs', 'demandDraft', 'application', 'boq'];
-      fileFields.forEach(field => {
-        if (formData[field]) {
-          submitData.append(field, formData[field]);
-        }
-      });
+      // const fileFields = ['enlistment', 'epf', 'gst', 'companyDocs', 'demandDraft', 'application', 'boq'];
+      // fileFields.forEach(field => {
+      //   if (formData[field]) {
+      //     submitData.append(field, formData[field]);
+      //   }
+      // });
 
       const response = await api.post('/bids', submitData, {
         headers: {
-          'Content-Type': 'multipart/form-data',
+          'Content-Type': 'application/json',
         },
       });
 
