@@ -28,13 +28,13 @@ function ProjectCard({ project, onClick,onDelete }) {
   return (
     <motion.div
       className="bg-slate-800/40 backdrop-blur-sm rounded-xl p-3 border border-slate-700/50 shadow-md flex flex-col gap-2 cursor-pointer transition-transform duration-200 hover:scale-[1.02] hover:shadow-lg group text-white"
-      onClick={() => onClick(project)}
+      
       tabIndex={0}
       aria-label={`View details for project ${project.title}`}
     >
      
       <div className="relative h-32 w-full rounded-lg overflow-hidden bg-slate-700 mb-2"
-      
+      onClick={() => onClick(project)}
       >
         <img
           src={project.thumbnail || 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=400&q=80'}
