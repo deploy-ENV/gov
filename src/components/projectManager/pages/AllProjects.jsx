@@ -126,6 +126,9 @@ function SupervisorSelectionModal({ bid, project, onClose, onConfirm }) {
     } catch (err) {
       alert("❌ Error finalizing project!");
       console.error(err);
+    }finally{
+      onClose();
+
     }
   };
 
