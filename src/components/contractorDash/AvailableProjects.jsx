@@ -225,7 +225,7 @@ console.log('isBiddingFormVisible:', isBiddingFormVisible);
                 </div>
                 <TrendingUp className="w-5 h-5 text-emerald-400" />
               </div>
-              <h3 className="text-2xl font-bold text-white mb-1">85%</h3>
+              <h3 className="text-2xl font-bold text-white mb-1">0%</h3>
               <p className="text-slate-400 text-sm">Success Rate</p>
             </div>
           </div>

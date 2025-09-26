@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ProjectContext } from '../projectContext';
 import Cookies from "js-cookie";
 
-import { getMyProjects ,deleteProjectById,getNearestSupervisor } from '../../../services/projectService';
+import { getMyProjects ,deleteProjectById,getNearestSupervisor,finalizeProjectTeam } from '../../../services/projectService';
 import { getBidsByProject } from '../../../services/bidService';
 
 
@@ -85,21 +85,26 @@ function ProjectCard({ project, onClick,onDelete }) {
 function SupervisorSelectionModal({ bid, project, onClose, onConfirm }) {
   const [selectedSupervisor, setSelectedSupervisor] = useState('');
   const [confirming, setConfirming] = useState(false);
-  const [supervisors, setSupervisors] = useState([]);
-
+  const [supervisors, setSupervisors] = useState([]);4
+  const zipcode = project?.location?.zipcode
+  const contractorId = bid?.contractorId
+  const projectId = bid?.projectId
+  console.log(bid);
+  
   const handleFetch = async () => {
-    setLoading(true);
-    setError(null);
+    // setLoading(true);
+    // setError(null);
     try {
-      const data = await getNearestSupervisor(zone);
+      const data = await getNearestSupervisor(zipcode);
       setSupervisors(data);
     } catch (err) {
-      setError(err.message || "Failed to fetch supervisors");
+      console.error(err.message || "Failed to fetch supervisors");
     } finally {
-      setLoading(false);
+      // setLoading(false);
     }
   };
-
+  console.log("supervisors", selectedSupervisor);
+  
   useEffect(() => {
     handleFetch();
   }, []);
@@ -113,21 +118,15 @@ function SupervisorSelectionModal({ bid, project, onClose, onConfirm }) {
     { id: 5, name: 'Vikram Gupta', experience: 7, region: 'Central', rating: 4.6, phone: '+91-9876543214' }
   ];
 
-  const handleConfirmAssignment = async () => {
-    if (!selectedSupervisor) return;
-    
-    setConfirming(true);
-    
-    // Simulate API call delay
-    setTimeout(() => {
-      const supervisor = DUMMY_SUPERVISORS.find(s => s.id === Number(selectedSupervisor));
-      onConfirm({
-        bid,
-        supervisor,
-        project
-      });
-      setConfirming(false);
-    }, 1000);
+  const handleFinalize = async () => {
+    try {
+      const data = await finalizeProjectTeam(projectId, contractorId, selectedSupervisor);
+      alert("✅ Project finalized successfully!");
+      console.log("Response:", data);
+    } catch (err) {
+      alert("❌ Error finalizing project!");
+      console.error(err);
+    }
   };
 
   const contractorName = bid.contractorName || bid.contractor_name || 'Unknown Contractor';
@@ -199,7 +198,7 @@ function SupervisorSelectionModal({ bid, project, onClose, onConfirm }) {
                 </option>
                 {supervisors.map(supervisor => (
                   <option key={supervisor.id} value={supervisor.id}>
-                    {supervisor.name} - {supervisor.experience} yrs exp (★{supervisor.rating})
+                    {supervisor.username} 
                   </option>
                 ))}
               </>
@@ -209,7 +208,7 @@ function SupervisorSelectionModal({ bid, project, onClose, onConfirm }) {
 
 
         {/* Selected Supervisor Details */}
-        {selectedSupervisor && (
+        {/* {selectedSupervisor && (
           <div className="bg-slate-700/30 rounded-xl p-4 mb-6 border border-slate-600/30">
             {(() => {
               const supervisor = DUMMY_SUPERVISORS.find(s => s.id === Number(selectedSupervisor));
@@ -242,7 +241,7 @@ function SupervisorSelectionModal({ bid, project, onClose, onConfirm }) {
               ) : null;
             })()}
           </div>
-        )}
+        )} */}
 
         {/* Action Buttons */}
         <div className="flex gap-4">
@@ -255,7 +254,7 @@ function SupervisorSelectionModal({ bid, project, onClose, onConfirm }) {
           </button>
           
           <button 
-            onClick={handleConfirmAssignment}
+            onClick={handleFinalize}
             disabled={!selectedSupervisor || confirming}
             className="flex-1 bg-gradient-to-r from-emerald-400 to-cyan-400 text-slate-900 font-semibold py-3 px-6 rounded-lg hover:from-emerald-500 hover:to-cyan-500 transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
           >
