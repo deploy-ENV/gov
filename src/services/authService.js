@@ -14,6 +14,7 @@ const setAuthCookies = (token, role,userDta) => {
   Cookies.set('token', token, cookieOptions);
   Cookies.set('userRole', role, cookieOptions);
   Cookies.set('userData', JSON.stringify(userDta), cookieOptions);
+  
 };
 
 // Register Government Admin

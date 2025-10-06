@@ -1,15 +1,14 @@
 import api from './api';
 import Cookies from 'js-cookie';
+
 // Submit Bid (Contractor)
 export const submitBid = async (bidData) => {
   try {
-    const response = await api.post('/bids', bidData,
-       {
-              headers: {
-                Authorization: `Bearer ${Cookies.get("token")}`
-              }
-        }
-    );
+    const response = await api.post('/bids', bidData, {
+      headers: {
+        Authorization: `Bearer ${Cookies.get("token")}`,
+      },
+    });
     return response.data;
   } catch (error) {
     throw error.response?.data || error.message;
@@ -19,13 +18,11 @@ export const submitBid = async (bidData) => {
 // Get All Bids for a Project
 export const getBidsByProject = async (projectId) => {
   try {
-    const response = await api.get(`/bids/project/${projectId}`,
-       {
-              headers: {
-                Authorization: `Bearer ${Cookies.get("token")}`
-              }
-        }
-    );
+    const response = await api.get(`/bids/project/${projectId}`, {
+      headers: {
+        Authorization: `Bearer ${Cookies.get("token")}`,
+      },
+    });
     return response.data;
   } catch (error) {
     throw error.response?.data || error.message;
@@ -35,7 +32,29 @@ export const getBidsByProject = async (projectId) => {
 // Assign Contractor to Project (PM)
 export const assignContractor = async (bidId, projectId) => {
   try {
-    const response = await api.post('/bids/assign', { bidId, projectId });
+    const response = await api.post(
+      '/bids/assign',
+      { bidId, projectId },
+      {
+        headers: {
+          Authorization: `Bearer ${Cookies.get("token")}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error.message;
+  }
+};
+
+// Get Bids by Contractor (My Bids)
+export const myBids = async (contractorId) => {
+  try {
+    const response = await api.get(`/bids/contractorid/${contractorId}`, {
+      headers: {
+        Authorization: `Bearer ${Cookies.get("token")}`,
+      },
+    });
     return response.data;
   } catch (error) {
     throw error.response?.data || error.message;

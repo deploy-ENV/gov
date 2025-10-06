@@ -55,7 +55,7 @@ import { getAllProjects } from '../../services/projectService';
 const AvailableProjects = () => {
   const [activeTab, setActiveTab] = useState('projects');
   const [isProfileOpen, setIsProfileOpen] = useState(false);
-  const data = Cookies.get("userData"); 
+  
   
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');

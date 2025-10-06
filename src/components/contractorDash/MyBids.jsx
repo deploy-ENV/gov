@@ -2,7 +2,8 @@ import React, { useState,useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-
+import { myBids } from '../../services/bidService';
+import Cookies from "js-cookie";
 import { 
   FileText, 
   CheckCircle, 
@@ -57,6 +58,38 @@ const MyBids = ({ onProjectSelect }) => {
       default: return 'text-gray-400';
     }
   };
+  
+  useEffect(() => {
+
+    const contractorDta = JSON.parse(Cookies.get("userData")); // Ensure you store userId at login
+    console.log(contractorDta);
+    const contractorId = contractorDta.id 
+    
+    const fetchMyBids = async () => {
+      try {
+        
+
+        // Get contractor ID from cookie or user state (adjust as needed)
+         // Ensure you store userId at login
+         
+        
+        
+        
+
+        const data = await myBids(contractorId);
+        setBids(data);
+      } catch (err) {
+        console.error('Error fetching bids:', err);
+        console.error(err.message || 'Failed to fetch bids');
+      } finally {
+        
+      }
+    };
+
+    fetchMyBids();
+  }, []);
+  console.log(bids);
+  
 
   const getBidStatusBg = (status) => {
     switch (status) {
@@ -210,19 +243,20 @@ const MyBids = ({ onProjectSelect }) => {
                       </div>
                       <p className="text-sm text-slate-400 mb-3">{bid.description}</p>
                       
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
                         <div className="bg-slate-600/30 rounded-lg p-3">
                           <p className="text-xs text-slate-400">Bid Amount</p>
                           <p className="text-lg font-bold text-emerald-400">{bid.bidAmount}</p>
                         </div>
                         <div className="bg-slate-600/30 rounded-lg p-3">
                           <p className="text-xs text-slate-400">Submitted</p>
-                          <p className="text-sm font-medium text-white">{bid.submittedDate}</p>
+                          <p className="text-sm font-medium text-white">{bid.submittedAt}</p>
                         </div>
                         <div className="bg-slate-600/30 rounded-lg p-3">
                           <p className="text-xs text-slate-400">Duration</p>
-                          <p className="text-sm font-medium text-white">{bid.estimatedDuration}</p>
+                          <p className="text-sm font-medium text-white">{bid.timelineEstimate}</p>
                         </div>
+                        
                       </div>
 
                       {bid.status === 'rejected' && bid.rejectionReason && (
