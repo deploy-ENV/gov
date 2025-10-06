@@ -1,11 +1,28 @@
-import { createSlice } from '@reduxjs/toolkit';
-import Dashboard from './LandingDashboardContractor';
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { myBids } from '../../services/bidService';
+
+// --- Async thunk to fetch contractor bids ---
+export const fetchMyBids = createAsyncThunk(
+  'projectsDashboard/fetchMyBids',
+  async (contractorId, { rejectWithValue }) => {
+    try {
+      const data = await myBids(contractorId);
+      return data;
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);
+
+const calculateDashMode = (bids) =>
+  bids.some((bid) => bid.status === 'accepted') ? 'execution' : 'bidding';
+
 const initialState = {
   profile: {
-    id:"",
+    id: "",
     Name: "",
     firmName: "",
-    region:"",
+    region: "",
     gst: "",
     gstDocument: null,
     tradeLicense: "",
@@ -18,40 +35,23 @@ const initialState = {
   viewProject: "",
   showViewDetails: false,
   showBiddingForm: false,
-  fundReq: [
-    
-  ],
-  
-  availableProjects : [
-    
-  ],
-  allotedProject:{
-      
-
-
-
-
-    },
+  fundReq: [],
+  availableProjects: [],
+  allotedProject: {},
   bill: [],
-  submittedUpdates: [
-   
-    
-  ],
+  submittedUpdates: [],
   activeTab: '',
-  myBids: [
-    
-  ],
-  // hasAcceptedBid :initialState.myBids.some(bid => bid.status === 'accepted'),
-  dashMode:"bidding",
+  myBids: [],   // <-- store fetched bids here
+  dashMode: "bidding",
   settings: {
     notificationPrefs: { email: true, push: false, sms: false },
     theme: 'light',
     language: 'en',
     memoryEnabled: true,
   },
+  loading: false,
+  error: null,
 };
-const calculateDashMode = (bids) =>
-  bids.some(bid => bid.status === 'accepted') ? 'execution' : 'bidding';
 
 const projectsDashboardSlice = createSlice({
   name: 'projectsDashboard',
@@ -70,7 +70,6 @@ const projectsDashboardSlice = createSlice({
     showBiddingForm: (state) => {
       state.showBiddingForm = true;
       state.showViewDetails = false;
-      
     },
     hideBiddingForm: (state) => {
       state.showBiddingForm = false;
@@ -100,10 +99,25 @@ const projectsDashboardSlice = createSlice({
       state.settings.memoryEnabled = !state.settings.memoryEnabled;
     },
     recalculateDashMode: (state) => {
-    state.dashMode = calculateDashMode(state.myBids);
-},
-
-  }
+      state.dashMode = calculateDashMode(state.myBids);
+    },
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchMyBids.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchMyBids.fulfilled, (state, action) => {
+        state.loading = false;
+        state.myBids = action.payload; // ✅ directly store the API result
+        state.dashMode = calculateDashMode(action.payload);
+      })
+      .addCase(fetchMyBids.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload || 'Failed to fetch bids';
+      });
+  },
 });
 
 export const {

@@ -37,6 +37,7 @@ import {
   showBiddingForm,
   hideBiddingForm,
   recalculateDashMode,
+  fetchMyBids,
 } from './dashboardSlice';
 
 const Dashboard = () => {
@@ -44,26 +45,31 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [isProfileOpen, setIsProfileOpen] = useState(false);
-  const activeTab = useSelector(state => state.projectsDashboard.activeTab);
   const [showMaterials, setShowMaterials] = useState(false);
+  const [data, setData] = useState(null);
+  
+  // Get all Redux state
+  const activeTab = useSelector(state => state.projectsDashboard.activeTab);
   const showViewDetails = useSelector(state => state.projectsDashboard.showViewDetails);
   const isBiddingFormVisible = useSelector(state => state.projectsDashboard.showBiddingForm);
   const viewProject = useSelector(state => state.projectsDashboard.viewProject);
   const myBids = useSelector(state => state.projectsDashboard.myBids);
-  const [data,setData] = useState(null) 
-  useEffect(() => {
-    setData(JSON.parse(Cookies.get("userData")))
-  }, []);
-  console.log("data:",(data));
-  
-  const hasAcceptedBid = myBids.some(bid => bid.status === 'accepted');
   const dashboardMode = useSelector(state => state.projectsDashboard.dashMode);
-
+  const availableProjects = useSelector(state => state.projectsDashboard.availableProjects);
+  const currentProject = useSelector(state => state.projectsDashboard.allotedProject);
+  const submittedUpdates = useSelector(state => state.projectsDashboard.submittedUpdates);
+    
+  // Fetch bids on mount
   useEffect(() => {
-    dispatch(recalculateDashMode());
+    const userData = JSON.parse(Cookies.get("userData"));
+    setData(userData);
+    
+    if (userData?.id) {
+      dispatch(fetchMyBids(userData.id));
+    }
   }, [dispatch]);
-  
 
+  // Handle navigation based on dashboard mode
   useEffect(() => {
     const currentPath = location.pathname.split('/').pop() || '';
     const isPathValid = (path) => {
@@ -78,18 +84,65 @@ const Dashboard = () => {
       navigate('', { replace: true });
     }
   }, [dashboardMode, location.pathname, navigate]);
-  const availableProjects = useSelector(state => state.projectsDashboard.availableProjects)
-  
+
+  // Helper function to format dates
+  const useParsedStartDate = (date) => {
+    if (!date) return null;
+
+    try {
+      const [day, month, year] = date.split('/');
+      const newDate = new Date(`${year}-${month}-${day}`);
+      const formattedDate = newDate.toLocaleDateString('en-GB', {
+        day: '2-digit',
+        month: 'short',
+        year: 'numeric',
+      });
+      return formattedDate;
+    } catch (e) {
+      console.error("Invalid date format:", date);
+      return null;
+    }
+  };
+
+  // Calculate days remaining
+  const calculateDaysRemaining = (startDateStr, endDateStr) => {
+    if (!startDateStr || !endDateStr) return 0;
+    
+    try {
+      const [startDay, startMonth, startYear] = startDateStr.split('/');
+      const [endDay, endMonth, endYear] = endDateStr.split('/');
+      
+      const startDate = new Date(`${startYear}-${startMonth}-${startDay}`);
+      const endDate = new Date(`${endYear}-${endMonth}-${endDay}`);
+      
+      const diffTime = endDate - startDate;
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      
+      return diffDays > 0 ? diffDays : 0;
+    } catch (e) {
+      console.error("Error calculating days:", e);
+      return 0;
+    }
+  };
+
   const biddingStats = [
     { title: 'Active Bids', value: myBids.length, icon: FileText, color: 'from-emerald-400 to-cyan-400' },
     { title: 'Projects Available', value: availableProjects.length, icon: Eye, color: 'from-yellow-400 to-orange-400' },
     { title: 'Bid Success Rate', value: '0%', icon: TrendingUp, color: 'from-green-400 to-emerald-400' },
   ];
 
+  const executionStats = [
+    { title: 'Allocated Project', value: '1', icon: CheckCircle, color: 'from-emerald-400 to-cyan-400' },
+    { title: 'Project Progress', value: `${currentProject.progress || 0}%`, icon: TrendingUp, color: 'from-yellow-400 to-orange-400' },
+    { title: 'Updates Submitted', value: submittedUpdates.length, icon: FileText, color: 'from-green-400 to-emerald-400' },
+    { title: 'Days Remaining', value: calculateDaysRemaining(currentProject.startDate, currentProject.endDate), icon: Clock, color: 'from-purple-400 to-pink-400' },
+  ];
+
+  const currentStats = dashboardMode === 'bidding' ? biddingStats : executionStats;
+
   const sidebarItems = [
     { id: 'overview', label: 'Overview', icon: Home, link: "" },
-    { id: 'availableprojects', label: 'Available Projects',hidden: dashboardMode === 'execution',  icon: FileText, link: "availableprojects" },
-    
+    { id: 'availableprojects', label: 'Available Projects', hidden: dashboardMode === 'execution', icon: FileText, link: "availableprojects" },
     { id: 'updates', label: 'Updates', icon: Activity, hidden: dashboardMode === 'bidding', link: "updates" },
     { id: 'expenses', label: 'Expenses', icon: BarChart3, hidden: dashboardMode === 'bidding', link: "expenses" },
     { id: 'bids', label: 'My Bids', icon: DollarSign, hidden: dashboardMode === 'execution', link: "bids" },
@@ -97,124 +150,86 @@ const Dashboard = () => {
     { id: 'fund', label: 'Request Fund', hidden: dashboardMode === 'bidding', icon: DollarSign, link: "requestFund" },
     { id: 'settings', label: 'Settings', icon: Settings, link: "settings" },
   ];
-  let currentProject=[]
-  if(hasAcceptedBid){
-    currentProject = useSelector(state => state.projectsDashboard.allotedProject)
-  }
-  const parseDate = (str) => {
-  const [day, month, year] = str.split('/');
-  return new Date(`${year}-${month}-${day}`);
-};
- function useParsedStartDate(date) {
-  
-
-  if (!date) return null;
-
-  try {
-    const [day, month, year] = date.split('/');
-    const newDate = new Date(`${year}-${month}-${day}`);
-    const formattedDate = newDate.toLocaleDateString('en-GB', {
-      day: '2-digit',
-      month: 'short',
-      year: 'numeric',
-    });
-    return String(formattedDate);
-  } catch (e) {
-    console.error("Invalid startDate format:", date);
-    return null;
-  }
-}
-
-  const executionStats = [
-    { title: 'Allocated Project', value: '1', icon: CheckCircle, color: 'from-emerald-400 to-cyan-400' },
-    { title: 'Project Progress', value: currentProject.progress+"%", icon: TrendingUp, color: 'from-yellow-400 to-orange-400' },
-    { title: 'Updates Submitted', value: useSelector(state => state.projectsDashboard.submittedUpdates).length, icon: FileText, color: 'from-green-400 to-emerald-400' },
-    { title: 'Days Remaining', value: (Math.ceil(useParsedStartDate(currentProject.endDate)-useParsedStartDate(currentProject.startDate))/ (1000 * 60 * 60 * 24)), icon: Clock, color: 'from-purple-400 to-pink-400' },
-  ];
-
 
   const getStatusColor = (status) => {
     switch (status) {
-      case 'pending': return 'text-yellow-400';
-      case 'under_review': return 'text-orange-400';
-      case 'rejected': return 'text-red-400';
-      case 'accepted': return 'text-green-400';
+      case 'PENDING': return 'text-yellow-400';
+      case 'UNDER_REVIEW': return 'text-orange-400';
+      case 'REJECTED': return 'text-red-400';
+      case 'ACCEPTED': return 'text-green-400';
       default: return 'text-gray-400';
     }
   };
 
   const getBidStatusBg = (status) => {
     switch (status) {
-      case 'pending': return 'bg-yellow-400/20';
-      case 'under_review': return 'bg-orange-400/20';
-      case 'rejected': return 'bg-red-400/20';
-      case 'accepted': return 'bg-green-400/20';
+      case 'PENDING': return 'bg-yellow-400/20';
+      case 'UNDER_REVIEW': return 'bg-orange-400/20';
+      case 'REJECTED': return 'bg-red-400/20';
+      case 'ACCEPTED': return 'bg-green-400/20';
       default: return 'bg-gray-400/20';
     }
   };
 
-  const currentStats = hasAcceptedBid === false ? biddingStats : executionStats;
-
   const toggleProfileDropdown = () => {
     setIsProfileOpen(!isProfileOpen);
   };
+
   const ViewMaterialsPopup = ({ isOpen, onClose }) => {
-  const project = useSelector(state => state.projectsDashboard.allotedProject);
+    const project = currentProject;
 
-  if (!isOpen || !project) return null;
+    if (!isOpen || !project) return null;
 
-  const renderDocs = (label, docs) => (
-    <div className="mb-4">
-      <h4 className="text-white font-semibold mb-2">{label}</h4>
-      <ul className="text-sm text-slate-300 list-disc pl-5 space-y-1">
-        {docs.map((doc, index) => (
-          <li key={index}>
-            {doc.name} <span className="text-slate-400">({doc.type}, {doc.size})</span>
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
+    const renderDocs = (label, docs) => (
+      <div className="mb-4">
+        <h4 className="text-white font-semibold mb-2">{label}</h4>
+        <ul className="text-sm text-slate-300 list-disc pl-5 space-y-1">
+          {docs.map((doc, index) => (
+            <li key={index}>
+              {doc.name} <span className="text-slate-400">({doc.type}, {doc.size})</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    );
 
-  return (
-    <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
-      <div className="bg-slate-800 p-6 rounded-xl w-full max-w-3xl overflow-y-auto max-h-[90vh] border border-slate-600 shadow-xl">
-        <div className="flex justify-between items-center mb-4">
-          <h3 className="text-xl font-bold text-white">Project Materials</h3>
-          <button onClick={onClose} className="text-slate-400 hover:text-red-400 transition-colors">
-            <X className="w-5 h-5" />
-          </button>
-        </div>
+    return (
+      <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
+        <div className="bg-slate-800 p-6 rounded-xl w-full max-w-3xl overflow-y-auto max-h-[90vh] border border-slate-600 shadow-xl">
+          <div className="flex justify-between items-center mb-4">
+            <h3 className="text-xl font-bold text-white">Project Materials</h3>
+            <button onClick={onClose} className="text-slate-400 hover:text-red-400 transition-colors">
+              <X className="w-5 h-5" />
+            </button>
+          </div>
 
-        <div className="mb-6">
-          <h4 className="text-white font-semibold mb-2">Required Materials</h4>
-          <ul className="text-sm text-slate-300 list-disc pl-5 space-y-1">
-            {project.requiredMaterials.map((mat, i) => (
-              <li key={i}>{mat}</li>
-            ))}
-          </ul>
-        </div>
+          <div className="mb-6">
+            <h4 className="text-white font-semibold mb-2">Required Materials</h4>
+            <ul className="text-sm text-slate-300 list-disc pl-5 space-y-1">
+              {project.requiredMaterials?.map((mat, i) => (
+                <li key={i}>{mat}</li>
+              ))}
+            </ul>
+          </div>
 
-        <div className="mb-6">
-          <h4 className="text-white font-semibold mb-2">Estimated Quantities</h4>
-          <ul className="text-sm text-slate-300 list-disc pl-5 space-y-1">
-            {project.estimatedQuantities.map((q, i) => (
-              <li key={i}>{q}</li>
-            ))}
-          </ul>
-        </div>
+          <div className="mb-6">
+            <h4 className="text-white font-semibold mb-2">Estimated Quantities</h4>
+            <ul className="text-sm text-slate-300 list-disc pl-5 space-y-1">
+              {project.estimatedQuantities?.map((q, i) => (
+                <li key={i}>{q}</li>
+              ))}
+            </ul>
+          </div>
 
-        {/* Documents */}
-        <div className="space-y-4">
-          {Object.entries(project.documents).map(([section, docs]) =>
-            renderDocs(section.charAt(0).toUpperCase() + section.slice(1), docs)
-          )}
+          <div className="space-y-4">
+            {project.documents && Object.entries(project.documents).map(([section, docs]) =>
+              renderDocs(section.charAt(0).toUpperCase() + section.slice(1), docs)
+            )}
+          </div>
         </div>
       </div>
-    </div>
-  );
-};
-
+    );
+  };
 
   return (
     <div className="flex h-screen font-sans bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
@@ -234,27 +249,27 @@ const Dashboard = () => {
 
         {/* Navigation */}
         <nav className="mt-4 px-4 relative z-10">
-                  {sidebarItems.filter(item => !item.hidden).map((item) => {
-                    const Icon = item.icon;
-                    return (
-                      <div key={item.id}>
-                        <Link to={item.link}>
-                          <button
-                           onClick={() => dispatch(setActiveTab(item.id))}
-                            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl mb-2 transition-all duration-300 ${
-                              activeTab === item.id
-                                ? 'bg-gradient-to-r from-yellow-300 via-emerald-400 to-cyan-400 text-slate-900 font-medium hover:brightness-110 transition-all shadow-lg shadow-emerald-500/20'
-                                : 'text-slate-300 hover:bg-slate-700/50 hover:text-white'
-                            }`}
-                          >
-                            <Icon className="w-5 h-5" />
-                            <span className="font-medium">{item.label}</span>
-                          </button>
-                        </Link>
-                      </div>
-                    );
-                  })}
-            </nav>
+          {sidebarItems.filter(item => !item.hidden).map((item) => {
+            const Icon = item.icon;
+            return (
+              <div key={item.id}>
+                <Link to={item.link}>
+                  <button
+                    onClick={() => dispatch(setActiveTab(item.id))}
+                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl mb-2 transition-all duration-300 ${
+                      activeTab === item.id
+                        ? 'bg-gradient-to-r from-yellow-300 via-emerald-400 to-cyan-400 text-slate-900 font-medium hover:brightness-110 transition-all shadow-lg shadow-emerald-500/20'
+                        : 'text-slate-300 hover:bg-slate-700/50 hover:text-white'
+                    }`}
+                  >
+                    <Icon className="w-5 h-5" />
+                    <span className="font-medium">{item.label}</span>
+                  </button>
+                </Link>
+              </div>
+            );
+          })}
+        </nav>
 
         {/* User Profile */}
         <div className="absolute bottom-6 left-4 right-4 bg-slate-700/50 rounded-xl p-4 backdrop-blur-sm">
@@ -263,7 +278,7 @@ const Dashboard = () => {
             onClick={toggleProfileDropdown}
           >
             <div className="w-10 h-10 bg-gradient-to-br from-yellow-400 to-orange-400 rounded-full flex items-center justify-center">
-          <User className="w-5 h-5 text-slate-900" />
+              <User className="w-5 h-5 text-slate-900" />
             </div>
             <div className="flex-1">
               <p className="text-sm font-medium text-white">{data?.username}</p>
@@ -284,7 +299,7 @@ const Dashboard = () => {
               </Link>
               <Link>
                 <button className="w-full flex items-center gap-2 px-3 py-2 text-sm bg-red-400/40 text-red-400/90 hover:bg-slate-500/50 rounded-md transition-colors" 
-                onClick={logout}
+                  onClick={logout}
                 >
                   <LogOut className="w-4 h-4" />
                   Logout
@@ -296,7 +311,6 @@ const Dashboard = () => {
       </div>
 
       {/* Main Content */}
-
       <div className="flex-1 overflow-auto">
         <Outlet />
         {/* Header */}
@@ -450,11 +464,11 @@ const Dashboard = () => {
                   <div className="grid grid-cols-2 gap-4 mb-4">
                     <div className="bg-slate-600/30 rounded-lg p-3">
                       <p className="text-xs text-slate-400">Start Date</p>
-                      <p className="text-sm font-medium text-white">{(useParsedStartDate(currentProject.startDate))}</p>
+                      <p className="text-sm font-medium text-white">{useParsedStartDate(currentProject.startDate)}</p>
                     </div>
                     <div className="bg-slate-600/30 rounded-lg p-3">
                       <p className="text-xs text-slate-400">End Date</p>
-                      <p className="text-sm font-medium text-white">{(useParsedStartDate(currentProject.endDate))}</p>
+                      <p className="text-sm font-medium text-white">{useParsedStartDate(currentProject.endDate)}</p>
                     </div>
                   </div>
 
@@ -467,22 +481,26 @@ const Dashboard = () => {
                   <div className="w-full bg-slate-600 rounded-full h-3 mb-3">
                     <div
                       className="bg-gradient-to-r from-emerald-400 to-cyan-400 h-3 rounded-full transition-all duration-500"
-                      style={{ width: `${currentProject.progress}%` }}
+                      style={{ width: `${currentProject.progress || 0}%` }}
                     ></div>
                   </div>
 
                   <div className="flex justify-between items-center mb-4">
-                    <span className="text-sm text-slate-300">{currentProject.progress}% Complete</span>
+                    <span className="text-sm text-slate-300">{currentProject.progress || 0}% Complete</span>
                     <span className="text-sm text-emerald-400">Next: {currentProject.nextPhase}</span>
                   </div>
 
                   <div className="grid grid-cols-2 gap-3">
-                    <button className="bg-gradient-to-r from-yellow-300 via-emerald-400 to-cyan-400 text-slate-900 font-medium rounded-lg  transition-all shadow-lg shadow-em pilota-emerald-500/20"
-                    onClick={()=>(navigate("/updates"))}>
+                    <button 
+                      className="bg-gradient-to-r from-yellow-300 via-emerald-400 to-cyan-400 text-slate-900 font-medium rounded-lg px-4 py-2 transition-all shadow-lg shadow-emerald-500/20"
+                      onClick={() => navigate("/updates")}
+                    >
                       Upload Update
                     </button>
-                    <button className="bg-slate-600/30 hover:bg-slate-600/50 text-slate-300 px-4 py-2 rounded-lg transition-colors"
-                    onClick={() => setShowMaterials(true)}>
+                    <button 
+                      className="bg-slate-600/30 hover:bg-slate-600/50 text-slate-300 px-4 py-2 rounded-lg transition-colors"
+                      onClick={() => setShowMaterials(true)}
+                    >
                       View Materials
                     </button>
                   </div>
@@ -519,12 +537,16 @@ const Dashboard = () => {
                   <div className="bg-slate-700/30 rounded-lg p-4">
                     <h4 className="font-medium text-white mb-2">Quick Actions</h4>
                     <div className="grid grid-cols-1 gap-2">
-                      <button className="bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-400 px-3 py-2 rounded-lg text-sm transition-colors"
-                      onClick={()=>(navigate("/updates"))}>
+                      <button 
+                        className="bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-400 px-3 py-2 rounded-lg text-sm transition-colors"
+                        onClick={() => navigate("/updates")}
+                      >
                         Upload Proof of Work
                       </button>
-                      <button className="bg-yellow-500/20 hover:bg-yellow-500/30 text-yellow-400 px-3 py-2 rounded-lg text-sm transition-colors"
-                       onClick={()=>(navigate("/expenses"))}>
+                      <button 
+                        className="bg-yellow-500/20 hover:bg-yellow-500/30 text-yellow-400 px-3 py-2 rounded-lg text-sm transition-colors"
+                        onClick={() => navigate("/expenses")}
+                      >
                         Track Expenses
                       </button>
                       <button className="bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-400 px-3 py-2 rounded-lg text-sm transition-colors">
