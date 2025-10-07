@@ -49,7 +49,7 @@ const Dashboard = () => {
   const [showMaterials, setShowMaterials] = useState(false);
   const [data, setData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-  
+  const [acceptedProject, setAcceptedProject] = useState(null);
   // Get all Redux state
   const activeTab = useSelector(state => state.projectsDashboard.activeTab);
   const showViewDetails = useSelector(state => state.projectsDashboard.showViewDetails);
@@ -58,7 +58,7 @@ const Dashboard = () => {
   const myBids = useSelector(state => state.projectsDashboard.myBids);
   const dashboardMode = useSelector(state => state.projectsDashboard.dashMode);
   const availableProjects = useSelector(state => state.projectsDashboard.availableProjects);
-  const currentProject = useSelector(state => state.projectsDashboard.allotedProject);
+  const [currentProject, setCurrentProject] = useState({});
   const submittedUpdates = useSelector(state => state.projectsDashboard.submittedUpdates);
     
   // Fetch bids on mount and handle loading
@@ -83,14 +83,27 @@ const Dashboard = () => {
 
   // Check for accepted bids and switch to execution mode
   useEffect(() => {
+     const fetchProject = async () => {
+      try {
+        const data = await getProjectById(acceptedProject?.projectId);
+        setCurrentProject(data);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        
+      }
+    };
     if (!isLoading && myBids && myBids.length > 0) {
       const hasAcceptedBid = myBids.some(bid => bid.status === 'ACCEPTED');
       if (hasAcceptedBid) {
         dispatch(recalculateDashMode());
+        setAcceptedProject(myBids.find(bid => bid.status === 'ACCEPTED'));
+        fetchProject();
       }
     }
   }, [myBids, isLoading, dispatch]);
-  console.log("Dashboard Mode:", dashboardMode);
+  console.log("current project", currentProject);
+  
   // Handle navigation based on dashboard mode
   useEffect(() => {
     if (isLoading) return;
@@ -498,7 +511,7 @@ const Dashboard = () => {
                         <FileText className="w-6 h-6 text-emerald-400" />
                       </div>
                       <div>
-                        <h4 className="font-medium text-white text-lg">{currentProject.name}</h4>
+                        <h4 className="font-medium text-white text-lg">{currentProject.title}</h4>
                         <p className="text-sm text-slate-400">Supervisor: {currentProject.supervisor}</p>
                         <span className="text-sm text-emerald-400">Current Phase: {currentProject.currentPhase}</span>
                       </div>
@@ -508,11 +521,11 @@ const Dashboard = () => {
                   <div className="grid grid-cols-2 gap-4 mb-4">
                     <div className="bg-slate-600/30 rounded-lg p-3">
                       <p className="text-xs text-slate-400">Start Date</p>
-                      <p className="text-sm font-medium text-white">{useParsedStartDate(currentProject.startDate)}</p>
+                      <p className="text-sm font-medium text-white">{useParsedStartDate(currentProject.expectedStartDate)}</p>
                     </div>
                     <div className="bg-slate-600/30 rounded-lg p-3">
                       <p className="text-xs text-slate-400">End Date</p>
-                      <p className="text-sm font-medium text-white">{useParsedStartDate(currentProject.endDate)}</p>
+                      <p className="text-sm font-medium text-white">{useParsedStartDate(currentProject.deadline)}</p>
                     </div>
                   </div>
 
