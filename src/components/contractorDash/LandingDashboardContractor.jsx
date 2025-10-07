@@ -25,6 +25,7 @@ import {
   X,
   UserCircle,
   LogOut,
+  Loader2,
 } from 'lucide-react';
 import BiddingFormCard from './BiddingForm';
 import { useSelector, useDispatch } from 'react-redux';
@@ -39,7 +40,7 @@ import {
   recalculateDashMode,
   fetchMyBids,
 } from './dashboardSlice';
-
+import { getProjectById } from '../../services/projectService';
 const Dashboard = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -47,6 +48,7 @@ const Dashboard = () => {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [showMaterials, setShowMaterials] = useState(false);
   const [data, setData] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
   
   // Get all Redux state
   const activeTab = useSelector(state => state.projectsDashboard.activeTab);
@@ -59,18 +61,40 @@ const Dashboard = () => {
   const currentProject = useSelector(state => state.projectsDashboard.allotedProject);
   const submittedUpdates = useSelector(state => state.projectsDashboard.submittedUpdates);
     
-  // Fetch bids on mount
+  // Fetch bids on mount and handle loading
   useEffect(() => {
-    const userData = JSON.parse(Cookies.get("userData"));
-    setData(userData);
-    
-    if (userData?.id) {
-      dispatch(fetchMyBids(userData.id));
-    }
+    const loadDashboard = async () => {
+      try {
+        const userData = JSON.parse(Cookies.get("userData"));
+        setData(userData);
+        
+        if (userData?.id) {
+          await dispatch(fetchMyBids(userData.id)).unwrap();
+        }
+      } catch (error) {
+        console.error("Error loading dashboard:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadDashboard();
   }, [dispatch]);
 
+  // Check for accepted bids and switch to execution mode
+  useEffect(() => {
+    if (!isLoading && myBids && myBids.length > 0) {
+      const hasAcceptedBid = myBids.some(bid => bid.status === 'ACCEPTED');
+      if (hasAcceptedBid) {
+        dispatch(recalculateDashMode());
+      }
+    }
+  }, [myBids, isLoading, dispatch]);
+  console.log("Dashboard Mode:", dashboardMode);
   // Handle navigation based on dashboard mode
   useEffect(() => {
+    if (isLoading) return;
+
     const currentPath = location.pathname.split('/').pop() || '';
     const isPathValid = (path) => {
       if (dashboardMode === 'bidding') {
@@ -83,7 +107,7 @@ const Dashboard = () => {
     if (!isPathValid(currentPath)) {
       navigate('', { replace: true });
     }
-  }, [dashboardMode, location.pathname, navigate]);
+  }, [dashboardMode, location.pathname, navigate, isLoading]);
 
   // Helper function to format dates
   const useParsedStartDate = (date) => {
@@ -230,6 +254,19 @@ const Dashboard = () => {
       </div>
     );
   };
+
+  // Loading screen
+  if (isLoading) {
+    return (
+      <div className="flex h-screen items-center justify-center bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
+        <div className="text-center">
+          <Loader2 className="w-16 h-16 text-emerald-400 animate-spin mx-auto mb-4" />
+          <h2 className="text-2xl font-bold text-white mb-2">Loading Dashboard...</h2>
+          <p className="text-slate-400">Fetching your bids and projects</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex h-screen font-sans bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
@@ -419,20 +456,27 @@ const Dashboard = () => {
                 <h3 className="text-xl font-bold text-white mb-6">My Bids</h3>
 
                 <div className="space-y-4">
-                  {myBids.map((bid) => (
-                    <div key={bid.id} className="bg-slate-700/30 rounded-lg p-4">
-                      <div className="flex items-start justify-between mb-3">
-                        <div className="flex-1">
-                          <h4 className="font-medium text-white text-sm mb-1">{bid.projectName}</h4>
-                          <p className="text-xs text-slate-400">Bid: {bid.bidAmount}</p>
+                  {myBids.length > 0 ? (
+                    myBids.map((bid) => (
+                      <div key={bid.id} className="bg-slate-700/30 rounded-lg p-4">
+                        <div className="flex items-start justify-between mb-3">
+                          <div className="flex-1">
+                            <h4 className="font-medium text-white text-sm mb-1">{bid.projectName}</h4>
+                            <p className="text-xs text-slate-400">Bid: {bid.bidAmount}</p>
+                          </div>
+                          <span className={`px-2 py-1 rounded-full text-xs ${getBidStatusBg(bid.status)} ${getStatusColor(bid.status)}`}>
+                            {bid.status.replace('_', ' ')}
+                          </span>
                         </div>
-                        <span className={`px-2 py-1 rounded-full text-xs ${getBidStatusBg(bid.status)} ${getStatusColor(bid.status)}`}>
-                          {bid.status.replace('_', ' ')}
-                        </span>
+                        <p className="text-xs text-slate-400">Submitted: {bid.submittedDate}</p>
                       </div>
-                      <p className="text-xs text-slate-400">Submitted: {bid.submittedDate}</p>
+                    ))
+                  ) : (
+                    <div className="text-center py-8">
+                      <FileText className="w-12 h-12 text-slate-600 mx-auto mb-3" />
+                      <p className="text-slate-400">No bids submitted yet</p>
                     </div>
-                  ))}
+                  )}
                 </div>
               </div>
             </div>

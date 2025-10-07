@@ -15,7 +15,7 @@ export const fetchMyBids = createAsyncThunk(
 );
 
 const calculateDashMode = (bids) =>
-  bids.some((bid) => bid.status === 'accepted') ? 'execution' : 'bidding';
+  bids.some((bid) => bid.status === 'ACCEPTED') ? 'execution' : 'bidding';
 
 const initialState = {
   profile: {
