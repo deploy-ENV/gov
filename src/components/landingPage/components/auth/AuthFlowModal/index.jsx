@@ -24,7 +24,7 @@ export default function AuthFlowModal({ selectedType, onClose }) {
     password: '',
     email: '',
     gsti: '',
-    location: {
+    address: {
       street: '',
       city: '',
       state: '',
@@ -108,12 +108,12 @@ export default function AuthFlowModal({ selectedType, onClose }) {
     const { name, value, files } = e.target;
     const newValue = files ? files[0] : value;
 
-    if (name.startsWith('location.')) {
+    if (name.startsWith('address.')) {
       const key = name.split('.')[1];
       setSignup((prev) => ({
         ...prev,
-        location: {
-          ...prev.location,
+        address: {
+          ...prev.address,
           [key]: newValue
         }
       }));
@@ -217,40 +217,40 @@ export default function AuthFlowModal({ selectedType, onClose }) {
       <FloatingInput
         icon={Building2}
         label="Street"
-        name="location.street"
-        value={signup.location.street}
+        name="address.street"
+        value={signup.address.street}
         onChange={handleSignupChange}
         required
       />
       <FloatingInput
         icon={Building2}
         label="City"
-        name="location.city"
-        value={signup.location.city}
+        name="address.city"
+        value={signup.address.city}
         onChange={handleSignupChange}
         required
       />
       <FloatingInput
         icon={Building2}
         label="State"
-        name="location.state"
-        value={signup.location.state}
+        name="address.state"
+        value={signup.address.state}
         onChange={handleSignupChange}
         required
       />
       <FloatingInput
         icon={Building2}
         label="Zip Code"
-        name="location.zipCode"
-        value={signup.location.zipCode}
+        name="address.zipCode"
+        value={signup.address.zipCode}
         onChange={handleSignupChange}
         required
       />
       <FloatingInput
         icon={Building2}
         label="Country"
-        name="location.country"
-        value={signup.location.country}
+        name="address.country"
+        value={signup.address.country}
         onChange={handleSignupChange}
         required
       />
