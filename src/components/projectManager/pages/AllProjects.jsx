@@ -95,7 +95,7 @@ function SupervisorSelectionModal({ bid, project, onClose, onConfirm }) {
     // setLoading(true);
     // setError(null);
     try {
-      const data = await getNearestSupervisor(zipcode);
+      const data = await getNearestSupervisor("North");
       setSupervisors(data);
     } catch (err) {
       console.error(err.message || "Failed to fetch supervisors");
@@ -103,7 +103,7 @@ function SupervisorSelectionModal({ bid, project, onClose, onConfirm }) {
       // setLoading(false);
     }
   };
-  console.log("supervisors", selectedSupervisor);
+  console.log("projk", supervisors);
   
   useEffect(() => {
     handleFetch();
