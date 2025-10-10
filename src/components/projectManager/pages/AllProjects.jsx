@@ -181,72 +181,74 @@ function SupervisorSelectionModal({ bid, project, onClose, onConfirm }) {
         </div>
 
         {/* Supervisor Selection */}
+       {/* Supervisor Selection */}
         <div className="mb-6">
-          <label className="text-sm font-medium text-white flex items-center gap-2 mb-3">
+          <label className="text-sm font-medium text-white flex items-center gap-2 mb-4">
             <User className="w-4 h-4 text-emerald-400" />
             Select Project Supervisor
           </label>
-          <select
-            className="w-full bg-slate-700/50 border border-slate-600 rounded-lg text-white px-4 py-3 focus:outline-none focus:border-cyan-400 transition"
-            value={selectedSupervisor}
-            onChange={e => setSelectedSupervisor(e.target.value)}
-            disabled={supervisors.length === 0} // disable if no supervisors
-          >
-            {supervisors.length === 0 ? (
-              <option value="" disabled>
-                No supervisors available
-              </option>
-            ) : (
-              <>
-                <option value="" disabled>
-                  Choose a supervisor...
-                </option>
-                {supervisors.map(supervisor => (
-                  <option key={supervisor.id} value={supervisor.id}>
-                    {supervisor.username} 
-                  </option>
-                ))}
-              </>
-            )}
-          </select>
+          
+          {supervisors.length === 0 ? (
+            <div className="text-center py-8 bg-slate-700/30 rounded-lg border border-slate-600/50">
+              <User className="w-12 h-12 text-slate-500 mx-auto mb-3" />
+              <p className="text-slate-400">No supervisors available</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-h-96 overflow-y-auto pr-2">
+              {supervisors.map(supervisor => (
+                <div
+                  key={supervisor.id}
+                  onClick={() => setSelectedSupervisor(supervisor.id)}
+                  className={`
+                    relative bg-slate-700/40 rounded-lg p-4 border-2 cursor-pointer transition-all
+                    ${selectedSupervisor === supervisor.id 
+                      ? 'border-emerald-400 bg-emerald-400/10 shadow-lg shadow-emerald-400/20' 
+                      : 'border-slate-600/50 hover:border-cyan-400/50 hover:bg-slate-700/60'
+                    }
+                  `}
+                >
+                  {/* Selection Indicator */}
+                  {selectedSupervisor === supervisor.id && (
+                    <div className="absolute top-3 right-3">
+                      <CheckCircle className="w-6 h-6 text-emerald-400" />
+                    </div>
+                  )}
+                  
+                  {/* Supervisor Avatar */}
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="w-12 h-12 bg-gradient-to-br from-emerald-400 to-cyan-400 rounded-full flex items-center justify-center">
+                      <User className="w-6 h-6 text-white" />
+                    </div>
+                    <div>
+                      <h4 className="font-bold text-white">{supervisor.username}</h4>
+                      <p className="text-xs text-slate-400">Supervisor ID: {supervisor.id}</p>
+                    </div>
+                  </div>
+                  
+                  {/* Additional Info (if available) */}
+                  <div className="space-y-2 text-xs">
+                    {supervisor.email && (
+                      <div className="flex items-center gap-2 text-slate-300">
+                        <Mail className="w-3 h-3 text-cyan-400" />
+                        <span className="truncate">{supervisor.email}</span>
+                      </div>
+                    )}
+                   
+                    
+                      <div className="flex items-center gap-2 text-slate-300">
+                        <Award className="w-3 h-3 text-purple-400" />
+                        <span>{supervisor.experience | 0} years experience</span>
+                      </div>
+                    
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
 
-        {/* Selected Supervisor Details */}
-        {/* {selectedSupervisor && (
-          <div className="bg-slate-700/30 rounded-xl p-4 mb-6 border border-slate-600/30">
-            {(() => {
-              const supervisor = DUMMY_SUPERVISORS.find(s => s.id === Number(selectedSupervisor));
-              return supervisor ? (
-                <div>
-                  <h4 className="text-lg font-bold text-white mb-2">Selected Supervisor Details</h4>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
-                    <div className="flex items-center gap-2">
-                      <User className="w-4 h-4 text-cyan-400" />
-                      <span className="text-slate-400">Name:</span>
-                      <span className="text-white font-medium">{supervisor.name}</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Award className="w-4 h-4 text-purple-400" />
-                      <span className="text-slate-400">Experience:</span>
-                      <span className="text-white font-medium">{supervisor.experience} years</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Star className="w-4 h-4 text-yellow-400 fill-current" />
-                      <span className="text-slate-400">Rating:</span>
-                      <span className="text-white font-medium">{supervisor.rating}/5</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Phone className="w-4 h-4 text-emerald-400" />
-                      <span className="text-slate-400">Contact:</span>
-                      <span className="text-white font-medium">{supervisor.phone}</span>
-                    </div>
-                  </div>
-                </div>
-              ) : null;
-            })()}
-          </div>
-        )} */}
+        
 
         {/* Action Buttons */}
         <div className="flex gap-4">
@@ -281,9 +283,7 @@ function SupervisorSelectionModal({ bid, project, onClose, onConfirm }) {
   );
 }
 
-// Bid Details Modal
-// Redesigned BidDetailsModal with BiddingFormCard styling
-// BidDetailsModal with exact same structure as BiddingFormCard
+
 function BidDetailsModal({ bid, project, onClose, onAcceptBid }) {
   const formatDate = (dateStr) => {
     if (!dateStr) return 'Date not available';
