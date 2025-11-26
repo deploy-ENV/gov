@@ -87,6 +87,8 @@ function SupervisorSelectionModal({ bid, project, onClose, onConfirm }) {
   const [confirming, setConfirming] = useState(false);
   const [supervisors, setSupervisors] = useState([]);4
   const zipcode = project?.address
+  console.log(project?.address);
+  
   const contractorId = bid?.contractorId
   const projectId = bid?.projectId
   console.log(bid);
