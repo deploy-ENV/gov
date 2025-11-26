@@ -40,7 +40,10 @@ export const getMyProjects = async (pmId) => {
 // Get Project by ID
 export const getProjectById = async (projectId) => {
   try {
+    console.log(Cookies.get("token"));
+    
     const response = await api.get(`/projects/${projectId}`, {
+      
       headers: {
         Authorization: `Bearer ${Cookies.get("token")}`
       }
@@ -55,7 +58,7 @@ export const getProjectById = async (projectId) => {
 export const getNearestSupervisor = async (zone) => {
   try {
     const response = await api.get('/projects/supervisors/nearest', {
-      params: { zone },
+      
       headers: {
         Authorization: `Bearer ${Cookies.get("token")}`
       }

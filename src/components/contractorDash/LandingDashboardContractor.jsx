@@ -88,6 +88,7 @@ const Dashboard = () => {
         const data = await getProjectById(acceptedProject?.projectId);
         setCurrentProject(data);
       } catch (err) {
+        console.log(err)
         console.error(err);
       } finally {
         
@@ -184,7 +185,7 @@ const Dashboard = () => {
     { id: 'expenses', label: 'Expenses', icon: BarChart3, hidden: dashboardMode === 'bidding', link: "expenses" },
     { id: 'bids', label: 'My Bids', icon: DollarSign, hidden: dashboardMode === 'execution', link: "bids" },
     { id: 'communication', label: 'Communication', hidden: dashboardMode === 'bidding', icon: Users, link: "communication" },
-    { id: 'fund', label: 'Request Fund', hidden: dashboardMode === 'bidding', icon: DollarSign, link: "requestFund" },
+    // { id: 'fund', label: 'Request Fund', hidden: dashboardMode === 'bidding', icon: DollarSign, link: "requestFund" },
     { id: 'settings', label: 'Settings', icon: Settings, link: "settings" },
   ];
 
