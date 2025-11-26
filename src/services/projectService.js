@@ -56,8 +56,10 @@ export const getProjectById = async (projectId) => {
 
 // Fetch Nearest Supervisor by Project Location
 export const getNearestSupervisor = async (zone) => {
+  console.log(zone);
+  
   try {
-    const response = await api.get('/projects/supervisors/nearest', {
+    const response = await api.get('/projects/supervisors/nearest', {zone},{
       
       headers: {
         Authorization: `Bearer ${Cookies.get("token")}`
