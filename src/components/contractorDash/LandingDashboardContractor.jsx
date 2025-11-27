@@ -173,7 +173,7 @@ const Dashboard = () => {
     { title: 'Allocated Project', value: '1', icon: CheckCircle, color: 'from-emerald-400 to-cyan-400' },
     { title: 'Project Progress', value: `${currentProject.progress || 0}%`, icon: TrendingUp, color: 'from-yellow-400 to-orange-400' },
     { title: 'Updates Submitted', value: submittedUpdates.length, icon: FileText, color: 'from-green-400 to-emerald-400' },
-    { title: 'Days Remaining', value: calculateDaysRemaining(currentProject.startDate, currentProject.endDate), icon: Clock, color: 'from-purple-400 to-pink-400' },
+    { title: 'Days Remaining', value: calculateDaysRemaining(currentProject.expectedStartDate, currentProject.deadline), icon: Clock, color: 'from-purple-400 to-pink-400' },
   ];
 
   const currentStats = dashboardMode === 'bidding' ? biddingStats : executionStats;
@@ -513,8 +513,8 @@ const Dashboard = () => {
                       </div>
                       <div>
                         <h4 className="font-medium text-white text-lg">{currentProject.title}</h4>
-                        <p className="text-sm text-slate-400">Supervisor: {currentProject.supervisor}</p>
-                        <span className="text-sm text-emerald-400">Current Phase: {currentProject.currentPhase}</span>
+                        <p className="text-sm text-slate-400">Supervisor: {currentProject.assignedSupervisorId}</p>
+                        {/* <span className="text-sm text-emerald-400">Current Phase: {currentProject.currentPhase}</span> */}
                       </div>
                     </div>
                   </div>
@@ -549,12 +549,12 @@ const Dashboard = () => {
                   </div>
 
                   <div className="grid grid-cols-2 gap-3">
-                    <button 
+                    {/* <button 
                       className="bg-gradient-to-r from-yellow-300 via-emerald-400 to-cyan-400 text-slate-900 font-medium rounded-lg px-4 py-2 transition-all shadow-lg shadow-emerald-500/20"
                       onClick={() => navigate("/updates")}
                     >
                       Upload Update
-                    </button>
+                    </button> */}
                     <button 
                       className="bg-slate-600/30 hover:bg-slate-600/50 text-slate-300 px-4 py-2 rounded-lg transition-colors"
                       onClick={() => setShowMaterials(true)}
