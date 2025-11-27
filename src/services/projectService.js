@@ -59,7 +59,7 @@ export const getNearestSupervisor = async (zone) => {
   console.log(zone);
   
   try {
-    const response = await api.get('/projects/supervisors/nearest', {zone},{
+    const response = await api.post('/projects/supervisors/nearest', zone,{
       
       headers: {
         Authorization: `Bearer ${Cookies.get("token")}`
