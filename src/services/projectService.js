@@ -71,13 +71,29 @@ export const getNearestSupervisor = async (zone) => {
     throw error.response?.data || error.message;
   }
 };
+export const getNearestSupplier = async (zone) => {
+  console.log(zone);
+  const zipCode = zone.zipCode;
+  try {
+    const response = await api.post('/projects/suplier/nearest',{zone}, {
+      
+      headers: {
+        Authorization: `Bearer ${Cookies.get("token")}`
+      }
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching nearest supervisor:", error);
+    throw error.response?.data || error.message;
+  }
+};
 
 // Move Project to Execution / Finalize Contractor & Supervisor
-export const finalizeProjectTeam = async (projectId, contractorId, supervisorId) => {
+export const finalizeProjectTeam = async (projectId, contractorId, supervisorId,suppliers) => {
   try {
     const response = await api.post(
-      `/projects/${projectId}/finalize/contractor/${contractorId}/supervisor/${supervisorId}`,
-      {},
+      `/projects/${projectId}/finalize/contractor/${contractorId}/supervisor/${supervisorId}/suppliers`,
+      suppliers,
       {
         headers: {
           Authorization: `Bearer ${Cookies.get("token")}`

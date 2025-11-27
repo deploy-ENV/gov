@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ProjectContext } from '../projectContext';
 import Cookies from "js-cookie";
 
-import { getMyProjects ,deleteProjectById,getNearestSupervisor,finalizeProjectTeam } from '../../../services/projectService';
+import { getMyProjects ,deleteProjectById,getNearestSupervisor,finalizeProjectTeam, getNearestSupplier } from '../../../services/projectService';
 import { getBidsByProject } from '../../../services/bidService';
 
 
@@ -81,61 +81,65 @@ function ProjectCard({ project, onClick,onDelete }) {
   );
 }
 
-// Supervisor Selection Modal
+// Supervisor & Suppliers Selection Modal
 function SupervisorSelectionModal({ bid, project, onClose, onConfirm }) {
+  const [step, setStep] = useState(1); // 1 for supervisor, 2 for suppliers
   const [selectedSupervisor, setSelectedSupervisor] = useState('');
+  const [selectedSuppliers, setSelectedSuppliers] = useState([]);
   const [confirming, setConfirming] = useState(false);
-  const [supervisors, setSupervisors] = useState([]);4
+  const [supervisors, setSupervisors] = useState([]);
+  const [suppliers, setSuppliers] = useState([]);
+  
   const zipcode = project?.location
   const contractorId = bid?.contractorId
   const projectId = bid?.projectId
   console.log(bid);
+  console.log(selectedSuppliers);
   
   const handleFetch = async () => {
-    // setLoading(true);
-    // setError(null);
     try {
-      const data = await getNearestSupervisor(zipcode);
-      setSupervisors(data);
+      const supervisorData = await getNearestSupervisor(zipcode);
+      setSupervisors(supervisorData);
+      // Fetch suppliers as well - replace with actual API call
+      const dummySuppliers = await getNearestSupplier(zipcode);
+      setSuppliers(dummySuppliers);
     } catch (err) {
-      console.error(err.message || "Failed to fetch supervisors");
-    } finally {
-      // setLoading(false);
+      console.error(err.message || "Failed to fetch data");
     }
   };
-  console.log("projk", contractorId);
   
   useEffect(() => {
     handleFetch();
   }, []);
 
-  // Dummy supervisors data - replace with actual API call
-  const DUMMY_SUPERVISORS = [
-    { id: 1, name: 'Rajesh Kumar', experience: 8, region: 'North', rating: 4.7, phone: '+91-9876543210' },
-    { id: 2, name: 'Priya Sharma', experience: 6, region: 'South', rating: 4.5, phone: '+91-9876543211' },
-    { id: 3, name: 'Amit Singh', experience: 10, region: 'East', rating: 4.8, phone: '+91-9876543212' },
-    { id: 4, name: 'Sunita Patel', experience: 5, region: 'West', rating: 4.3, phone: '+91-9876543213' },
-    { id: 5, name: 'Vikram Gupta', experience: 7, region: 'Central', rating: 4.6, phone: '+91-9876543214' }
-  ];
+  const handleSupplierToggle = (supplierId) => {
+    setSelectedSuppliers(prev =>
+      prev.includes(supplierId)
+        ? prev.filter(id => id !== supplierId)
+        : [...prev, supplierId]
+    );
+  };
 
   const handleFinalize = async () => {
     try {
-      const data = await finalizeProjectTeam(projectId, contractorId, selectedSupervisor);
+      setConfirming(true);
+      const data = await finalizeProjectTeam(projectId, contractorId, selectedSupervisor,selectedSuppliers);
       alert("✅ Project finalized successfully!");
       console.log("Response:", data);
     } catch (err) {
       alert("❌ Error finalizing project!");
       console.error(err);
+    } finally {
+      setConfirming(false);
       onClose();
-
-    }finally{
-      onClose();
-
     }
   };
 
   const contractorName = bid.contractorName || bid.contractor_name || 'Unknown Contractor';
   const bidAmount = bid.bidAmount || bid.bid_amount || bid.amount || 0;
+  const selectedSupplierNames = suppliers
+    .filter(s => selectedSuppliers.includes(s.id))
+    .map(s => s.name);
 
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
@@ -152,9 +156,19 @@ function SupervisorSelectionModal({ bid, project, onClose, onConfirm }) {
         {/* Header */}
         <div className="mb-6">
           <h1 className="text-2xl font-bold bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-transparent mb-2">
-            Assign Supervisor
+            {step === 1 ? 'Assign Supervisor' : 'Select Suppliers'}
           </h1>
-          <p className="text-slate-400">Complete the project assignment process</p>
+          <p className="text-slate-400">
+            {step === 1 
+              ? 'Complete the project assignment process' 
+              : 'Choose suppliers for the project'}
+          </p>
+        </div>
+
+        {/* Step Indicator */}
+        <div className="flex gap-2 mb-6">
+          <div className={`flex-1 h-2 rounded-full transition-all ${step === 1 ? 'bg-emerald-400' : 'bg-slate-600'}`}></div>
+          <div className={`flex-1 h-2 rounded-full transition-all ${step === 2 ? 'bg-emerald-400' : 'bg-slate-600'}`}></div>
         </div>
 
         {/* Assignment Summary */}
@@ -180,103 +194,202 @@ function SupervisorSelectionModal({ bid, project, onClose, onConfirm }) {
           </div>
         </div>
 
-        {/* Supervisor Selection */}
-       {/* Supervisor Selection */}
-        <div className="mb-6">
-          <label className="text-sm font-medium text-white flex items-center gap-2 mb-4">
-            <User className="w-4 h-4 text-emerald-400" />
-            Select Project Supervisor
-          </label>
-          
-          {supervisors.length === 0 ? (
-            <div className="text-center py-8 bg-slate-700/30 rounded-lg border border-slate-600/50">
-              <User className="w-12 h-12 text-slate-500 mx-auto mb-3" />
-              <p className="text-slate-400">No supervisors available</p>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-h-96 overflow-y-auto pr-2">
-              {supervisors.map(supervisor => (
-                <div
-                  key={supervisor.id}
-                  onClick={() => setSelectedSupervisor(supervisor.id)}
-                  className={`
-                    relative bg-slate-700/40 rounded-lg p-4 border-2 cursor-pointer transition-all
-                    ${selectedSupervisor === supervisor.id 
-                      ? 'border-emerald-400 bg-emerald-400/10 shadow-lg shadow-emerald-400/20' 
-                      : 'border-slate-600/50 hover:border-cyan-400/50 hover:bg-slate-700/60'
-                    }
-                  `}
-                >
-                  {/* Selection Indicator */}
-                  {selectedSupervisor === supervisor.id && (
-                    <div className="absolute top-3 right-3">
-                      <CheckCircle className="w-6 h-6 text-emerald-400" />
-                    </div>
-                  )}
-                  
-                  {/* Supervisor Avatar */}
-                  <div className="flex items-center gap-3 mb-3">
-                    <div className="w-12 h-12 bg-gradient-to-br from-emerald-400 to-cyan-400 rounded-full flex items-center justify-center">
-                      <User className="w-6 h-6 text-white" />
-                    </div>
-                    <div>
-                      <h4 className="font-bold text-white">{supervisor.username}</h4>
-                      <p className="text-xs text-slate-400">Supervisor ID: {supervisor.id}</p>
-                    </div>
-                  </div>
-                  
-                  {/* Additional Info (if available) */}
-                  <div className="space-y-2 text-xs">
-                    {supervisor.email && (
-                      <div className="flex items-center gap-2 text-slate-300">
-                        <Mail className="w-3 h-3 text-cyan-400" />
-                        <span className="truncate">{supervisor.email}</span>
+        {/* Step 1: Supervisor Selection */}
+        {step === 1 && (
+          <div className="mb-6">
+            <label className="text-sm font-medium text-white flex items-center gap-2 mb-4">
+              <User className="w-4 h-4 text-emerald-400" />
+              Select Project Supervisor
+            </label>
+            
+            {supervisors.length === 0 ? (
+              <div className="text-center py-8 bg-slate-700/30 rounded-lg border border-slate-600/50">
+                <User className="w-12 h-12 text-slate-500 mx-auto mb-3" />
+                <p className="text-slate-400">No supervisors available</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-h-96 overflow-y-auto pr-2">
+                {supervisors.map(supervisor => (
+                  <div
+                    key={supervisor.id}
+                    onClick={() => setSelectedSupervisor(supervisor.id)}
+                    className={`
+                      relative bg-slate-700/40 rounded-lg p-4 border-2 cursor-pointer transition-all
+                      ${selectedSupervisor === supervisor.id 
+                        ? 'border-emerald-400 bg-emerald-400/10 shadow-lg shadow-emerald-400/20' 
+                        : 'border-slate-600/50 hover:border-cyan-400/50 hover:bg-slate-700/60'
+                      }
+                    `}
+                  >
+                    {/* Selection Indicator */}
+                    {selectedSupervisor === supervisor.id && (
+                      <div className="absolute top-3 right-3">
+                        <CheckCircle className="w-6 h-6 text-emerald-400" />
                       </div>
                     )}
-                   
                     
+                    {/* Supervisor Avatar */}
+                    <div className="flex items-center gap-3 mb-3">
+                      <div className="w-12 h-12 bg-gradient-to-br from-emerald-400 to-cyan-400 rounded-full flex items-center justify-center">
+                        <User className="w-6 h-6 text-white" />
+                      </div>
+                      <div>
+                        <h4 className="font-bold text-white">{supervisor.username}</h4>
+                        <p className="text-xs text-slate-400">Supervisor ID: {supervisor.id}</p>
+                      </div>
+                    </div>
+                    
+                    {/* Additional Info */}
+                    <div className="space-y-2 text-xs">
+                      {supervisor.email && (
+                        <div className="flex items-center gap-2 text-slate-300">
+                          <Mail className="w-3 h-3 text-cyan-400" />
+                          <span className="truncate">{supervisor.email}</span>
+                        </div>
+                      )}
                       <div className="flex items-center gap-2 text-slate-300">
                         <Award className="w-3 h-3 text-purple-400" />
-                        <span>{supervisor.experience | 0} years experience</span>
+                        <span>{supervisor.experience || 0} years experience</span>
                       </div>
-                    
+                    </div>
                   </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Step 2: Suppliers Selection */}
+        {step === 2 && (
+          <div className="mb-6">
+            <label className="text-sm font-medium text-white flex items-center gap-2 mb-4">
+              <Truck className="w-4 h-4 text-emerald-400" />
+              Select Suppliers (You can select multiple)
+            </label>
+            
+            {suppliers.length === 0 ? (
+              <div className="text-center py-8 bg-slate-700/30 rounded-lg border border-slate-600/50">
+                <Truck className="w-12 h-12 text-slate-500 mx-auto mb-3" />
+                <p className="text-slate-400">No suppliers available</p>
+              </div>
+            ) : (
+              <div className="space-y-3 max-h-96 overflow-y-auto pr-2">
+                {suppliers.map(supplier => (
+                  <div
+                    key={supplier.id}
+                    onClick={() => handleSupplierToggle(supplier.id)}
+                    className={`
+                      relative bg-slate-700/40 rounded-lg p-4 border-2 cursor-pointer transition-all
+                      ${selectedSuppliers.includes(supplier.id)
+                        ? 'border-cyan-400 bg-cyan-400/10 shadow-lg shadow-cyan-400/20' 
+                        : 'border-slate-600/50 hover:border-cyan-400/50 hover:bg-slate-700/60'
+                      }
+                    `}
+                  >
+                    {/* Selection Indicator */}
+                    <div className="absolute top-3 right-3">
+                      <div className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-all ${
+                        selectedSuppliers.includes(supplier.id)
+                          ? 'bg-cyan-400 border-cyan-400'
+                          : 'border-slate-400'
+                      }`}>
+                        {selectedSuppliers.includes(supplier.id) && (
+                          <CheckCircle className="w-4 h-4 text-white" />
+                        )}
+                      </div>
+                    </div>
+                    
+                    {/* Supplier Info */}
+                    <div className="flex items-center gap-3 mb-2">
+                      <div className="w-12 h-12 bg-gradient-to-br from-cyan-400 to-blue-400 rounded-full flex items-center justify-center">
+                        <Truck className="w-6 h-6 text-white" />
+                      </div>
+                      <div>
+                        <h4 className="font-bold text-white">{supplier.name}</h4>
+                        <p className="text-xs text-slate-400">{supplier.category}</p>
+                      </div>
+                    </div>
+                    
+                    {/* Additional Info */}
+                    <div className="flex gap-2 items-center text-xs mt-2">
+                      <div className="flex items-center gap-1 text-yellow-400">
+                        <Star size={12} fill="currentColor" />
+                        {supplier.rating}
+                      </div>
+                      <div className="flex items-center gap-1 text-slate-300">
+                        <Phone size={12} />
+                        {supplier.phone}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* Selected Suppliers Summary */}
+            {selectedSuppliers.length > 0 && (
+              <div className="mt-4 p-3 bg-cyan-500/10 rounded-lg border border-cyan-500/30">
+                <p className="text-xs text-cyan-300 font-medium mb-2">Selected Suppliers: {selectedSuppliers.length}</p>
+                <div className="flex flex-wrap gap-2">
+                  {selectedSupplierNames.map(name => (
+                    <span key={name} className="inline-block bg-cyan-500/20 text-cyan-300 px-2 py-1 rounded text-xs">
+                      {name}
+                    </span>
+                  ))}
                 </div>
-              ))}
-            </div>
-          )}
-        </div>
-
-
-        
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Action Buttons */}
         <div className="flex gap-4">
-          <button
-            onClick={onClose}
-            className="px-6 py-3 bg-slate-700/50 text-slate-300 rounded-lg hover:bg-slate-600/50 transition"
-            disabled={confirming}
-          >
-            Cancel
-          </button>
+          {step === 2 && (
+            <button
+              onClick={() => setStep(1)}
+              className="px-6 py-3 bg-slate-700/50 text-slate-300 rounded-lg hover:bg-slate-600/50 transition"
+            >
+              Back
+            </button>
+          )}
           
-          <button 
-            onClick={handleFinalize}
-            disabled={!selectedSupervisor || confirming}
-            className="flex-1 bg-gradient-to-r from-emerald-400 to-cyan-400 text-slate-900 font-semibold py-3 px-6 rounded-lg hover:from-emerald-500 hover:to-cyan-500 transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-          >
-            {confirming ? (
-              <>
-                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-slate-900"></div>
-                Assigning...
-              </>
-            ) : (
-              <>
-                <CheckCircle className="w-5 h-5" />
-                Confirm Assignment
-              </>
-            )}
-          </button>
+          {step === 1 ? (
+            <button
+              onClick={() => setStep(2)}
+              disabled={!selectedSupervisor || confirming}
+              className="flex-1 bg-gradient-to-r from-emerald-400 to-cyan-400 text-slate-900 font-semibold py-3 px-6 rounded-lg hover:from-emerald-500 hover:to-cyan-500 transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+            >
+              {confirming ? (
+                <>
+                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-slate-900"></div>
+                  Processing...
+                </>
+              ) : (
+                <>
+                  <CheckCircle className="w-5 h-5" />
+                  Next: Select Suppliers
+                </>
+              )}
+            </button>
+          ) : (
+            <button 
+              onClick={handleFinalize}
+              disabled={selectedSuppliers.length === 0 || confirming}
+              className="flex-1 bg-gradient-to-r from-emerald-400 to-cyan-400 text-slate-900 font-semibold py-3 px-6 rounded-lg hover:from-emerald-500 hover:to-cyan-500 transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+            >
+              {confirming ? (
+                <>
+                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-slate-900"></div>
+                  Finalizing...
+                </>
+              ) : (
+                <>
+                  <CheckCircle className="w-5 h-5" />
+                  Finalize Assignment
+                </>
+              )}
+            </button>
+          )}
         </div>
       </div>
     </div>
@@ -332,7 +445,7 @@ function BidDetailsModal({ bid, project, onClose, onAcceptBid }) {
           <p className="text-slate-400">Review contractor's proposal for this project</p>
         </div>
 
-        {/* Contractor Info Card - Same structure as Project Info Card */}
+        {/* Contractor Info Card */}
         <div className="bg-slate-800/40 backdrop-blur-sm rounded-2xl p-6 border border-slate-700/50 mb-6">
           <div className="flex items-center gap-3 mb-4">
             <div className="w-12 h-12 bg-gradient-to-br from-emerald-400 to-cyan-400 rounded-xl flex items-center justify-center">
@@ -369,8 +482,6 @@ function BidDetailsModal({ bid, project, onClose, onAcceptBid }) {
               <p className="text-sm font-medium text-white">{timeline} days</p>
             </div>
 
-          
-
             <div className="bg-slate-700/30 rounded-lg p-4">
               <div className="flex items-center gap-2 mb-2">
                 <Calendar className="w-4 h-4 text-emerald-400" />
@@ -381,7 +492,7 @@ function BidDetailsModal({ bid, project, onClose, onAcceptBid }) {
           </div>
         </div>
 
-        {/* Bid Form - Same structure as BiddingFormCard form */}
+        {/* Bid Form */}
         <div className="bg-slate-800/40 rounded-2xl p-6 border border-slate-700/50 space-y-6">
           {/* Basic Form Fields */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -537,8 +648,6 @@ function BidDetailsModal({ bid, project, onClose, onAcceptBid }) {
             </div>
           </div>
 
-          {/* Contact Information Section */}
-         
           {/* Action Buttons */}
           <div className="flex gap-4 pt-6">
             <button
@@ -548,7 +657,7 @@ function BidDetailsModal({ bid, project, onClose, onAcceptBid }) {
               Close
             </button>
             
-            {project.status === 'BIDDING' && (
+            {project.status === 'On Bidding' && (
               <button 
                 onClick={() => onAcceptBid && onAcceptBid(bid)}
                 className="flex-1 bg-gradient-to-r from-yellow-300 via-emerald-400 to-cyan-400 text-slate-900 font-semibold py-3 px-6 rounded-lg hover:from-emerald-500 hover:to-cyan-500 transition"
@@ -665,7 +774,7 @@ function BidCard({ bid, index, project, onViewDetails, onAcceptBid }) {
             View Details
           </button>
 
-          {project.status === 'On Bidding' && (
+          {project.status === 'BIDDING' && (
             <button 
               onClick={(e) => {
                 e.stopPropagation();
@@ -703,22 +812,16 @@ function ProjectBidsView({ project, onBack, onProjectUpdate }) {
       if (bidsData && Array.isArray(bidsData) && bidsData.length > 0) {
         setBids(bidsData);
       } else {
-        // Use dummy data if no bids found
-        setBids(getDummyBids());
+        setBids([]);
       }
     } catch (err) {
       console.error('Error fetching bids:', err);
       setError('Failed to load bids. Please try again.');
-      // Show dummy data on error for demo purposes
-      setBids(getDummyBids());
+      setBids([]);
     } finally {
       setLoading(false);
     }
   };
-
-  const getDummyBids = () => [
-   
-  ];
 
   useEffect(() => {
     if (project?.id) {
@@ -732,31 +835,24 @@ function ProjectBidsView({ project, onBack, onProjectUpdate }) {
 
   const handleAcceptBid = (bid) => {
     setAcceptingBid(bid);
-    setSelectedBid(null); // Close bid details modal
-    setShowSupervisorModal(true); // Show supervisor selection modal
+    setSelectedBid(null);
+    setShowSupervisorModal(true);
   };
 
-  const handleSupervisorAssignment = (assignmentData) => {
-    // Update project with new assignment
+  const handleSupervisorAssignment = () => {
     const updatedProject = {
       ...project,
       status: 'Ongoing',
-      contractor: assignmentData.bid.contractorName,
-      supervisor: assignmentData.supervisor.name,
-      budgetUsed: assignmentData.bid.bidAmount
+      contractor: acceptingBid.contractorName,
+      budgetUsed: acceptingBid.bidAmount
     };
 
-    // Call parent update function if available
     if (onProjectUpdate) {
       onProjectUpdate(updatedProject);
     }
 
-    // Close modals
     setShowSupervisorModal(false);
     setAcceptingBid(null);
-
-    // Show success message or redirect
-    console.log('Project assigned successfully:', assignmentData);
   };
 
   return (
@@ -850,7 +946,7 @@ function ProjectBidsView({ project, onBack, onProjectUpdate }) {
         />
       )}
 
-      {/* Supervisor Selection Modal */}
+      {/* Supervisor & Suppliers Selection Modal */}
       {showSupervisorModal && acceptingBid && (
         <SupervisorSelectionModal
           bid={acceptingBid}
@@ -866,139 +962,19 @@ function ProjectBidsView({ project, onBack, onProjectUpdate }) {
   );
 }
 
-function OnBiddingModal({ project, onClose, onAssign }) {
-  const [step, setStep] = useState(0);
-  const [assignedContractor, setAssignedContractor] = useState(null);
-  const [autoSupplier, setAutoSupplier] = useState(null);
-  const [selectedSupervisor, setSelectedSupervisor] = useState('');
-  const [confirming, setConfirming] = useState(false);
-
-  const DUMMY_BIDS = [];
-  const DUMMY_SUPPLIERS = [];
-  const DUMMY_SUPERVISORS = [];
-
-  const getNearestSupplier = (zone) => DUMMY_SUPPLIERS.find(s => s.zone === zone) || DUMMY_SUPPLIERS[0];
-
-  const handleAssignContractor = (bid) => {
-    setAssignedContractor(bid);
-    setStep(1);
-    setTimeout(() => setAutoSupplier(getNearestSupplier(project.zone)), 400);
-  };
-
-  const handleConfirmSupervisor = () => {
-    setConfirming(true);
-    setTimeout(() => {
-      onAssign({
-        contractor: assignedContractor.name,
-        supplier: autoSupplier.name,
-        supervisor: DUMMY_SUPERVISORS.find(s => s.id === Number(selectedSupervisor))?.name || '',
-      });
-      setConfirming(false);
-      onClose();
-    }, 900);
-  };
-
-  return (
-    <AnimatePresence>
-      <motion.div
-        className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        onClick={onClose}
-      >
-        <motion.div
-          className="bg-slate-800/90 text-white rounded-xl border border-slate-700/50 shadow-xl p-6 max-w-2xl w-full relative overflow-y-auto max-h-[90vh]"
-          initial={{ scale: 0.95, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          exit={{ scale: 0.95, opacity: 0 }}
-          onClick={e => e.stopPropagation()}
-        >
-          <button className="absolute top-4 right-4 text-slate-400 hover:text-red-400" onClick={onClose}><XCircle size={24} /></button>
-          <div className="flex gap-4 mb-6 border-b border-slate-600 pb-2">
-            <button className={`font-semibold px-2 pb-1 border-b-2 ${step === 0 ? 'border-yellow-400 text-yellow-300' : 'border-transparent text-white/50'}`} onClick={() => setStep(0)}>1. View Bids</button>
-            <button className={`font-semibold px-2 pb-1 border-b-2 ${step === 1 ? 'border-cyan-400 text-cyan-300' : 'border-transparent text-white/50'}`} disabled={!assignedContractor} onClick={() => assignedContractor && setStep(1)}>2. Auto Supplier</button>
-            <button className={`font-semibold px-2 pb-1 border-b-2 ${step === 2 ? 'border-emerald-400 text-emerald-300' : 'border-transparent text-white/50'}`} disabled={!autoSupplier} onClick={() => autoSupplier && setStep(2)}>3. Assign Supervisor</button>
-          </div>
-          <div className="space-y-6">
-            {step === 0 && DUMMY_BIDS.map(bid => (
-              <div key={bid.id} className="bg-slate-700/40 rounded-xl p-4 border border-slate-600 shadow space-y-2">
-                <div className="font-bold text-lg flex items-center gap-2"><User size={18} />{bid.name}</div>
-                <div className="text-sm flex items-center gap-1"><FileText size={16} /> Proposal: <a href={`/${bid.proposal}`} className="underline text-cyan-400 hover:text-cyan-300" download>Download</a></div>
-                <div className="text-sm">Bid Amount: <span className="font-semibold text-emerald-400">₹{bid.amount.toLocaleString()}</span></div>
-                <div className="text-sm">Timeline: <span className="font-semibold text-cyan-400">{bid.duration} days</span></div>
-                <button
-                  className="mt-3 px-4 py-2 rounded-lg bg-yellow-400/20 text-yellow-300 font-semibold hover:bg-yellow-400/30 transition"
-                  onClick={() => handleAssignContractor(bid)}
-                >
-                  <CheckCircle className="inline mr-1 text-green-300" size={18} /> Assign Contractor
-                </button>
-              </div>
-            ))}
-            {step === 1 && autoSupplier && (
-              <div className="text-center text-emerald-300 font-semibold">
-                <Truck className="inline-block mr-1" /> Auto-selected Supplier: {autoSupplier.name} ({autoSupplier.zone})
-                <button className="block mt-4 mx-auto px-4 py-2 bg-cyan-400 text-slate-900 rounded-lg font-bold hover:brightness-110" onClick={() => setStep(2)}>
-                  Next: Assign Supervisor
-                </button>
-              </div>
-            )}
-            {step === 2 && (
-              <div className="flex flex-col gap-4">
-                <label className="text-white font-semibold">Select Supervisor</label>
-                <select
-                  className="px-3 py-2 rounded-lg bg-slate-700 text-white"
-                  value={selectedSupervisor}
-                  onChange={e => setSelectedSupervisor(e.target.value)}
-                >
-                  <option value="" disabled>Select supervisor…</option>
-                  {DUMMY_SUPERVISORS.filter(s => s.region === project.zone).map(s => (
-                    <option key={s.id} value={s.id}>{s.name} ({s.experience} yrs)</option>
-                  ))}
-                </select>
-                <button
-                  className="px-5 py-2 rounded bg-emerald-400 text-slate-900 font-bold shadow hover:brightness-110 transition disabled:opacity-50"
-                  disabled={!selectedSupervisor || confirming}
-                  onClick={handleConfirmSupervisor}
-                >
-                  <CheckCircle className="inline mr-1" size={18} /> Confirm Assignment
-                </button>
-              </div>
-            )}
-          </div>
-        </motion.div>
-      </motion.div>
-    </AnimatePresence>
-  );
-}
-
 export default function AllProjects() {
   const { hardcodedProjects } = useContext(ProjectContext);
   const [dynamicProjects, setDynamicProjects] = useState([]);
-  const [modalProject, setModalProject] = useState(null);
-  const [selectedProject, setSelectedProject] = useState(null); // For full page bids view
+  const [selectedProject, setSelectedProject] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const handleAssign = ({ contractor, supplier, supervisor }) => {
-    if (modalProject) {
-      setDynamicProjects(prev =>
-        prev.map(p =>
-          p.id === modalProject.id
-            ? { ...p, status: "Ongoing", contractor, supplier, supervisor }
-            : p
-        )
-      );
-    }
-    setModalProject(null);
-  };
-
   const handleProjectClick = (project) => {
-    setSelectedProject(project); // Show full page bids view instead of modal
+    setSelectedProject(project);
   };
 
   const handleBackToProjects = () => {
-    setSelectedProject(null); // Return to projects list
+    setSelectedProject(null);
   };
 
   const handleProjectUpdate = (updatedProject) => {
@@ -1007,17 +983,17 @@ export default function AllProjects() {
         p.id === updatedProject.id ? updatedProject : p
       )
     );
-    setSelectedProject(updatedProject); // Update the selected project as well
+    setSelectedProject(updatedProject);
   };
 
   const handleDeleteProject = async (projectId) => {
-      try {
+    try {
       await deleteProjectById(projectId);
       setDynamicProjects(prev => prev.filter(p => p.id !== projectId));
-      } catch (err) {
+    } catch (err) {
       console.error("Failed to delete project", err);
-      }
-    };
+    }
+  };
   
   const userData = JSON.parse(Cookies.get("userData"));
 
@@ -1037,7 +1013,6 @@ export default function AllProjects() {
     fetchProjects();
   }, []);
 
-  // If a project is selected, show the full page bids view
   if (selectedProject) {
     return (
       <ProjectBidsView 
@@ -1048,7 +1023,6 @@ export default function AllProjects() {
     );
   }
 
-  // Otherwise show the projects list
   return (
     <div className="h-full w-full bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-6 font-sans text-white">
       <div className="flex justify-between items-center mb-6">
@@ -1085,15 +1059,6 @@ export default function AllProjects() {
           )}
         </div>
       )}
-
-      {modalProject && (
-        <OnBiddingModal
-          project={modalProject}
-          onClose={() => setModalProject(null)}
-          onAssign={handleAssign}
-        />
-      )}
     </div>
   );
 }
-
