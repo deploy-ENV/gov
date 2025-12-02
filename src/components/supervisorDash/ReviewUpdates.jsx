@@ -128,7 +128,7 @@ const UpdatesReview = () => {
           </div>
 
           {/* Photos Section */}
-          {photos.length > 0 && (
+          {photos?.length > 0 && (
             <div className="mb-6">
               <h4 className="text-sm font-semibold text-emerald-400 mb-2">Photos</h4>
               <div className="grid grid-cols-3 gap-2">
@@ -146,7 +146,7 @@ const UpdatesReview = () => {
           )}
 
           {/* Videos Section */}
-          {videos.length > 0 && (
+          {videos?.length > 0 && (
             <div className="mb-6">
               <h4 className="text-sm font-semibold text-emerald-400 mb-2">Videos</h4>
               <div className="grid grid-cols-1 gap-2">
@@ -326,7 +326,7 @@ const UpdatesReview = () => {
         <div className="p-6">
           <div className="bg-slate-800/40 backdrop-blur-sm rounded-2xl p-6 border border-slate-700/50">
             <h3 className="text-xl font-bold text-white mb-6">Submitted Updates</h3>
-            {submittedUpdates.length > 0 ? (
+            {submittedUpdates?.length > 0 ? (
               <div className="space-y-4">
                 {submittedUpdates.map((update) => (
                   <div
@@ -423,7 +423,7 @@ const UpdatePopup = ({ update }) => {
         </div>
 
         {/* Photos Section */}
-        {photos.length > 0 && (
+        {photos?.length > 0 && (
           <div className="mb-6">
             <h4 className="text-sm font-semibold text-emerald-400 mb-2">Photos</h4>
             <div className="grid grid-cols-3 gap-2">
@@ -441,7 +441,7 @@ const UpdatePopup = ({ update }) => {
         )}
 
         {/* Videos Section */}
-        {videos.length > 0 && (
+        {videos?.length > 0 && (
           <div className="mb-6">
             <h4 className="text-sm font-semibold text-emerald-400 mb-2">Videos</h4>
             <div className="grid grid-cols-1 gap-2">
