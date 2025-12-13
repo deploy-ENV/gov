@@ -23,14 +23,14 @@ export const registerGovt = async (userData,role) => {
      if(role == 'Project Manager'){
       const response = await api.post('/auth/register/projectmanager', userData);
       if (response.data.token) {
-      setAuthCookies(response.data.token, 'projectmanager',userData);
+      setAuthCookies(response.data.token, 'projectmanager',response.data.data);
     }
       return response.data;
     }
     else{
       const response = await api.post('/auth/register/supervisor', userData);
       if (response.data.token) {
-      setAuthCookies(response.data.token, 'supervisor',userData);
+      setAuthCookies(response.data.token, 'supervisor',response.data.data);
     }
     return response.data;
     }
