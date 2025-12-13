@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { ClipboardList, Truck, CreditCard, Home, Calendar, PackageCheck, ArrowRight, X, Package, Archive, Search, Bell, TrendingUp } from "lucide-react";
 import Cookies from "js-cookie";
+
 const stats = [
   {
     label: "Projects Active",
@@ -53,11 +54,54 @@ export default function Overview() {
 
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
-  const [data,setData] = useState(null) 
-      console.log("data:",(data));
-      useEffect(() => {
-        setData(JSON.parse(Cookies.get("userData")))
+  const [showCatalogEnter, setShowCatalogEnter] = useState(false);
+  const [catalog, setCatalog] = useState([]);
+  const [data,setData] = useState(null);
+  const [newProduct, setNewProduct] = useState({
+    name: '',
+    price: '',
+    image: '',
+    available: true
+  });
+  
+  console.log("data:",(data));
+  
+  useEffect(() => {
+    const userDataCookie = Cookies.get("userData");
+    if (userDataCookie) {
+      setData(JSON.parse(userDataCookie));
+    }
+    
+    const catalogData = Cookies.get("catalogProducts");
+    if (catalogData && catalogData !== "null" && catalogData !== "undefined") {
+      setCatalog(JSON.parse(catalogData));
+    } else {
+      setShowCatalogEnter(true);
+    }
   }, []);
+
+  const handleAddProduct = () => {
+    if (newProduct.name && newProduct.price && newProduct.image) {
+      const updatedCatalog = [...catalog, { ...newProduct, id: Date.now() }];
+      setCatalog(updatedCatalog);
+      Cookies.set("catalogProducts", JSON.stringify(updatedCatalog));
+      setNewProduct({ name: '', price: '', image: '', available: true });
+    }
+  };
+
+  const handleSaveCatalog = () => {
+    if (catalog.length > 0) {
+      setShowCatalogEnter(false);
+    } else {
+      alert("Please add at least one product to the catalog");
+    }
+  };
+
+  const handleRemoveProduct = (id) => {
+    const updatedCatalog = catalog.filter(product => product.id !== id);
+    setCatalog(updatedCatalog);
+    Cookies.set("catalogProducts", JSON.stringify(updatedCatalog));
+  };
 
   return (
     <div className="flex min-h-screen font-sans bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
@@ -170,6 +214,127 @@ export default function Overview() {
           </div>
         </div>
       </div>
+
+      {/* Catalog Entry Modal */}
+      {showCatalogEnter && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center">
+          <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" />
+          <div className="relative z-10 w-full max-w-4xl mx-4 rounded-xl bg-slate-800/95 backdrop-blur-sm border border-slate-700/50 shadow-2xl overflow-hidden max-h-[90vh] flex flex-col">
+            <div className="flex items-center justify-between p-6 border-b border-slate-700/50">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-gradient-to-br from-emerald-400 to-cyan-400 rounded-lg flex items-center justify-center">
+                  <Package className="w-6 h-6 text-white" />
+                </div>
+                <div>
+                  <h2 className="text-2xl font-bold text-white">Setup Catalog</h2>
+                  <p className="text-sm text-slate-400">Add products to your catalog</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex-1 overflow-y-auto p-6">
+              <div className="bg-slate-700/30 rounded-xl p-6 mb-6">
+                <h3 className="text-lg font-semibold text-white mb-4">Add New Product</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                  <div>
+                    <label className="block text-sm font-medium text-slate-300 mb-2">Product Name</label>
+                    <input
+                      type="text"
+                      value={newProduct.name}
+                      onChange={(e) => setNewProduct({...newProduct, name: e.target.value})}
+                      placeholder="e.g., Cement, Bricks, Steel"
+                      className="w-full px-4 py-2 bg-slate-600/50 border border-slate-500 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-400/50"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-slate-300 mb-2">Price</label>
+                    <input
+                      type="text"
+                      value={newProduct.price}
+                      onChange={(e) => setNewProduct({...newProduct, price: e.target.value})}
+                      placeholder="e.g., ₹500/bag"
+                      className="w-full px-4 py-2 bg-slate-600/50 border border-slate-500 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-400/50"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-slate-300 mb-2">Image URL</label>
+                    <input
+                      type="text"
+                      value={newProduct.image}
+                      onChange={(e) => setNewProduct({...newProduct, image: e.target.value})}
+                      placeholder="https://example.com/image.jpg"
+                      className="w-full px-4 py-2 bg-slate-600/50 border border-slate-500 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-400/50"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-slate-300 mb-2">Availability</label>
+                    <select
+                      value={newProduct.available}
+                      onChange={(e) => setNewProduct({...newProduct, available: e.target.value === 'true'})}
+                      className="w-full px-4 py-2 bg-slate-600/50 border border-slate-500 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-emerald-400/50"
+                    >
+                      <option value="true">Available</option>
+                      <option value="false">Out of Stock</option>
+                    </select>
+                  </div>
+                </div>
+                <button
+                  onClick={handleAddProduct}
+                  className="w-full bg-gradient-to-r from-emerald-400 to-cyan-400 text-slate-900 font-semibold px-6 py-3 rounded-lg hover:shadow-lg hover:shadow-emerald-500/30 transition-all"
+                >
+                  Add Product to Catalog
+                </button>
+              </div>
+
+              {catalog.length > 0 && (
+                <div>
+                  <h3 className="text-lg font-semibold text-white mb-4">Catalog Products ({catalog.length})</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {catalog.map((product) => (
+                      <div key={product.id} className="bg-slate-700/40 rounded-lg p-4 border border-slate-600/50 hover:border-emerald-400/50 transition-all">
+                        <div className="relative mb-3">
+                          <img
+                            src={product.image}
+                            alt={product.name}
+                            className="w-full h-32 object-cover rounded-lg"
+                            onError={(e) => {
+                              e.target.src = 'https://via.placeholder.com/200x150?text=No+Image';
+                            }}
+                          />
+                          <button
+                            onClick={() => handleRemoveProduct(product.id)}
+                            className="absolute top-2 right-2 p-1.5 bg-red-500/80 hover:bg-red-500 rounded-lg transition-colors"
+                          >
+                            <X className="w-4 h-4 text-white" />
+                          </button>
+                        </div>
+                        <h4 className="font-semibold text-white mb-1">{product.name}</h4>
+                        <p className="text-emerald-400 font-medium mb-2">{product.price}</p>
+                        <span className={`inline-block px-3 py-1 rounded-full text-xs font-semibold ${
+                          product.available 
+                            ? 'bg-emerald-900/60 text-emerald-300' 
+                            : 'bg-red-900/60 text-red-300'
+                        }`}>
+                          {product.available ? 'Available' : 'Out of Stock'}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <div className="p-6 border-t border-slate-700/50 bg-slate-800/50">
+              <button
+                onClick={handleSaveCatalog}
+                className="w-full bg-gradient-to-r from-yellow-300 via-emerald-400 to-cyan-400 text-slate-900 font-bold px-6 py-3 rounded-lg hover:shadow-lg hover:shadow-emerald-500/30 transition-all"
+              >
+                Save Catalog & Continue
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Project Details Modal */}
       {isModalOpen && (
