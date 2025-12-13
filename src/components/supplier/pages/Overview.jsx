@@ -72,7 +72,7 @@ export default function Overview() {
       setData(JSON.parse(userDataCookie));
     }
     
-    const catalogData = Cookies.get("catalogProducts");
+    const catalogData = userDataCookie.catalogProducts;
     if (catalogData && catalogData !== "null" && catalogData !== "undefined") {
       setCatalog(JSON.parse(catalogData));
     } else {
