@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { ClipboardList, Truck, CreditCard, Home, Calendar, PackageCheck, ArrowRight, X, Package, Archive, Search, Bell, TrendingUp } from "lucide-react";
-
+import Cookies from "js-cookie";
 const stats = [
   {
     label: "Projects Active",
