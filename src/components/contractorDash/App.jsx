@@ -13,7 +13,7 @@ import Updates from './ProjectUpdates';
 import Expense from './Expense';
 import Communication from './Communication';
 import Settings from './Settings';
-
+import Profile from './Profile';
 // Component to handle tab state based on route
 const RouteHandler = () => {
   const location = useLocation();
@@ -49,6 +49,9 @@ const RouteHandler = () => {
       case 'settings':
         activeTab = 'settings';
         break;
+      case 'profile':
+        activeTab = 'profile';
+        break;
       default:
         activeTab = 'overview';
     }
@@ -74,6 +77,7 @@ function App() {
           <Route path="expenses" element={<Expense />} />
           <Route path="communication" element={<Communication />} />
           <Route path="settings" element={<Settings />} />
+          <Route path="profile" element={<Profile />} />
         </Route>
       </Routes>
     </div>

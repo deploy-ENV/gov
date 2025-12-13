@@ -243,104 +243,10 @@ const Expense = () => {
                 )}
               </div>
 
-              <div className="bg-slate-800/40 backdrop-blur-sm rounded-2xl p-6 border border-slate-700/50">
-                <div className="flex items-center justify-between mb-6">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-gradient-to-br from-yellow-400 to-orange-400 rounded-lg flex items-center justify-center">
-                      <Calculator className="w-5 h-5 text-white" />
-                    </div>
-                    <h3 className="text-xl font-bold text-white">Note Usage per Task</h3>
-                  </div>
-                  <button
-                    onClick={() => setShowAddTask(true)}
-                    className="bg-yellow-500/20 hover:bg-yellow-500/30 text-yellow-400 px-4 py-2 rounded-lg transition-colors flex items-center gap-2"
-                  >
-                    <Plus className="w-4 h-4" />
-                    Add Task Note
-                  </button>
-                </div>
-                <div className="space-y-3">
-                  {taskUsage.map((note) => (
-                    <div key={note.id} className="flex items-center justify-between p-4 bg-slate-700/30 rounded-lg border border-slate-600/30">
-                      <div>
-                        <p className="text-white font-medium">{note.task}</p>
-                        <p className="text-slate-400 text-sm">Usage: ₹{note.usage}</p>
-                      </div>
-                      <button
-                        onClick={() => removeTaskNote(note.id)}
-                        className="text-red-400 hover:text-red-500 p-1 rounded-lg transition-colors"
-                      >
-                        <X className="w-5 h-5" />
-                      </button>
-                    </div>
-                  ))}
-                </div>
-                {showAddTask && (
-                  <div className="mt-4 p-4 bg-slate-700/50 rounded-lg border border-slate-600/50">
-                    <h4 className="text-white font-medium mb-3">Add New Task Note</h4>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <input
-                        type="text"
-                        placeholder="Task name"
-                        value={newTaskNote.task}
-                        onChange={(e) => setNewTaskNote({ ...newTaskNote, task: e.target.value })}
-                        className="bg-slate-600/50 border border-slate-500 rounded-lg px-4 py-2 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-400/50"
-                      />
-                      <input
-                        type="number"
-                        placeholder="Usage amount (₹)"
-                        value={newTaskNote.usage}
-                        onChange={(e) => setNewTaskNote({ ...newTaskNote, usage: e.target.value })}
-                        className="bg-slate-600/50 border border-slate-500 rounded-lg px-4 py-2 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-400/50"
-                      />
-                    </div>
-                    <div className="flex gap-2 mt-3">
-                      <button
-                        onClick={addTaskNote}
-                        className="bg-yellow-500/20 hover:bg-yellow-500/30 text-yellow-400 px-4 py-2 rounded-lg transition-colors"
-                      >
-                        Add Note
-                      </button>
-                      <button
-                        onClick={() => setShowAddTask(false)}
-                        className="bg-slate-600/50 hover:bg-slate-600/70 text-slate-300 px-4 py-2 rounded-lg transition-colors"
-                      >
-                        Cancel
-                      </button>
-                    </div>
-                  </div>
-                )}
-              </div>
+              
             </div>
 
-            <div className="space-y-6">
-              <div className="bg-slate-800/40 backdrop-blur-sm rounded-2xl p-6 border border-slate-700/50">
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="w-10 h-10 bg-gradient-to-br from-cyan-400 to-blue-400 rounded-lg flex items-center justify-center">
-                    <BarChart3 className="w-5 h-5 text-white" />
-                  </div>
-                  <h3 className="text-xl font-bold text-white">Track Total vs. Fund Received</h3>
-                </div>
-                <div className="space-y-4">
-                  <div className="flex justify-between items-center p-3 bg-slate-700/30 rounded-lg">
-                    <span className="text-slate-300">Total Expenses</span>
-                    <span className="text-emerald-400 font-medium">₹{totalExpense.toLocaleString()}</span>
-                  </div>
-                  <div className="flex justify-between items-center p-3 bg-slate-700/30 rounded-lg">
-                    <span className="text-slate-300">Fund Received</span>
-                    <span className="text-yellow-400 font-medium">₹{fundReceived.toLocaleString()}</span>
-                  </div>
-                  <div className="border-t border-slate-600 pt-4">
-                    <div className="flex justify-between items-center">
-                      <span className="text-white font-bold text-lg">Remaining Balance</span>
-                      <span className="text-2xl font-bold bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-transparent">
-                        ₹{(fundReceived - totalExpense).toLocaleString()}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+           
           </div>
         </div>
       </div>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { Link, useNavigate, useLocation, data } from 'react-router-dom';
 import ProjectDetailsPopup from './BiddingDetailsCard';
 import Cookies from "js-cookie";
 import {
@@ -26,7 +26,8 @@ import {
 } from 'lucide-react';
 import { useSelector, useDispatch } from 'react-redux';
 import { logout } from '../../services/authService';
-
+// import axios from 'axios';
+import api from '../common/api';
 const SupervisorDashboard = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -38,7 +39,7 @@ const SupervisorDashboard = () => {
     useEffect(() => {
       setData(JSON.parse(Cookies.get("userData")))
     }, []);
-
+  const [allotedProject, setAllotedProject] = useState(null);
   // Update active tab based on URL
   useEffect(() => {
     const path = location.pathname.split('/').pop() || '';
@@ -60,11 +61,39 @@ const SupervisorDashboard = () => {
     setActiveTab(tab);
   };
 
+  useEffect(() => {
+    const supData = JSON.parse(Cookies.get("userData"))
+    console.log(Cookies.get("token"));
+    const suppId = supData.empId
+    
+       const fetchProject = async () => {
+        try {
+          const fetchdata = await api.get(`/auth/supervisors/getProject/${suppId}`,
+            {
+              headers: {
+                      Authorization: `Bearer ${Cookies.get("token")}`
+                    }
+            }
+
+          );
+          console.log(fetchdata);
+          
+          setAllotedProject(fetchdata.data);
+        } catch (err) {
+          console.log(err)
+          console.error(err);
+        } finally {
+          
+        }
+      };
+      fetchProject();
+    }, []);
+
   const [showMaterials, setShowMaterials] = useState(false);
   const fundReq = useSelector(state => state.supervisorDashboard.fundReq);
   const submittedUpdates = useSelector(state => state.supervisorDashboard.submittedUpdates);
   const currentProject = useSelector(state => state.supervisorDashboard.allotedProject);
-
+  
   const parseDate = (str) => {
     const [day, month, year] = str.split('/');
     return new Date(`${year}-${month}-${day}`);
@@ -74,7 +103,7 @@ const SupervisorDashboard = () => {
   const executionStats = [
     { title: 'Allocated Project', value: currentProject.length, icon: CheckCircle, color: 'from-emerald-400 to-cyan-400' },
     { title: 'Project Progress', value: useSelector(state => state.supervisorDashboard.allotedProject?.progress || 0) + "%", icon: TrendingUp, color: 'from-yellow-400 to-orange-400' },
-    { title: 'Updates Submitted', value: useSelector(state => state.supervisorDashboard?.submittedUpdates || [])?.length || "0", icon: FileText, color: 'from-green-400 to-emerald-400' },
+    { title: 'Updates Received', value: useSelector(state => state.supervisorDashboard?.submittedUpdates || [])?.length || "0", icon: FileText, color: 'from-green-400 to-emerald-400' },
     { title: 'Days Remaining', value: (Math.ceil((parseDate(useSelector(state => state.supervisorDashboard.allotedProject?.endDate || "0")) - parseDate(useSelector(state => state.supervisorDashboard.allotedProject?.startDate || "0"))) / (1000 * 60 * 60 * 24))), icon: Clock, color: 'from-purple-400 to-pink-400' },
   ];
 

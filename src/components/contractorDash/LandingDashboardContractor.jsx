@@ -143,25 +143,34 @@ const Dashboard = () => {
   };
 
   // Calculate days remaining
-  const calculateDaysRemaining = (startDateStr, endDateStr) => {
-    if (!startDateStr || !endDateStr) return 0;
-    
+  const calculateDaysRemaining = (endDateStr) => {
+    if (!endDateStr) return 0;
+
     try {
-      const [startDay, startMonth, startYear] = startDateStr.split('/');
-      const [endDay, endMonth, endYear] = endDateStr.split('/');
-      
-      const startDate = new Date(`${startYear}-${startMonth}-${startDay}`);
-      const endDate = new Date(`${endYear}-${endMonth}-${endDay}`);
-      
-      const diffTime = endDate - startDate;
-      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-      
-      return diffDays > 0 ? diffDays : 0;
+        const currentDate = new Date();
+        currentDate.setHours(0, 0, 0, 0);
+
+        const [endDay, endMonth, endYear] = endDateStr.split('/');
+        
+        
+        const endDate = new Date(
+            parseInt(endYear, 10), 
+            parseInt(endMonth, 10) - 1, 
+            parseInt(endDay, 10)
+        );
+        endDate.setHours(0, 0, 0, 0);
+
+        const diffTime = endDate.getTime() - currentDate.getTime();
+        const millisecondsPerDay = 1000 * 60 * 60 * 24;
+        
+        const diffDays = Math.ceil(diffTime / millisecondsPerDay);
+
+        return diffDays > 0 ? diffDays : 0;
     } catch (e) {
-      console.error("Error calculating days:", e);
-      return 0;
+        console.error("Error calculating days:", e);
+        return 0;
     }
-  };
+};
 
   const biddingStats = [
     { title: 'Active Bids', value: myBids.length, icon: FileText, color: 'from-emerald-400 to-cyan-400' },
@@ -173,9 +182,9 @@ const Dashboard = () => {
     { title: 'Allocated Project', value: '1', icon: CheckCircle, color: 'from-emerald-400 to-cyan-400' },
     { title: 'Project Progress', value: `${currentProject.progress || 0}%`, icon: TrendingUp, color: 'from-yellow-400 to-orange-400' },
     { title: 'Updates Submitted', value: submittedUpdates.length, icon: FileText, color: 'from-green-400 to-emerald-400' },
-    { title: 'Days Remaining', value: calculateDaysRemaining(currentProject.expectedStartDate, currentProject.deadline), icon: Clock, color: 'from-purple-400 to-pink-400' },
+    { title: 'Days Remaining', value: calculateDaysRemaining(currentProject.deadline), icon: Clock, color: 'from-purple-400 to-pink-400' },
   ];
-
+  
   const currentStats = dashboardMode === 'bidding' ? biddingStats : executionStats;
 
   const sidebarItems = [
@@ -342,7 +351,7 @@ const Dashboard = () => {
               <Link to="/profile">
                 <button 
                   className="w-full flex items-center gap-2 px-3 py-2 text-sm text-slate-300 hover:bg-slate-500/50 rounded-md transition-colors"
-                  onClick={() => dispatch(setActiveTab(""))}
+                  onClick={() => dispatch(setActiveTab("profile"))}
                 >
                   <UserCircle className="w-4 h-4" />
                   Profile
@@ -403,7 +412,7 @@ const Dashboard = () => {
                     <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${stat.color} flex items-center justify-center`}>
                       <Icon className="w-6 h-6 text-white" />
                     </div>
-                    <TrendingUp className="w-5 h-5 text-emerald-400" />
+                    {/* <TrendingUp className="w-5 h-5 text-emerald-400" /> */}
                   </div>
                   <h3 className="text-2xl font-bold text-white mb-1">{stat.value}</h3>
                   <p className="text-slate-400 text-sm">{stat.title}</p>
@@ -555,12 +564,7 @@ const Dashboard = () => {
                     >
                       Upload Update
                     </button> */}
-                    <button 
-                      className="bg-slate-600/30 hover:bg-slate-600/50 text-slate-300 px-4 py-2 rounded-lg transition-colors"
-                      onClick={() => setShowMaterials(true)}
-                    >
-                      View Materials
-                    </button>
+                   
                   </div>
                 </div>
               </div>

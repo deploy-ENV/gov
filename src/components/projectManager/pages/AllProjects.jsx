@@ -3,14 +3,15 @@ import { Flag, XCircle, CheckCircle, User,Send , Truck, FileText, Eye, Calendar,
 import { motion, AnimatePresence } from 'framer-motion';
 import { ProjectContext } from '../projectContext';
 import Cookies from "js-cookie";
+import ProjectDetailsViewer from './ProjectCard';
 
 import { getMyProjects ,deleteProjectById,getNearestSupervisor,finalizeProjectTeam, getNearestSupplier } from '../../../services/projectService';
 import { getBidsByProject } from '../../../services/bidService';
 
 
 const STATUS_STYLES = {
-  'On Bidding': 'bg-yellow-400/20 text-yellow-300 text-xs font-semibold rounded-md px-2 py-1',
-  'Ongoing': 'bg-cyan-400/20 text-cyan-300 rounded-md px-2 py-1 text-xs font-semibold',
+  'BIDDING': 'bg-yellow-400/20 text-yellow-300 text-xs font-semibold rounded-md px-2 py-1',
+  'IN_PROGRESS': 'bg-cyan-400/20 text-cyan-300 rounded-md px-2 py-1 text-xs font-semibold',
   'Completed': 'bg-emerald-400/20 text-emerald-300 rounded-md px-2 py-1 text-xs font-semibold',
   'Delayed': 'bg-red-400/20 text-red-300 rounded-md px-2 py-1 text-xs font-semibold',
 };
@@ -22,7 +23,7 @@ function daysAgo(dateStr) {
   return diff === 0 ? 'Today' : `${diff} day${diff > 1 ? 's' : ''} ago`;
 }
 
-function ProjectCard({ project, onClick,onDelete }) {
+function ProjectCard({ project, onClick,onDelete,onViewDetails }) {
   const percentUsed = project.budgetTotal ? Math.round((project.budgetUsed / project.budgetTotal) * 100) : 0;
   
   return (
@@ -34,7 +35,7 @@ function ProjectCard({ project, onClick,onDelete }) {
     >
      
       <div className="relative h-32 w-full rounded-lg overflow-hidden bg-slate-700 mb-2"
-      onClick={() => onClick(project)}
+      
       >
         <img
           src={project.thumbnail || 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=400&q=80'}
@@ -50,10 +51,10 @@ function ProjectCard({ project, onClick,onDelete }) {
         <span className={STATUS_STYLES[project.status]}>{project.status}</span>
       </div>
       <div className="text-xs text-slate-300 space-y-1">
-        <div><span className="font-semibold text-white">Contractor:</span> {project.contractor || <span className="italic text-slate-500">Not Assigned</span>}</div>
-        <div><span className="font-semibold text-white">Supervisor:</span> {project.supervisor || <span className="italic text-slate-500">Not Assigned</span>}</div>
+        <div><span className="font-semibold text-white">Contractor:</span> {project.assignedContractorId || <span className="italic text-slate-500">Not Assigned</span>}</div>
+        <div><span className="font-semibold text-white">Supervisor:</span> {project.assignedSupervisorId || <span className="italic text-slate-500">Not Assigned</span>}</div>
       </div>
-      <div className="mt-2">
+      {/* <div className="mt-2">
         <div className="flex justify-between text-xs mb-1 text-slate-400">
           <span>Budget Used</span>
           <span>{percentUsed}%</span>
@@ -65,7 +66,28 @@ function ProjectCard({ project, onClick,onDelete }) {
           <span className="text-emerald-400 font-semibold">₹{project.budgetUsed?.toLocaleString?.() || 0}</span>
           <span>/ ₹{project.budgetTotal?.toLocaleString?.() || 0}</span>
         </div>
+      </div> */}
+      <div className="flex gap-2 pt-2">
+          <button 
+            onClick={() => onViewDetails(project)}
+            className="flex items-center gap-1 px-3 py-2 bg-cyan-500/15 text-cyan-300 rounded-lg hover:bg-cyan-500/25 transition-all text-xs font-medium border border-cyan-500/30 flex-1 justify-center"
+          >
+            <Eye size={14} />
+            View Details
+          </button>
+
+          {project.status === 'BIDDING' && (
+            <button 
+              onClick={() => onClick(project)}
+              className="flex items-center gap-1 px-3 py-2 bg-emerald-500/15 text-emerald-300 rounded-lg hover:bg-emerald-500/25 transition-all text-xs font-medium border border-emerald-500/30 flex-1 justify-center"
+            >
+              
+              View Bids
+            </button>
+          )}
+         
       </div>
+      
       <div className="flex justify-between items-center text-xs mt-2 text-slate-500">
         <span>{project.startDate || (project.createdAt && daysAgo(project.createdAt))}</span>
         <span>|</span>
@@ -81,6 +103,59 @@ function ProjectCard({ project, onClick,onDelete }) {
   );
 }
 
+
+
+function SupplierCatalogModal({ supplier, onClose }) {
+  // Use mock data for now, assume a real API call would populate this
+  const catalog = supplier?.materialsSupplied; 
+
+  console.log(supplier);
+  
+  return (
+    <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+      <div className="w-full max-w-lg bg-slate-800/95 backdrop-blur-xl rounded-2xl border border-slate-700/50 p-6 relative">
+        
+        {/* Close Button */}
+        <button
+          onClick={onClose}
+          className="absolute top-4 right-4 p-2 rounded hover:bg-slate-700/50"
+        >
+          <X className="w-6 h-6 text-slate-400" />
+        </button>
+
+        {/* Header */}
+        <div className="mb-6">
+          <h1 className="text-2xl font-bold bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent mb-2">
+            {supplier.name}'s Material Catalog
+          </h1>
+          <p className="text-slate-400">Materials supplied by {supplier.category}</p>
+        </div>
+
+        {/* Catalog List */}
+        <div className="max-h-96 overflow-y-auto pr-2 space-y-3">
+          {catalog.length === 0 ? (
+             <div className="text-center py-8 text-slate-500">No materials listed in catalog.</div>
+          ) : (
+            catalog.map(material => (
+              <div 
+                key={material} 
+                className={`flex items-center justify-between p-4 rounded-lg transition-all bg-slate-700/40 border border-slate-600/50 hover:bg-slate-600/50 cursor-pointer`}
+              >
+                <div className="flex flex-col">
+                  <span className="font-semibold text-white">{material}</span>
+                  
+                </div>
+               
+              </div>
+            ))
+          )}
+        </div>
+
+      </div>
+    </div>
+  );
+}
+
 // Supervisor & Suppliers Selection Modal
 function SupervisorSelectionModal({ bid, project, onClose, onConfirm }) {
   const [step, setStep] = useState(1); // 1 for supervisor, 2 for suppliers
@@ -89,7 +164,7 @@ function SupervisorSelectionModal({ bid, project, onClose, onConfirm }) {
   const [confirming, setConfirming] = useState(false);
   const [supervisors, setSupervisors] = useState([]);
   const [suppliers, setSuppliers] = useState([]);
-  
+  const [selectedCatalogSupplier, setSelectedCatalogSupplier] = useState(null);
   const zipcode = project?.location
   const contractorId = bid?.contractorId
   const projectId = bid?.projectId
@@ -112,6 +187,9 @@ function SupervisorSelectionModal({ bid, project, onClose, onConfirm }) {
     handleFetch();
   }, []);
 
+  console.log(suppliers)
+
+  const getSupplier = (id) => suppliers.find(s => s.id === id);
   const handleSupplierToggle = (supplierId) => {
     setSelectedSuppliers(prev =>
       prev.includes(supplierId)
@@ -120,6 +198,10 @@ function SupervisorSelectionModal({ bid, project, onClose, onConfirm }) {
     );
   };
 
+  const handleViewCatalog = (e, supplier) => {
+    e.stopPropagation(); // Stop the card's click event (toggle selection)
+    setSelectedCatalogSupplier(supplier);
+  };
   const handleFinalize = async () => {
     try {
       setConfirming(true);
@@ -142,6 +224,8 @@ function SupervisorSelectionModal({ bid, project, onClose, onConfirm }) {
     .map(s => s.name);
 
   return (
+    <>
+    
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
       <div className="w-full max-w-2xl bg-slate-800/95 backdrop-blur-xl rounded-2xl border border-slate-700/50 p-6 relative">
         
@@ -320,6 +404,13 @@ function SupervisorSelectionModal({ bid, project, onClose, onConfirm }) {
                         <Phone size={12} />
                         {supplier.phone}
                       </div>
+                      <button
+                          onClick={(e) => handleViewCatalog(e, supplier)}
+                          className="flex items-center gap-1 px-2 py-1 bg-purple-500/15 text-purple-300 rounded hover:bg-purple-500/25 transition-all text-xs font-medium border border-purple-500/30"
+                        >
+                          <Eye size={12} />
+                          View Catalog
+                        </button>
                     </div>
                   </div>
                 ))}
@@ -393,6 +484,13 @@ function SupervisorSelectionModal({ bid, project, onClose, onConfirm }) {
         </div>
       </div>
     </div>
+    {selectedCatalogSupplier && (
+        <SupplierCatalogModal
+          supplier={selectedCatalogSupplier}
+          onClose={() => setSelectedCatalogSupplier(null)}
+        />
+      )}
+    </>
   );
 }
 
@@ -786,6 +884,7 @@ function BidCard({ bid, index, project, onViewDetails, onAcceptBid }) {
               Accept Bid
             </button>
           )}
+         
         </div>
       </div>
     </motion.div>
@@ -968,13 +1067,25 @@ export default function AllProjects() {
   const [selectedProject, setSelectedProject] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
+  const [viewProjectDetails, setViewProjectDetails] = useState(false);
+  const [viewProjectBids, setViewProjectBids] = useState(false); 
+  const [viewBidDetails, setViewBidDetails] = useState(false);
   const handleProjectClick = (project) => {
     setSelectedProject(project);
+    setViewProjectDetails(false);
+    setViewProjectBids(true);
+  };
+
+  const handleViewBids = (project) => {
+    setSelectedProject(project);
+    setViewProjectBids(true);
+    setViewProjectDetails(false);
   };
 
   const handleBackToProjects = () => {
     setSelectedProject(null);
+    setViewProjectDetails(false);
+    setViewProjectBids(false);
   };
 
   const handleProjectUpdate = (updatedProject) => {
@@ -986,9 +1097,13 @@ export default function AllProjects() {
     setSelectedProject(updatedProject);
   };
 
+  const handleViewDetails = (project) => {
+    setSelectedProject(project);
+    setViewProjectDetails(!viewProjectDetails);
+  }
   const handleDeleteProject = async (projectId) => {
     try {
-      await deleteProjectById(projectId);
+      await deleteProjectById(projectId); 
       setDynamicProjects(prev => prev.filter(p => p.id !== projectId));
     } catch (err) {
       console.error("Failed to delete project", err);
@@ -1001,8 +1116,7 @@ export default function AllProjects() {
     const fetchProjects = async () => {
       try {
         setLoading(true);
-        const projects = await getMyProjects(userData.id);
-        console.log("projects", projects);
+        const projects = await getMyProjects(userData.id); 
         setDynamicProjects(projects);
       } catch (err) {
         setError(err);
@@ -1013,12 +1127,33 @@ export default function AllProjects() {
     fetchProjects();
   }, []);
 
-  if (selectedProject) {
+  if(selectedProject && viewBidDetails) {
+    return (
+      <BidDetailsModal
+        bid={selectedBid}
+        project={selectedProject}
+        onClose={() => setSelectedBid(null)}
+        onAcceptBid={handleAcceptBid}
+      />
+    )
+  }
+
+  if (selectedProject && viewProjectBids) {
     return (
       <ProjectBidsView 
         project={selectedProject} 
         onBack={handleBackToProjects}
         onProjectUpdate={handleProjectUpdate}
+      />
+    );
+  }
+
+  if (selectedProject && viewProjectDetails) {
+    return (
+      <ProjectDetailsViewer 
+        projectData={selectedProject} 
+        onBack={handleBackToProjects} 
+        onViewBids={() => handleViewBids(selectedProject)} 
       />
     );
   }
@@ -1048,11 +1183,12 @@ export default function AllProjects() {
             <ProjectCard
               key={project.id}
               project={project}
-              onClick={handleProjectClick}
+              onClick={handleViewBids}
               onDelete={handleDeleteProject}
+              onViewDetails={handleViewDetails}
             />
           ))}
-          {hardcodedProjects.length + dynamicProjects.length === 0 && (
+          {(hardcodedProjects.length + dynamicProjects.length) === 0 && (
             <div className="col-span-full text-center text-slate-400 py-12">
               No projects found.
             </div>

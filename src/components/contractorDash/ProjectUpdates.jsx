@@ -250,7 +250,7 @@ const Updates = () => {
           <div className="flex items-center justify-between">
             <div>
               <h2 className="text-2xl font-bold text-cyan-400">Updates</h2>
-              <p className="text-slate-400 mt-1">Submit daily/weekly project updates</p>
+              <p className="text-slate-400 mt-1">Submit daily project updates</p>
             </div>
             <div className="flex items-center gap-4">
               <div className="relative">
@@ -286,16 +286,7 @@ const Updates = () => {
                   >
                     Daily
                   </button>
-                  <button
-                    onClick={() => setUpdateType('weekly')}
-                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                      updateType === 'weekly'
-                        ? 'bg-emerald-500/20 text-emerald-400'
-                        : 'bg-slate-700/50 text-slate-300 hover:bg-slate-700'
-                    }`}
-                  >
-                    Weekly
-                  </button>
+                 
                 </div>
               </div>
 
@@ -345,12 +336,12 @@ const Updates = () => {
                   </div>
                   <div className="space-y-3">
                     {formData.materialUsage.map((material, index) => (
-                      <div key={index} className="flex gap-3 items-center">
+                      <div key={index} className="grid grid-cols-4 gap-3 items-center">
                         <input
                           type="text"
                           value={material.material}
                           onChange={(e) => handleMaterialChange(index, 'material', e.target.value)}
-                          className="flex-1 px-3 py-2 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-400/50"
+                          className="flex-1 col-span-2 px-3 py-2 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-400/50"
                           placeholder="Material name"
                         />
                         <input
