@@ -53,6 +53,11 @@ export default function Overview() {
 
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
+  const [data,setData] = useState(null) 
+      console.log("data:",(data));
+      useEffect(() => {
+        setData(JSON.parse(Cookies.get("userData")))
+  }, []);
 
   return (
     <div className="flex min-h-screen font-sans bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
