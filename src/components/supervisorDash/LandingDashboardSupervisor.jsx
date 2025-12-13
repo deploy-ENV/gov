@@ -64,7 +64,7 @@ const SupervisorDashboard = () => {
   useEffect(() => {
     const supData = JSON.parse(Cookies.get("userData"))
     console.log(Cookies.get("token"));
-    const suppId = supData.empId
+    const suppId = supData.id
     
        const fetchProject = async () => {
         try {
