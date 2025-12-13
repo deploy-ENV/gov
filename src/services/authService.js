@@ -77,7 +77,7 @@ export const registerContractor = async (contractorData) => {
   try {
     const response = await api.post('/auth/register/contractor', contractorData);
      if (response.data.token) {
-      setAuthCookies(response.data.token, 'contractor',contractorData);
+      setAuthCookies(response.data.token, 'contractor',response.data.data);
     }
     return response.data;
   } catch (error) {
@@ -91,7 +91,7 @@ export const registerSupplier = async (supplierData) => {
   try {
     const response = await api.post('/auth/register/supplier', supplierData);
     if (response.data.token) {
-      setAuthCookies(response.data.token, 'supplier',supplierData);
+      setAuthCookies(response.data.token, 'supplier',response.data.data);
     }
     return response.data;
   } catch (error) {
