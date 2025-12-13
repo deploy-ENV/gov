@@ -130,8 +130,10 @@ export const loginSupplier = async (credentials) => {
 
 // Logout
 export const logout = () => {
-  Cookies.remove('token', { sameSite: 'strict', secure: true });
-  Cookies.remove('userRole', { sameSite: 'strict', secure: true });
+  Object.keys(Cookies.get()).forEach(name => {
+    Cookies.remove(name);
+  });
+
   sessionStorage.clear();
   
   window.location.href = '/'; // or '/login'

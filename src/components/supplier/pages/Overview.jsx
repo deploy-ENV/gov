@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { ClipboardList, Truck, CreditCard, Home, Calendar, PackageCheck, ArrowRight, X, Package, Archive, Search, Bell, TrendingUp } from "lucide-react";
 import Cookies from "js-cookie";
-
+import { addProduct } from "../../../services/productService";
 const stats = [
   {
     label: "Projects Active",
@@ -60,9 +60,10 @@ export default function Overview() {
   const [newProduct, setNewProduct] = useState({
     name: '',
     price: '',
-    image: '',
+    discription: '',
     available: true
   });
+  console.log(catalog);
   
   console.log("data:",(data));
   
@@ -71,10 +72,12 @@ export default function Overview() {
     if (userDataCookie) {
       setData(JSON.parse(userDataCookie));
     }
+    const anyCatalog = Cookies.get("catalogProducts");
+    const catalogData = JSON.parse(Cookies.get("userData")).catalogProducts || anyCatalog;
+    console.log("catalogData", catalogData);
     
-    const catalogData = userDataCookie.catalogProducts;
     if (catalogData && catalogData !== "null" && catalogData !== "undefined") {
-      setCatalog(JSON.parse(catalogData));
+      setCatalog(catalogData);
     } else {
       setShowCatalogEnter(true);
     }
@@ -84,14 +87,27 @@ export default function Overview() {
     if (newProduct.name && newProduct.price && newProduct.image) {
       const updatedCatalog = [...catalog, { ...newProduct, id: Date.now() }];
       setCatalog(updatedCatalog);
-      Cookies.set("catalogProducts", JSON.stringify(updatedCatalog));
+      Cookies.set("catalogProducts", JSON.stringify(updatedCatalog), {
+        expires: 7,
+        sameSite: "strict",
+      });
+
       setNewProduct({ name: '', price: '', image: '', available: true });
     }
   };
 
-  const handleSaveCatalog = () => {
+  const handleSaveCatalog = async() => {
     if (catalog.length > 0) {
+      try{
+        const response = await addProduct(data.id,newProduct);
+        
+        console.log(response);
+      }catch(e){
+        console.log("add product error",e);
+        
+      }
       setShowCatalogEnter(false);
+      
     } else {
       alert("Please add at least one product to the catalog");
     }
@@ -257,12 +273,12 @@ export default function Overview() {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-slate-300 mb-2">Image URL</label>
+                    <label className="block text-sm font-medium text-slate-300 mb-2">Description</label>
                     <input
                       type="text"
                       value={newProduct.image}
                       onChange={(e) => setNewProduct({...newProduct, image: e.target.value})}
-                      placeholder="https://example.com/image.jpg"
+                      placeholder="Cement"
                       className="w-full px-4 py-2 bg-slate-600/50 border border-slate-500 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-400/50"
                     />
                   </div>
