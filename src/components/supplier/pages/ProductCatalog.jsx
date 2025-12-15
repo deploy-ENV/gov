@@ -132,10 +132,10 @@ export default function ProductCatalog() {
             const response = await addProduct(data.id,
             {
               
-              name: addForm.name,
-              desp: addForm.desp,
-              price: parseFloat(addForm.price),
-              available: addForm.available,
+              name: products[0].name,
+              desp: products[0].desp,
+              price: parseFloat(products[0].price),
+              available: products[0].available,
             }
           );
     setToast("Product added successfully");
