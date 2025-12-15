@@ -67,7 +67,7 @@ const AssignedProject = () => {
     }
   }
 
-  const daysRemaining = currentProject ? Math.ceil((parseDate(currentProject.endDate) - parseDate(currentProject.startDate)) / (1000 * 60 * 60 * 24)) : 0;
+const daysRemaining = currentProject.length != 0 ? Math.ceil((parseDate(currentProject.endDate) - parseDate(currentProject.startDate)) / (1000 * 60 * 60 * 24)) : 0;
 
  const sidebarItems = [
      { id: 'overview', label: 'Overview', icon: Home, path: '', color: 'text-blue-600' },
@@ -97,7 +97,7 @@ const AssignedProject = () => {
     document.body.removeChild(link);
   };
 
-  
+ console.log("currentProject:",currentProject);
   const handleSavePhase = async () => {
   if (newPhase.trim()) {
     try {
@@ -223,7 +223,7 @@ const AssignedProject = () => {
 
         {/* Project Details */}
         <div className="p-6">
-          {currentProject ? (
+          {currentProject?.name ? (
             <div className="bg-slate-800/40 backdrop-blur-sm rounded-2xl p-6 border border-slate-700/50">
               <div className="flex items-center justify-between mb-6">
                 <h3 className="text-xl font-bold text-white">{currentProject.name}</h3>
@@ -310,7 +310,7 @@ const AssignedProject = () => {
                     <div>
                       <p className="text-xs text-slate-400">Contractor Requirements</p>
                       <ul className="text-sm text-slate-300 list-disc pl-5">
-                        {currentProject.contractorRequirements.map((req, index) => (
+                        {currentProject?.contractorRequirements.map((req, index) => (
                           <li key={index}>{req}</li>
                         ))}
                       </ul>
@@ -345,7 +345,11 @@ const AssignedProject = () => {
               </div>
             </div>
           ) : (
-            <p className="text-slate-400">No project assigned yet.</p>
+            <div className="bg-slate-800/40 backdrop-blur-sm rounded-2xl p-12 border border-slate-700/50 text-center">
+              <FileText className="w-16 h-16 text-slate-600 mx-auto mb-4" />
+              <h3 className="text-xl font-semibold text-slate-300 mb-2">No Project Assigned</h3>
+              <p className="text-slate-400">You don't have any project assigned yet. Check back later or contact your administrator.</p>
+            </div>
           )}
         </div>
       </div>
