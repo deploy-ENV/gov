@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import api from '../../services/api';
+import { uploadDocument } from '../../services/documentService';
 import {
   FileText,
   MapPin,
@@ -119,7 +120,7 @@ const BiddingFormCard = ({ projectId, show, onClose }) => {
                 onChange={(e) => {
                   const selectedFile = e.target.files[0];
                   if (selectedFile) {
-                    handleFileUpload(field, selectedFile);
+                     uploadDocument(e.target.files[0],"Contractor",projectId,label,contractorId,"Contractor");
                   }
                 }}
               />

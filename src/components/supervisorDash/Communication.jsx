@@ -55,103 +55,103 @@ const SupervisorCommunications = () => {
   ];
 
   const contacts = [
-    // {
-    //   id: 'pm',
-    //   name: 'Project Manager',
-    //   email: 'pm@secureportal.com',
-    //   role: 'Project Manager',
-    //   status: 'online',
-    //   avatar: 'PM',
-    //   lastSeen: 'Active now',
-    //   unreadCount: 3
-    // },
-    // {
-    //   id: 'contractor',
-    //   name: 'John Construction Co.',
-    //   email: 'john@constructionco.com',
-    //   role: 'Contractor',
-    //   status: 'offline',
-    //   avatar: 'JC',
-    //   lastSeen: '2 hours ago',
-    //   unreadCount: 1
-    // },
-    // {
-    //   id: 'supplier',
-    //   name: 'John traders Co.',
-    //   email: 'john@traders.com',
-    //   role: 'Supplier',
-    //   status: 'offline',
-    //   avatar: 'SP',
-    //   lastSeen: '2 hours ago',
-    //   unreadCount: 1
-    // },
+    {
+      id: 'pm',
+      name: 'Project Manager',
+      email: 'pm@secureportal.com',
+      role: 'Project Manager',
+      status: 'online',
+      avatar: 'PM',
+      lastSeen: 'Active now',
+      unreadCount: 3
+    },
+    {
+      id: 'contractor',
+      name: 'John Construction Co.',
+      email: 'john@constructionco.com',
+      role: 'Contractor',
+      status: 'offline',
+      avatar: 'JC',
+      lastSeen: '2 hours ago',
+      unreadCount: 1
+    },
+    {
+      id: 'supplier',
+      name: 'John traders Co.',
+      email: 'john@traders.com',
+      role: 'Supplier',
+      status: 'offline',
+      avatar: 'SP',
+      lastSeen: '2 hours ago',
+      unreadCount: 1
+    },
   ];
 
   const [conversations, setConversations] = useState({
-    // pm: [
-    //   {
-    //     id: 1,
-    //     sender: 'pm',
-    //     message: 'Hi, I need an update on the current project phase. Can you provide the latest progress report?',
-    //     timestamp: '2025-01-15T10:30:00Z',
-    //     status: 'read',
-    //     type: 'text'
-    //   },
-    //   {
-    //     id: 2,
-    //     sender: 'supervisor',
-    //     message: 'Sure, I will send the progress report by end of day. The current phase is 65% complete.',
-    //     timestamp: '2025-01-15T10:45:00Z',
-    //     status: 'delivered',
-    //     type: 'text'
-    //   },
-    //   {
-    //     id: 3,
-    //     sender: 'pm',
-    //     message: 'Great! Also, there are some budget concerns regarding the next phase. Can we schedule a meeting?',
-    //     timestamp: '2025-01-15T11:00:00Z',
-    //     status: 'read',
-    //     type: 'text'
-    //   },
-    //   {
-    //     id: 4,
-    //     sender: 'pm',
-    //     message: 'I have attached the budget analysis document for your review.',
-    //     timestamp: '2025-01-15T11:15:00Z',
-    //     status: 'unread',
-    //     type: 'file',
-    //     fileName: 'budget-analysis.pdf',
-    //     fileSize: '2.3 MB'
-    //   }
-    // ],
-    // contractor: [
-    //   {
-    //     id: 1,
-    //     sender: 'contractor',
-    //     message: 'Hello, we need approval for the additional materials request for Phase 2.',
-    //     timestamp: '2025-01-15T09:00:00Z',
-    //     status: 'read',
-    //     type: 'text'
-    //   },
-    //   {
-    //     id: 2,
-    //     sender: 'supervisor',
-    //     message: 'I have reviewed your request. Can you provide more details about the specific materials needed?',
-    //     timestamp: '2025-01-15T09:30:00Z',
-    //     status: 'delivered',
-    //     type: 'text'
-    //   },
-    //   {
-    //     id: 3,
-    //     sender: 'contractor',
-    //     message: 'We need additional steel reinforcement bars and concrete mix. The quantities are in the attached document.',
-    //     timestamp: '2025-01-15T14:00:00Z',
-    //     status: 'unread',
-    //     type: 'file',
-    //     fileName: 'material-requirements.xlsx',
-    //     fileSize: '1.8 MB'
-    //   }
-    // ]
+    pm: [
+      {
+        id: 1,
+        sender: 'pm',
+        message: 'Hi, I need an update on the current project phase. Can you provide the latest progress report?',
+        timestamp: '2025-01-15T10:30:00Z',
+        status: 'read',
+        type: 'text'
+      },
+      {
+        id: 2,
+        sender: 'supervisor',
+        message: 'Sure, I will send the progress report by end of day. The current phase is 65% complete.',
+        timestamp: '2025-01-15T10:45:00Z',
+        status: 'delivered',
+        type: 'text'
+      },
+      {
+        id: 3,
+        sender: 'pm',
+        message: 'Great! Also, there are some budget concerns regarding the next phase. Can we schedule a meeting?',
+        timestamp: '2025-01-15T11:00:00Z',
+        status: 'read',
+        type: 'text'
+      },
+      {
+        id: 4,
+        sender: 'pm',
+        message: 'I have attached the budget analysis document for your review.',
+        timestamp: '2025-01-15T11:15:00Z',
+        status: 'unread',
+        type: 'file',
+        fileName: 'budget-analysis.pdf',
+        fileSize: '2.3 MB'
+      }
+    ],
+    contractor: [
+      {
+        id: 1,
+        sender: 'contractor',
+        message: 'Hello, we need approval for the additional materials request for Phase 2.',
+        timestamp: '2025-01-15T09:00:00Z',
+        status: 'read',
+        type: 'text'
+      },
+      {
+        id: 2,
+        sender: 'supervisor',
+        message: 'I have reviewed your request. Can you provide more details about the specific materials needed?',
+        timestamp: '2025-01-15T09:30:00Z',
+        status: 'delivered',
+        type: 'text'
+      },
+      {
+        id: 3,
+        sender: 'contractor',
+        message: 'We need additional steel reinforcement bars and concrete mix. The quantities are in the attached document.',
+        timestamp: '2025-01-15T14:00:00Z',
+        status: 'unread',
+        type: 'file',
+        fileName: 'material-requirements.xlsx',
+        fileSize: '1.8 MB'
+      }
+    ]
   });
 
   const toggleProfileDropdown = () => {
